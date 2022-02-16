@@ -4,12 +4,11 @@
 
 ## 1. Overview
 
-### OS Purposes
-
+#### OS Purposes
 * **Abstract H/W**
     * Computer(CPU, Memory, Disk...) Low level set of resources.
     * OS provide high-level interfaces and abstractions that app can use.
-* **Multiplex / Isolation**
+* **Multiplexing / Isolation**
     * Run many applications at same time, without having them interfere.
 * **Sharing**
 * **Security**
