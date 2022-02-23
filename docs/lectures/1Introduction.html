@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:og="http://ogp.me/ns#"
+      xmlns:fb="https://www.facebook.com/2008/fbml">
+<head>
+    <title>Angold-4 Organization</title>
+    <!-- Using the latest rendering mode for IE -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link href="../../../images/favicon.png" rel="icon">
+
+<link rel="canonical" href=".">
+        <meta name="author" content="Angold Wang" />
+
+    <meta property="og:site_name" content="Angold-4" />
+<!--     <meta property="og:type" content="article"/> -->
+    <meta property="og:title" content="Angold-4 Organization"/>
+    <meta property="og:url" content="."/>
+
+    <!-- Bootstrap -->
+        <link rel="stylesheet" href="../../../theme/css/bootstrap.flatly.min.css" type="text/css"/>
+    <link href="../../../theme/css/font-awesome.min.css" rel="stylesheet">
+<!--     <link href="https://cdnjs.cloudflare.com/ajax/libs/typicons/2.0.9/typicons.min.css" rel="stylesheet"> -->
+
+    <link href="../../../theme/css/pygments/monokai.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../../theme/css/style.css" type="text/css"/>
+
+</head>
+<body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<!-- <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script> -->
+
+<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="http://angold4.org" class="navbar-brand">
+<img src="../../../images/logo.png" width="32"/> Angold4            </a>
+        </div>
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav">
+			    <li><a href="../../../about.html">About</a>
+                            <li><a href="../../../blogs.html">Blogs</a>
+                            <li><a href="../../../projects.html">Projects</a>
+
+	    </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li> <a title="Youtube" href="https://www.youtube.com/channel/UC3ZAjh2LHhm-FrgxgBtgMzQ" target="_new"><i class="fa fa-youtube"></i> Youtube</a>
+		</li>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+</div> <!-- /.navbar -->
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12">
+	<section id="content" class="body">
+
+
+<h1>1. Introduction</h1>
+<h5>02/16/2022 By Angold Wang</h5>
+<h2>1. Overview</h2>
+<h3>i. OS Purposes</h3>
+<ul>
+<li><strong>Abstract H/W</strong>
+<ul>
+<li>Computer(CPU, Memory, Disk...) Low level set of resources.</li>
+<li>OS provide high-level interfaces and abstractions that app can use.</li>
+</ul>
+</li>
+<li><strong>Multiplexing / Isolation</strong>
+<ul>
+<li>Run many applications at same time, without having them interfere.</li>
+</ul>
+</li>
+<li><strong>Sharing</strong></li>
+<li><strong>Security</strong></li>
+<li><strong>Performance</strong>
+<ul>
+<li>Whatever services it provides, don't get in the way of applicatins getting high performance.</li>
+<li>Maybe even help applications achieve good performance.</li>
+</ul>
+</li>
+<li><strong>Range of Uses</strong></li>
+</ul>
+<p><img src="Sources/osstruct.png" alt="osstruct"></p>
+<h3>ii. Why do we need an Operating System ?</h3>
+<p><img src="Sources/exosdesign.png" alt="exosdesign"></p>
+<h4>Strawman Design: No OS:</h4>
+<ul>
+<li><strong>Application directly interactes with hardware</strong>
+<ul>
+<li>CPU cores &amp; registers</li>
+<li>DRAM chips</li>
+<li>Disk blocks</li>
+<li>...</li>
+</ul>
+</li>
+<li><strong>OS acts as a library (perhaps abstracts some of hardware)</strong></li>
+</ul>
+<h4>Problems:</h4>
+<ul>
+<li>
+<p><strong>Not conductive to multiplexing</strong> (No enforced multiplexing)</p>
+<ul>
+<li>Each processes periodically must <strong>give up</strong> the hardware.</li>
+<li>One process forgets to give up or in an infinite loop, no other processes run.</li>
+</ul>
+</li>
+<li>
+<p><strong>Not memory isolation</strong> (All apps share physical memory)</p>
+<ul>
+<li>One app can overwrite another app's memory.</li>
+<li>One app can overwrite the OS library.</li>
+</ul>
+</li>
+<li>
+<p>......</p>
+</li>
+</ul>
+<h3>iii. Revisit Purposes: Bring Abstraction</h3>
+<h4>The OS Interface abstracts the hardware resources, and make it easier/possible to provide the strong isolation, etc.</h4>
+<h4>Processes</h4>
+<ul>
+<li>The Abstraction of CPU</li>
+</ul>
+<p>Instead of having direct CPUs to manipulate or given to the application, OS provides processes, which <strong>abstract the CPU itself</strong> so that the operating system can multiplex in one or multiple CPU(s) among multiple applications.</p>
+<p><strong>We add this layer between CPU and applications so that behind the scenes the kernel can switch between processes in order to switch different applications.</strong></p>
+<blockquote>
+<p>Example: The RISC-V CPU we are using in the lab that actually four cores. Which means you can run four processes in parallel. What the OS does is that in case you have eight applications. It will take several cores <strong>Time Multiplexes</strong> between different processes. <strong>(Enforces that no process can run longer than 100 milliseconds)</strong></p>
+</blockquote>
+<h4>Exec</h4>
+<ul>
+<li>The Abstraction of Memory</li>
+<li><strong>Each process can have its &quot;own&quot; memory</strong></li>
+</ul>
+<p>When you call the <strong><code>exec</code></strong> system call with specifc filename (<code>PE</code> for Windows, <code>ELF</code> for Unix). And what in that file is basically is the memory image of a program, such as segmentation data etc., and that forms the memory of the application.</p>
+<p><strong>The application will never have a direct access to physical memory (i.e. By specifying the phsical address), they can only grow its memory by system call, for example <code>sbrk</code> can help applications grow their memory.</strong></p>
+<h4>Files</h4>
+<ul>
+<li>The Abstraction of Disk Block</li>
+<li><strong>In Unix, the only way to interact with the storage system is through files.</strong></li>
+</ul>
+<p>OS provides convenient names of each file, and allows files to be shared by different apps and users.</p>
+<h2>2. Kernel and System Call</h2>
+<h3>i. OS Should Be Defensive</h3>
+<ul>
+<li><strong>An App crash will not crash the OS.</strong></li>
+<li><strong>An App shouldn't be able to break out of isolation domain and then take control of the kernel.</strong></li>
+</ul>
+<h3>ii. Achieve this Strong Isolation: Hardware Support</h3>
+<p><strong>Strong isolation requires a hard boundary between applications and the operating system. So it is not enough to just implement all these stuff in the OS level.</strong> All series processors that are intended to run an operating system in multiple applications have to support these <strong>Hardware Support</strong>.</p>
+<h4>User / Kernel Mode</h4>
+<ul>
+<li>
+<p><strong>User Mode</strong></p>
+<ul>
+<li>CPU Mode Flag = <code>1</code></li>
+<li>CPU can only execute <strong>Unprivileged</strong> instructions.</li>
+</ul>
+</li>
+<li>
+<p><strong>Kernel Mode</strong></p>
+<ul>
+<li>CPU Mode Flag = <code>2</code></li>
+<li>CPU can only execute <strong>Privileged</strong> instructions.</li>
+<li>The software running in kernel mode (space) is called the <strong>kernel</strong></li>
+</ul>
+</li>
+</ul>
+<p><img src="Sources/ukmode.png" alt="ukmode"></p>
+<ul>
+<li><strong>The Unprivileged instructions, like <code>add</code>, <code>sub</code>, <code>call</code>, <code>jmp</code> or <code>branch</code> .etc.</strong></li>
+<li><strong>The Privileged instructions, like &quot;set up the page table register&quot;, &quot;disable clock&quot; or &quot;disable interrupt&quot;. etc. They are all kinds of states on the processor that the operating system is tend to use, manipulating that state is donne for privilieged instructions.</strong></li>
+</ul>
+<p><strong>For example, If CPU find a user application tries to actually execute a privileged instruction, then the processor won't execute it</strong>, and that will result in the transfer control from user mode to kernel mode so that the operating system can actually take control, and maybe kill the application because it is misbehaving.</p>
+<h4>Virtual Memory</h4>
+<ul>
+<li><strong>Strong memory isolation.</strong></li>
+<li><strong>Page Table: map virtual address into physical address.</strong></li>
+<li><strong>Each process has its own page table.</strong> Which means each process can actually only allowed to access that piece of physical memory that actually shows up in the page table.</li>
+<li><strong>Kernel also has its own page table, called Kernel Space.</strong></li>
+</ul>
+<h3>iii. Kernel - the trusted computing base</h3>
+<ul>
+<li><strong>Kernel must be &quot;correct&quot;</strong>
+<ul>
+<li>if there is a bug in the kernel, maybe an attacker is able to tickle that bug and turn the bug into an exploit.</li>
+<li>That exploit maybe allow that particular attacker to break out of isolation or take some control over the kernel.</li>
+</ul>
+</li>
+<li><strong>Kernel must treat processes as malicious</strong></li>
+</ul>
+<h2>3. Kernel Organization</h2>
+<p>A Key design question is that what part of the operating system should run in supervisor mode.</p>
+<h3>i. Monolithic Kernel</h3>
+<p><strong>One possible answer is that the entire operating system resides in the kernel, which means the entire operating system runs with full hardware priviledge.</strong></p>
+<p><img src="Sources/mnkernel.png" alt="mnkernel"></p>
+<ul>
+<li><strong>Pros:</strong>
+<ul>
+<li>Tight integration: it is easier for different parts of the operating system to cooperate.</li>
+<li><strong>Which will lead a great performance</strong></li>
+</ul>
+</li>
+<li><strong>Cons:</strong>
+<ul>
+<li>There are a lot of code in the kernel, which will bring many bugs.</li>
+</ul>
+</li>
+</ul>
+<h3>ii. Microkernel</h3>
+<p><strong>Another design which basically focuses on reducing the amount of code in the kernel,</strong> which let many OS services run as ordinary user programs, and the kernel only implements minimal mechanism to services in user space.</p>
+<p><img src="Sources/microkernel.png" alt="microkernel"></p>
+<ul>
+<li>
+<p><strong>Pros:</strong></p>
+<ul>
+<li>More isolation, can pick which we part want in different using environment.</li>
+<li>Less code, hopefully less bugs and easier to implement.</li>
+</ul>
+</li>
+<li>
+<p><strong>Cons:</strong></p>
+<ul>
+<li>Maybe hard to get good performance (Too much <strong>ipc</strong>)</li>
+</ul>
+</li>
+</ul>
+<p><img src="Sources/minix.png" alt="minix"></p>
+	</section>
+	</div>
+    </div>
+</div>
+<footer>
+   <div class="well well-lg" id="footer-well">
+      <div class="container">
+
+
+      <div class="row">
+         <div class="col-xs-6">
+            <a href="https://angold4.org" title="Angold-4 Organization" class="image-link"><img src="../../../images/logo.png" class="cmudb-logo" /></a>
+         </div>
+         <div class="col-xs-6">
+            <p class="pull-right"><i class="fa fa-arrow-up"></i> <a href="#">Back to top</a></p>
+        </div>
+      </div>
+   </div>
+   </div>
+</footer>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="../../../theme/js/bootstrap.min.js"></script>
+
+<!-- Enable responsive features in IE8 with Respond.js (https://github.com/scottjehl/Respond) -->
+<script src="../../../theme/js/respond.min.js"></script>
+
+<!-- Fix scrolling issues to internal HREFs that get positioned behind navbar -->
+<!-- http://stackoverflow.com/questions/10732690/offsetting-an-html-anchor-to-adjust-for-fixed-header -->
+<script src="../../../theme/js/href_scroll.js"></script>
+
+<!-- You know what this is and you know what he did to me... -->
+<script src="../../../theme/js/tim-kraska-betrayed-me.js"></script>
+</body>
+</html>

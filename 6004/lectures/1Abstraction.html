@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:og="http://ogp.me/ns#"
+      xmlns:fb="https://www.facebook.com/2008/fbml">
+<head>
+    <title>Angold-4 Organization</title>
+    <!-- Using the latest rendering mode for IE -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link href="../../../images/favicon.png" rel="icon">
+
+<link rel="canonical" href=".">
+        <meta name="author" content="Angold Wang" />
+
+    <meta property="og:site_name" content="Angold-4" />
+<!--     <meta property="og:type" content="article"/> -->
+    <meta property="og:title" content="Angold-4 Organization"/>
+    <meta property="og:url" content="."/>
+
+    <!-- Bootstrap -->
+        <link rel="stylesheet" href="../../../theme/css/bootstrap.flatly.min.css" type="text/css"/>
+    <link href="../../../theme/css/font-awesome.min.css" rel="stylesheet">
+<!--     <link href="https://cdnjs.cloudflare.com/ajax/libs/typicons/2.0.9/typicons.min.css" rel="stylesheet"> -->
+
+    <link href="../../../theme/css/pygments/monokai.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../../theme/css/style.css" type="text/css"/>
+
+</head>
+<body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<!-- <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script> -->
+
+<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="http://angold4.org" class="navbar-brand">
+<img src="../../../images/logo.png" width="32"/> Angold4            </a>
+        </div>
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav">
+			    <li><a href="../../../about.html">About</a>
+                            <li><a href="../../../blogs.html">Blogs</a>
+                            <li><a href="../../../projects.html">Projects</a>
+
+	    </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li> <a title="Youtube" href="https://www.youtube.com/channel/UC3ZAjh2LHhm-FrgxgBtgMzQ" target="_new"><i class="fa fa-youtube"></i> Youtube</a>
+		</li>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+</div> <!-- /.navbar -->
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12">
+	<section id="content" class="body">
+
+
+<h1>1. The Digital Abstraction</h1>
+<h5>16/02/2022 By Angold Wang</h5>
+<h2>1. Abstractions</h2>
+<pre><code>Computer Programs
+
+======================&gt; Virtual Machines
+
+Module 3: Computer Systems
+Operating systems, virtual memory, I/O
+
+======================&gt; Instruction set + memory
+
+Module 2: Computer Architecture
+Assembly language, processors, caches, pipelining
+
+======================&gt; Digital circuits
+
+Module 1: Digital Design
+combinational and sequencial circuits
+
+======================&gt; Bits, logic gates
+
+Atoms, Materials
+
+</code></pre>
+<h4>These Abstractions:</h4>
+<ul>
+<li><strong>Are actually interfaces that let us reason about the behavior of our building blocks, without understanding the implementation details underneath.</strong></li>
+<li><strong>Are extremely long-lived, which live far longer than the specific implementations of these building blocks.</strong></li>
+<li><strong>Shielding the levels above from from the details of the implementation.</strong></li>
+<li><strong>Can limit complexity at each level, which shorten design time.</strong></li>
+</ul>
+<h2>2. Analog vs. Digital Systems</h2>
+<ul>
+<li><strong>Analog systems</strong> represent and process information using <strong>continuous signals</strong>.</li>
+<li><strong>Digital systems</strong> represent and process information using <strong>discrete symbols</strong>.</li>
+</ul>
+<p>The reason why <strong>digital system</strong> are practically used <strong>everywhere</strong> and <strong>analog system</strong> are used only in very <strong>limited circumstances</strong>:</p>
+<h4>Digital Systems Tolerate Noise !!!</h4>
+<p>Which makes Digital systems can process information reliably at very high speeds.</p>
+<h2>3. Using Voltages &quot;Digitally&quot;</h2>
+<p><img src="Sources/dbits.png" alt="dbits"></p>
+<p><img src="Sources/way3.png" alt="way3"></p>
+<h4>Voltage Transfer Characteristic (VTC)</h4>
+<p><img src="Sources/vtc.png" alt="vtc"></p>
+<ol>
+<li><strong>VTC must avoid the shaded regions (aka &quot;forbidden zones&quot;) which correspond to valid inputs but invalid outputs</strong></li>
+<li><strong>The VTC can do anything when Vil &lt; Vin &lt; Vih.</strong></li>
+<li><strong>There's some amplification going on (ACTIVE, an amplifier or a transistor) which is injecting energy into the circuit when Vin &gt; Vil.</strong></li>
+</ol>
+	</section>
+	</div>
+    </div>
+</div>
+<footer>
+   <div class="well well-lg" id="footer-well">
+      <div class="container">
+
+
+      <div class="row">
+         <div class="col-xs-6">
+            <a href="https://angold4.org" title="Angold-4 Organization" class="image-link"><img src="../../../images/logo.png" class="cmudb-logo" /></a>
+         </div>
+         <div class="col-xs-6">
+            <p class="pull-right"><i class="fa fa-arrow-up"></i> <a href="#">Back to top</a></p>
+        </div>
+      </div>
+   </div>
+   </div>
+</footer>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="../../../theme/js/bootstrap.min.js"></script>
+
+<!-- Enable responsive features in IE8 with Respond.js (https://github.com/scottjehl/Respond) -->
+<script src="../../../theme/js/respond.min.js"></script>
+
+<!-- Fix scrolling issues to internal HREFs that get positioned behind navbar -->
+<!-- http://stackoverflow.com/questions/10732690/offsetting-an-html-anchor-to-adjust-for-fixed-header -->
+<script src="../../../theme/js/href_scroll.js"></script>
+
+<!-- You know what this is and you know what he did to me... -->
+<script src="../../../theme/js/tim-kraska-betrayed-me.js"></script>
+</body>
+</html>
