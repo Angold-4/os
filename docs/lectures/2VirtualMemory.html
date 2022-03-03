@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:og="http://ogp.me/ns#"
+      xmlns:fb="https://www.facebook.com/2008/fbml">
+<head>
+    <title>Angold-4 Organization</title>
+    <!-- Using the latest rendering mode for IE -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link href="../../../images/favicon.png" rel="icon">
+
+<link rel="canonical" href=".">
+        <meta name="author" content="Angold Wang" />
+
+    <meta property="og:site_name" content="Angold-4" />
+<!--     <meta property="og:type" content="article"/> -->
+    <meta property="og:title" content="Angold-4 Organization"/>
+    <meta property="og:url" content="."/>
+
+    <!-- Bootstrap -->
+        <link rel="stylesheet" href="../../../theme/css/bootstrap.flatly.min.css" type="text/css"/>
+    <link href="../../../theme/css/font-awesome.min.css" rel="stylesheet">
+<!--     <link href="https://cdnjs.cloudflare.com/ajax/libs/typicons/2.0.9/typicons.min.css" rel="stylesheet"> -->
+
+    <link href="../../../theme/css/pygments/monokai.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../../theme/css/style.css" type="text/css"/>
+
+</head>
+<body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<!-- <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script> -->
+
+<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="http://angold4.org" class="navbar-brand">
+<img src="../../../images/logo.png" width="32"/> Angold4            </a>
+        </div>
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav">
+			    <li><a href="../../../about.html">About</a>
+                            <li><a href="../../../blogs.html">Blogs</a>
+                            <li><a href="../../../projects.html">Projects</a>
+
+	    </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li> <a title="Youtube" href="https://www.youtube.com/channel/UC3ZAjh2LHhm-FrgxgBtgMzQ" target="_new"><i class="fa fa-youtube"></i> Youtube</a>
+		</li>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+</div> <!-- /.navbar -->
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12">
+	<section id="content" class="body">
+
+
+<h1>2. Virtual Memory</h1>
+<h5>03/03/2022 By Angold Wang</h5>
+<h3>Kernel with &quot;Isolation&quot;</h3>
+<ul>
+<li><strong>Restrict each user processes so that all it can do is read/write/execute its own user memory, and use the 32 gerneral-purpose RISC-V registers.</strong></li>
+<li><strong>One user-process can only affect the kernel and other processes in the ways that system calls are intended to allow</strong></li>
+</ul>
+<h2>1. Memory Isolation</h2>
+<p>The RISC-V instructions (both user and kernel) <strong>manipulate</strong> <strong>virtual addresses</strong>. But machine's RAM, or physical memory, is indexed with <strong>physical addresses</strong>.</p>
+<p>In the <strong><a href="https://a4org.github.io/os/docs/lectures/1Introduction.html">last</a></strong> note, we mentioned that one way to bring isolation is through <strong>Virtual Memory</strong>.
+The main purpose of <strong>Virtual Memory</strong> is to achieve <strong>strong Memory Isolation</strong>.</p>
+<ul>
+<li>Each process has its own memory</li>
+<li>It can read and write its own memory</li>
+<li>It cannot read or write anything else directly (must through syscall, with privileges)</li>
+<li><strong>Each process believes that they have full memory space under control</strong> (Two processes with &quot;same&quot; virtual address)</li>
+</ul>
+<p><img src="Sources/pvview.png" alt="pvview"></p>
+<p>How to multiplex several memories over one physical memory? while maintaining isolation between memories.</p>
+<h2>2. Paging Hardware</h2>
+<h3>i. Level of Indirection Indexing</h3>
+<p><img src="Sources/lii.png" alt="lii"></p>
+<ul>
+<li>Software can only read and write to virtual memory.</li>
+<li>Only kernel can program mmu (Memory Manage Unit), <strong>which means this VA -&gt; PA mapping is completely under the control of the Operating System.</strong></li>
+<li>MMU has a <strong>Page table</strong> that maps virtual addresses to physical adresses.</li>
+<li>Some virtual addresses restricted to kernel-only.</li>
+</ul>
+<h3>ii. Virtual Address to Page</h3>
+<h4>Why we need page?</h4>
+<p>Imagine that a <code>64-bit</code> machine, which means it support <code>2^64</code> memory address, if we just simply map one <strong>VA</strong> into one <strong>PA</strong>, the mapping table continuous store in memory will be also <code>2^64</code> -- which is gigantic.</p>
+<p><strong>So we use another way, instead store this mapping relationship in a very gigantic continuous mapping array, we divide them into different pages, and each virtual address contains two message: <code>page_id</code> and <code>offset</code>.</strong></p>
+<p><strong>Each process has its own <code>page_table</code>, which managed by the kernel</strong>, here is the <strong><code>proc</code></strong> structure in xv6:</p>
+<pre><code class="language-c">struct proc {
+  struct spinlock lock;
+
+  // p-&gt;lock must be held when using these:
+  enum procstate state;        // Process state
+  void *chan;                  // If non-zero, sleeping on chan
+  int killed;                  // If non-zero, have been killed
+  int xstate;                  // Exit status to be returned to parent's wait
+  int pid;                     // Process ID
+
+  // wait_lock must be held when using this:
+  struct proc *parent;         // Parent process
+
+  // these are private to the process, so p-&gt;lock need not be held.
+  uint64 kstack;               // Virtual address of kernel stack
+  uint64 sz;                   // Size of process memory (bytes)
+  pagetable_t pagetable;       // User page table (Which table / start address)
+  struct trapframe *trapframe; // data page for trampoline.S
+  struct context context;      // swtch() here to run process
+  struct file *ofile[NOFILE];  // Open files
+  struct inode *cwd;           // Current directory
+  char name[16];               // Process name (debugging)
+};
+
+</code></pre>
+<h4>High-level view of xv6 page table</h4>
+<p>xv6 runs on Sv39 RISC-V, which means that only the bottom <code>39</code> bits of a 64-bit virtual address. <strong>A RISC-V page table is logically an array of <code>2^27</code> (<code>134,217,728</code>) page table entries (PTE). Each PTE contains a <code>44-bit</code> physical page number (PPN) and <code>10-bit</code> flags.</strong></p>
+<p><img src="Sources/abstractpage.png" alt="abstractpage"></p>
+<h3>iii. Page to Page Directory</h3>
+<p><strong>Revisted: Would it be reasonable for page table to just be an array of PTEs?</strong></p>
+<ul>
+<li><strong><code>2^27</code> is roughly <code>134</code> millions</strong></li>
+<li><strong><code>64</code> bits per page entry</strong></li>
+<li><strong><code>134 * 8bytes * million</code> for a full page table</strong>
+<ul>
+<li>wasting roughly <code>1GB</code> per page table</li>
+<li>one page table per address space</li>
+<li>one address space per application</li>
+</ul>
+</li>
+<li><strong>Would waste losts of memory for small programs!</strong>
+<ul>
+<li>you only need mappings for a few hundred pages.</li>
+<li>so the rest of the million entries would be there but not needed</li>
+</ul>
+</li>
+</ul>
+<h4>Satp Register</h4>
+<p><strong>Each CPU core has its own unique <code>%satp</code> register, where store the current-running process's page table starting address of its CPU.</strong></p>
+<h4>3-level page table (Page Directory)</h4>
+<p>As we see that above, it is not good to just simply have a giant page table per process. In real translation at MMU, <strong>A page table is stored in physical memory as a three-level tree. Each level is a page directory, which is <code>4096 bytes</code>, and contains <code>512 (2^9)</code> 64-bit page table entries. And that 3-level <code>2^9</code> PTEs can be located via the first 27 bits virtual address.</strong></p>
+<p><img src="Sources/mmu3level.png" alt="mmu3level"></p>
+<p>This three-level structure of above figure <strong>allows a memory-efficient way of recording PTEs, which means in the 3-level page table, you can leave a lot of entries empty.</strong></p>
+<p>For example, if you leave the entry in the top level page table directory empty, for those entries, you don't have to create middle level page tables or bottom level page tables at all. <strong>And then we can allowcate these chunks on demand.</strong></p>
+	</section>
+	</div>
+    </div>
+</div>
+<footer>
+   <div class="well well-lg" id="footer-well">
+      <div class="container">
+
+
+      <div class="row">
+         <div class="col-xs-6">
+            <a href="https://angold4.org" title="Angold-4 Organization" class="image-link"><img src="../../../images/logo.png" class="cmudb-logo" /></a>
+         </div>
+         <div class="col-xs-6">
+            <p class="pull-right"><i class="fa fa-arrow-up"></i> <a href="#">Back to top</a></p>
+        </div>
+      </div>
+   </div>
+   </div>
+</footer>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="../../../theme/js/bootstrap.min.js"></script>
+
+<!-- Enable responsive features in IE8 with Respond.js (https://github.com/scottjehl/Respond) -->
+<script src="../../../theme/js/respond.min.js"></script>
+
+<!-- Fix scrolling issues to internal HREFs that get positioned behind navbar -->
+<!-- http://stackoverflow.com/questions/10732690/offsetting-an-html-anchor-to-adjust-for-fixed-header -->
+<script src="../../../theme/js/href_scroll.js"></script>
+
+<!-- You know what this is and you know what he did to me... -->
+<script src="../../../theme/js/tim-kraska-betrayed-me.js"></script>
+</body>
+</html>
