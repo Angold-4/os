@@ -4,6 +4,7 @@
 
 ## MIT 6.S081 Lecture Notes
 * **[1. Introduction](docs/lectures/1Introduction.html)**
+* **[2. Virtual Memory](docs/lectures/2VirtualMemory.html)**
 
 ## MIT 6.004 Lecture Notes
 * **[1. The Power of Abstraction](6004/lectures/1Abstraction.html)**
