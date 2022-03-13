@@ -416,10 +416,199 @@ argv:
 
 ```
 
+`initcode.s` (`user/initcode.S`) loads the number for the `exec` system call, `SYS_EXEC` into register `a7`, and then calls `ecall` to re-enter the kernel in order to execute `exec` system call. The details of this procedure is what we will discuss in detail later on.
+
+
+After the kernel has completed `exec` by replacing the page table and registers of the current process. it return to user space in the `/init` process (execute it). **`init`** creates a new [console device file](https://en.wikipedia.org/wiki/System_console) (console is the text entry and display device for system administration messages) and then opens it as file descriptors 0, 1, and 2. Then it starts a shell on the console. The system is up.
+
+```c
+// init.c
+// init: The initial user-level program
+
+char *argv[] = { "sh", 0 };
+
+int
+main(void)
+{
+  int pid, wpid;
+
+  if(open("console", O_RDWR) < 0){
+    mknod("console", CONSOLE, 0);
+    open("console", O_RDWR);
+  }
+  dup(0);  // stdout
+  dup(0);  // stderr
+
+  for(;;){
+    printf("init: starting sh\n");
+    pid = fork();
+    if(pid < 0){
+      printf("init: fork failed\n");
+      exit(1);
+    }
+    if(pid == 0){
+      exec("sh", argv);
+      printf("init: exec sh failed\n");
+      exit(1);
+    }
+
+    for(;;){
+      // this call to wait() returns if the shell exits,
+      // or if a parentless process exits.
+      wpid = wait((int *) 0);
+      if(wpid == pid){
+        // the shell exited; restart it.
+        break;
+      } else if(wpid < 0){
+        printf("init: wait returned an error\n");
+        exit(1);
+      } else {
+        // it was a parentless process; do nothing.
+      }
+    }
+  }
+}
+
+```
+
 ## 1. ecall
+
+### i. User-level process
+
+**The kernel must allocate and free physical memory at run-time for page tables, user memory, kernel stacks and pipe buffers.** xv6 uses the physical memory between the end of the kernel and `PHYSTOP` for run-time allocation, as we can see in the layout figure (va & pa) located near the begin of this note, these area are not the part of **direct mapping**. 
+
+Each process has a separate page table. the figure below shows the layout of the **user memory** of an executing process in xv6. Notice that the stack is a single page, and is shown with the initial contents as created by `exec`, where contains the command-line arguments, as well as an array of pointers at the very top of the stack.
+
+![procmem](Sources/procmem.png)
+
+### ii. RISC-V trap machinery
+
+**Each RISC-V CPU has a set of control registers that the kernel writes to tell the CPU how to handle traps, and that the kernel can read to find out about a trap that has occured.** Here is an outline of the most important registers: **`$sscratch`**, **`$stvec`** and **`$sepc`**:
+
+![trapecall](Sources/trapecall.png)
+
+
+### iii. Traps from user space
+
+**After `init` starts the shell, the shell (`user/sh.c`) will call `getcmd` and trying to receive a command from user. `getcmd` will call `fprintf` defined in `user/printf.c` in order to print `$` at the console.**
+
+**If you jump into the `fprintf` code located in `user/printf.c`, since the shell runs in the user-space, it require a `write` system call in order to print anything to the console.**
+```c
+// user/printf.c
+static void
+putc(int fd, char c)
+{
+  write(fd, &c, 1);
+}
+```
+
+**After calling that `write` in user space, the `write` function which sit in the shell library will cause a trap:**
+```assembly
+# user/sh.asm
+0000000000000de8 <write>:
+.global write
+write:
+ li a7, SYS_write
+     de8:	48c1                	li	a7,16
+ ecall
+     dea:	00000073          	ecall
+ ret
+     dee:	8082                	ret
+```
+
+A trap may occur while executing in user space if the user program makes a system call (`ecall` instruction).
+**And the `ecall` basically did three things:**
+1. **Change mode from user to supervisor.**
+2. **Save `$pc` in `$sepc`.**
+3. **Jump to `$stvec`.**
+
+
+**Now lets jump into the runtime of shell when it prints `$` which causes the `write` system call for the first time:**
+
+```
+(gdb) b *0xdea
+Breakpoint 1 at 0xdea
+(gdb) c
+Continuing.
+
+Breakpoint 1, 0x0000000000000dea in ?? ()
+=> 0x0000000000000dea:  73 00 00 00     ecall
+(gdb) x/3i 0xde8
+   0xde8:       li      a7,16
+=> 0xdea:       ecall
+   0xdee:       ret
+```
+
+**And we can check the current `$pc` and page table of our shell process:**
+```
+(gdb) print $pc
+$1 = (void (*)()) 0xdea
+
+(qemu) info mem
+vaddr            paddr            size             attr
+---------------- ---------------- ---------------- -------
+0000000000000000 0000000087f61000 0000000000001000 rwxu-a-
+0000000000001000 0000000087f5e000 0000000000001000 rwxu-a-
+0000000000002000 0000000087f5d000 0000000000001000 rwx----
+0000000000003000 0000000087f5c000 0000000000001000 rwxu-ad
+0000003fffffe000 0000000087f70000 0000000000001000 rw---ad
+0000003ffffff000 0000000080007000 0000000000001000 r-x--a-
+```
+
+**As you can see that, this is a very small page table that contains only six mappings, if you check that user-level process memory layout figure above, from top to bottom:**
+* **`0x0000000000000000` to `0x0000000000001000` refers to the shell's instructions (text).**
+* **`0x0000000000001000` to `0x0000000000002000` refers to the shell's data.**
+* **`0x0000000000002000` to `0x0000000000003000` refers to the stack guard page**
+    * which is invalid, since it doesn't have the `u` flag set.
+    * the user code can only get at pte entries for which the `u` flag is set.
+* **`0x0000000000003000` to `0x0000000000004000` refers to the stack page, which can grow dynamically.**
+* **`0x0000003fffffe000` to `0x0000003ffffff000` refers to the trap frame page.**
+* **`0x0000003ffffff000` to `0x0000004000000000` refers to the trampoline page.**
+
+
+**Now let's step further, and execute that `ecall` instruction:**
+
+```
+(gdb) stepi
+0x0000003ffffff000 in ?? ()
+=> 0x0000003ffffff000:  73 15 05 14     csrrw   a0,sscratch,a0
+(gdb) print $pc
+$2 = (void (*)()) 0x3ffffff000
+(gdb) x/6i 0x3ffffff000
+=> 0x3ffffff000:        csrrw   a0,sscratch,a0
+   0x3ffffff004:        sd      ra,40(a0)
+   0x3ffffff008:        sd      sp,48(a0)
+   0x3ffffff00c:        sd      gp,56(a0)
+   0x3ffffff010:        sd      tp,64(a0)
+   0x3ffffff014:        sd      t0,72(a0)
+```
+
+**As we can see, the value `$stvec` register is the current `$pc` register value, which is the begining of trampoline page. And that is the reason why we ended up executing at this particular place.**
+
+```
+(gdb) print/x $stvec
+$4 = 0x3ffffff000
+(gdb) print/x $sepc
+$5 = 0xdea
+(gdb) print/x $sscratch
+$6 = 0x3fffffe000
+```
+**Another thing is we can see is that the `ecall` hardware instruction has already helped us storing the previous `$pc` into `$sepc`.**
 
 
 ## 2. Trampoline
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

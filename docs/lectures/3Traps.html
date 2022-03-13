@@ -202,9 +202,406 @@ main()
 
   scheduler();        
 }
+</code></pre>
+<p><strong>This is the <code>main()</code> boot sequence of xv6, We are going to only introduce two procedures since we only mentioned these two concepts before.</strong></p>
+<ul>
+<li><strong><code>kvminit()</code> for initializing kernel page table</strong></li>
+<li><strong><code>userinit()</code> for making the first user system call</strong></li>
+</ul>
+<h3>iv. <code>main</code> -- <code>kvminit()</code></h3>
+<pre><code class="language-c">// Initialize the one kernel_pagetable
+void
+kvminit(void)
+{
+  kernel_pagetable = kvmmake();
+}
+</code></pre>
+<p><strong><code>main</code> calls <code>kvminit</code> to create the kernel's page table using <code>kvmmake</code>, this call occurs before xv6 has enabled paging on the RISC-V, so the address refer directly to physical memory.</strong></p>
+<pre><code class="language-c">// Make a direct-map page table for the kernel.
+pagetable_t
+kvmmake(void)
+{
+  pagetable_t kpgtbl;
+
+  kpgtbl = (pagetable_t) kalloc();
+  memset(kpgtbl, 0, PGSIZE);
+
+  // uart registers
+  kvmmap(kpgtbl, UART0, UART0, PGSIZE, PTE_R | PTE_W);
+
+  // virtio mmio disk interface
+  kvmmap(kpgtbl, VIRTIO0, VIRTIO0, PGSIZE, PTE_R | PTE_W);
+
+  // PLIC
+  kvmmap(kpgtbl, PLIC, PLIC, 0x400000, PTE_R | PTE_W);
+
+  // map kernel text executable and read-only.
+  kvmmap(kpgtbl, KERNBASE, KERNBASE, (uint64)etext-KERNBASE, PTE_R | PTE_X);
+
+  // map kernel data and the physical RAM we'll make use of.
+  kvmmap(kpgtbl, (uint64)etext, (uint64)etext, PHYSTOP-(uint64)etext, PTE_R | PTE_W);
+
+  // map the trampoline for trap entry/exit to
+  // the highest virtual address in the kernel.
+  kvmmap(kpgtbl, TRAMPOLINE, (uint64)trampoline, PGSIZE, PTE_R | PTE_X);
+
+  // map kernel stacks
+  proc_mapstacks(kpgtbl);
+  
+  return kpgtbl;
+}
+
+</code></pre>
+<ol>
+<li><strong><code>kvmmake</code> first allocates a page of physical memory to hold the root page-table page.</strong></li>
+<li><strong>Then it calls <code>kvmmap</code> to install the translations(page tables) that the kernel needs:</strong>
+<ul>
+<li>kernel's instructions and data.</li>
+<li>physical memory up to <code>PHYSTOP</code></li>
+<li>memory ranges which are actually devices</li>
+</ul>
+</li>
+<li><strong>Finially it calls <code>proc_mapstacks</code> in order to allocate a kernel stack for each process.</strong></li>
+</ol>
+<ul>
+<li>After all these mappings are done, the kernel's page table should looks like this:</li>
+</ul>
+<pre><code>(qemu) info mem
+vaddr            paddr            size             attr
+---------------- ---------------- ---------------- -------
+000000000c000000 000000000c000000 0000000000400000 rw-----
+0000000010000000 0000000010000000 0000000000002000 rw-----
+0000000080000000 0000000080000000 0000000000001000 r-x--a-
+0000000080001000 0000000080001000 0000000000007000 r-x----
+0000000080008000 0000000080008000 0000000000017000 rw-----
+000000008001f000 000000008001f000 0000000000001000 rw---a-
+0000000080020000 0000000080020000 0000000007fe0000 rw-----
+0000003ffff7f000 0000000087f78000 0000000000040000 rw-----
+0000003ffffff000 0000000080007000 0000000000001000 r-x----
+
+</code></pre>
+<pre><code class="language-c">// add a mapping to the kernel page table.
+// only used when booting.
+// does not flush TLB or enable paging.
+void
+kvmmap(pagetable_t kpgtbl, uint64 va, uint64 pa, uint64 sz, int perm)
+{
+  if(mappages(kpgtbl, va, sz, pa, perm) != 0)
+    panic(&quot;kvmmap&quot;);
+}
+
+// Create PTEs for virtual addresses starting at va that refer to
+// physical addresses starting at pa. va and size might not
+// be page-aligned. Returns 0 on success, -1 if walk() couldn't
+// allocate a needed page-table page.
+int
+mappages(pagetable_t pagetable, uint64 va, uint64 size, uint64 pa, int perm)
+{
+  uint64 a, last;
+  pte_t *pte;
+
+  if(size == 0)
+    panic(&quot;mappages: size&quot;);
+  
+  a = PGROUNDDOWN(va);
+  last = PGROUNDDOWN(va + size - 1);
+  for(;;){
+    if((pte = walk(pagetable, a, 1)) == 0)
+      return -1;
+    if(*pte &amp; PTE_V)
+      panic(&quot;mappages: remap&quot;);
+    *pte = PA2PTE(pa) | perm | PTE_V;
+    if(a == last)
+      break;
+    a += PGSIZE;
+    pa += PGSIZE;
+  }
+  return 0;
+}
+</code></pre>
+<p><strong><code>kvmmap</code> calls <code>mappages</code>, which installs mappings into a page table for a range of virtual addresses to a corresponding range of physical addresses.</strong> It does this seperately for each virtual address in the range, at page intervals. For each virtual address to be mapped, <strong><code>mappages</code></strong> calls <strong><code>walk</code></strong> to find the address of the PTE for that address. It then initializes the PTE to hold the relevant physical page number, and set its desired permissions.</p>
+<p><strong>Basically, what the <code>mappages</code> does is that it creates many page tables by calling <code>walk</code>, in order to map <code>size</code> of memory from virtual address <code>va</code> to physical address <code>pa</code>.</strong></p>
+<pre><code class="language-c">// Return the address of the PTE in page table pagetable
+// that corresponds to virtual address va.  If alloc!=0,
+// create any required page-table pages.
+//
+// The risc-v Sv39 scheme has three levels of page-table
+// pages. A page-table page contains 512 64-bit PTEs.
+// A 64-bit virtual address is split into five fields:
+//   39..63 -- must be zero.
+//   30..38 -- 9 bits of level-2 index.
+//   21..29 -- 9 bits of level-1 index.
+//   12..20 -- 9 bits of level-0 index.
+//    0..11 -- 12 bits of byte offset within the page.
+pte_t *
+walk(pagetable_t pagetable, uint64 va, int alloc)
+{
+  if(va &gt;= MAXVA)
+    panic(&quot;walk&quot;);
+
+  for(int level = 2; level &gt; 0; level--) {
+    // 
+    // PX extract the three 9-bit page table indices from a virtual address.
+    pte_t *pte = &amp;pagetable[PX(level, va)];
+    if(*pte &amp; PTE_V) { // valid or not
+      pagetable = (pagetable_t)PTE2PA(*pte);
+    } else {
+      if(!alloc || (pagetable = (pde_t*)kalloc()) == 0)
+        return 0;
+      memset(pagetable, 0, PGSIZE);
+      *pte = PA2PTE(pagetable) | PTE_V;
+    }
+  }
+  return &amp;pagetable[PX(0, va)]; // the new page table
+}
+</code></pre>
+<p><strong>Finally comes to <code>walk</code>, this function mimics the RISC-V paging hardware as it looks up the PTE for a virtual address.</strong></p>
+<ol>
+<li><strong><code>walk</code></strong> descends the 3-level page table 9 bits at the time. It uses each level's 9 bits of virtual address to find the PTE of either the next-level page table or the final page table.</li>
+<li>If the PTE isn't valid, then the required page hasn't yet been allocated; if the <code>alloc</code> argument is set, <strong><code>walk</code></strong> allocates a new page-table page and puts its physical address in the PTE.</li>
+<li>Finally, it returns the address of the PTE in the lowest layer in the tree.</li>
+</ol>
+<p>After all page tables of kernel has been created successfully, <strong><code>main</code></strong> calls <strong><code>kvminithart</code></strong>, which install this kernel page table by writing the physical address of the root page table page into the register <code>satp</code>, and then allow CPU translate addresses using the kernel page table.</p>
+<pre><code class="language-c">// Switch h/w page table register to the kernel's page table,
+// and enable paging.
+void
+kvminithart()
+{
+  w_satp(MAKE_SATP(kernel_pagetable));
+  sfence_vma();
+}
+
+</code></pre>
+<h3>v. <code>main</code> -- <code>userinit()</code></h3>
+<p><strong>After <code>main</code> initializes several devices, subsystems and memory, it create the first user process by calling <code>userinit</code>.</strong></p>
+<pre><code class="language-c">// a user program that calls exec(&quot;/init&quot;)
+// od -t xC initcode
+uchar initcode[] = {
+  0x17, 0x05, 0x00, 0x00, 0x13, 0x05, 0x45, 0x02,
+  0x97, 0x05, 0x00, 0x00, 0x93, 0x85, 0x35, 0x02,
+  0x93, 0x08, 0x70, 0x00, 0x73, 0x00, 0x00, 0x00,
+  0x93, 0x08, 0x20, 0x00, 0x73, 0x00, 0x00, 0x00,
+  0xef, 0xf0, 0x9f, 0xff, 0x2f, 0x69, 0x6e, 0x69,
+  0x74, 0x00, 0x00, 0x24, 0x00, 0x00, 0x00, 0x00,
+  0x00, 0x00, 0x00, 0x00
+};
+
+
+// Set up first user process.
+void
+userinit(void)
+{
+  struct proc *p;
+
+  // Look in the process table for an UNUSED proc.
+  p = allocproc(); // total 64 process, 
+  initproc = p;
+  
+  // allocate one user page and copy init's instructions
+  // and data into it.
+  uvminit(p-&gt;pagetable, initcode, sizeof(initcode));
+  p-&gt;sz = PGSIZE;
+
+  // prepare for the very first &quot;return&quot; from kernel to user.
+  p-&gt;trapframe-&gt;epc = 0;      // user program counter
+  p-&gt;trapframe-&gt;sp = PGSIZE;  // user stack pointer
+
+  safestrcpy(p-&gt;name, &quot;initcode&quot;, sizeof(p-&gt;name));
+  p-&gt;cwd = namei(&quot;/&quot;);
+
+  p-&gt;state = RUNNABLE;
+
+  release(&amp;p-&gt;lock);
+}
+</code></pre>
+<p><strong><code>userinit</code> basically does these things:</strong></p>
+<ol>
+<li>It look in the process table for an unused proc by calling <strong><code>allocproc</code></strong></li>
+<li>Call <strong><code>uvminit</code></strong> to set the user virtual memory, and load the <code>initcode</code> into the new process's page table in order to exec.</li>
+<li>Set the first user process's state to <code>RUNNABLE</code>, which means it will assigned to be executed by process scheduler.</li>
+</ol>
+<pre><code class="language-assembly"># initcode.s
+# Initial process that execs /init.
+# This code runs in user space.
+
+#include &quot;syscall.h&quot;
+
+# exec(init, argv)
+.globl start
+start:
+        la a0, init
+        la a1, argv
+        li a7, SYS_exec
+        ecall
+
+# for(;;) exit();
+exit:
+        li a7, SYS_exit
+        ecall
+        jal exit
+
+# char init[] = &quot;/init\0&quot;;
+init:
+  .string &quot;/init\0&quot;
+
+# char *argv[] = { init, 0 };
+.p2align 2
+argv:
+  .long init
+  .long 0
+
+</code></pre>
+<p><code>initcode.s</code> (<code>user/initcode.S</code>) loads the number for the <code>exec</code> system call, <code>SYS_EXEC</code> into register <code>a7</code>, and then calls <code>ecall</code> to re-enter the kernel in order to execute <code>exec</code> system call. The details of this procedure is what we will discuss in detail later on.</p>
+<p>After the kernel has completed <code>exec</code> by replacing the page table and registers of the current process. it return to user space in the <code>/init</code> process (execute it). <strong><code>init</code></strong> creates a new <a href="https://en.wikipedia.org/wiki/System_console">console device file</a> (console is the text entry and display device for system administration messages) and then opens it as file descriptors 0, 1, and 2. Then it starts a shell on the console. The system is up.</p>
+<pre><code class="language-c">// init.c
+// init: The initial user-level program
+
+char *argv[] = { &quot;sh&quot;, 0 };
+
+int
+main(void)
+{
+  int pid, wpid;
+
+  if(open(&quot;console&quot;, O_RDWR) &lt; 0){
+    mknod(&quot;console&quot;, CONSOLE, 0);
+    open(&quot;console&quot;, O_RDWR);
+  }
+  dup(0);  // stdout
+  dup(0);  // stderr
+
+  for(;;){
+    printf(&quot;init: starting sh\n&quot;);
+    pid = fork();
+    if(pid &lt; 0){
+      printf(&quot;init: fork failed\n&quot;);
+      exit(1);
+    }
+    if(pid == 0){
+      exec(&quot;sh&quot;, argv);
+      printf(&quot;init: exec sh failed\n&quot;);
+      exit(1);
+    }
+
+    for(;;){
+      // this call to wait() returns if the shell exits,
+      // or if a parentless process exits.
+      wpid = wait((int *) 0);
+      if(wpid == pid){
+        // the shell exited; restart it.
+        break;
+      } else if(wpid &lt; 0){
+        printf(&quot;init: wait returned an error\n&quot;);
+        exit(1);
+      } else {
+        // it was a parentless process; do nothing.
+      }
+    }
+  }
+}
 
 </code></pre>
 <h2>1. ecall</h2>
+<h3>i. User-level process</h3>
+<p><strong>The kernel must allocate and free physical memory at run-time for page tables, user memory, kernel stacks and pipe buffers.</strong> xv6 uses the physical memory between the end of the kernel and <code>PHYSTOP</code> for run-time allocation, as we can see in the layout figure (va &amp; pa) located near the begin of this note, these area are not the part of <strong>direct mapping</strong>.</p>
+<p>Each process has a separate page table. the figure below shows the layout of the <strong>user memory</strong> of an executing process in xv6. Notice that the stack is a single page, and is shown with the initial contents as created by <code>exec</code>, where contains the command-line arguments, as well as an array of pointers at the very top of the stack.</p>
+<p><img src="Sources/procmem.png" alt="procmem"></p>
+<h3>ii. RISC-V trap machinery</h3>
+<p><strong>Each RISC-V CPU has a set of control registers that the kernel writes to tell the CPU how to handle traps, and that the kernel can read to find out about a trap that has occured.</strong> Here is an outline of the most important registers: <strong><code>$sscratch</code></strong>, <strong><code>$stvec</code></strong> and <strong><code>$sepc</code></strong>:</p>
+<p><img src="Sources/trapecall.png" alt="trapecall"></p>
+<h3>iii. Traps from user space</h3>
+<p><strong>After <code>init</code> starts the shell, the shell (<code>user/sh.c</code>) will call <code>getcmd</code> and trying to receive a command from user. <code>getcmd</code> will call <code>fprintf</code> defined in <code>user/printf.c</code> in order to print <code>$</code> at the console.</strong></p>
+<p><strong>If you jump into the <code>fprintf</code> code located in <code>user/printf.c</code>, since the shell runs in the user-space, it require a <code>write</code> system call in order to print anything to the console.</strong></p>
+<pre><code class="language-c">// user/printf.c
+static void
+putc(int fd, char c)
+{
+  write(fd, &amp;c, 1);
+}
+</code></pre>
+<p><strong>After calling that <code>write</code> in user space, the <code>write</code> function which sit in the shell library will cause a trap:</strong></p>
+<pre><code class="language-assembly"># user/sh.asm
+0000000000000de8 &lt;write&gt;:
+.global write
+write:
+ li a7, SYS_write
+     de8:	48c1                	li	a7,16
+ ecall
+     dea:	00000073          	ecall
+ ret
+     dee:	8082                	ret
+</code></pre>
+<p>A trap may occur while executing in user space if the user program makes a system call (<code>ecall</code> instruction).
+<strong>And the <code>ecall</code> basically did three things:</strong></p>
+<ol>
+<li><strong>Change mode from user to supervisor.</strong></li>
+<li><strong>Save <code>$pc</code> in <code>$sepc</code>.</strong></li>
+<li><strong>Jump to <code>$stvec</code>.</strong></li>
+</ol>
+<p><strong>Now lets jump into the runtime of shell when it prints <code>$</code> which causes the <code>write</code> system call for the first time:</strong></p>
+<pre><code>(gdb) b *0xdea
+Breakpoint 1 at 0xdea
+(gdb) c
+Continuing.
+
+Breakpoint 1, 0x0000000000000dea in ?? ()
+=&gt; 0x0000000000000dea:  73 00 00 00     ecall
+(gdb) x/3i 0xde8
+   0xde8:       li      a7,16
+=&gt; 0xdea:       ecall
+   0xdee:       ret
+</code></pre>
+<p><strong>And we can check the current <code>$pc</code> and page table of our shell process:</strong></p>
+<pre><code>(gdb) print $pc
+$1 = (void (*)()) 0xdea
+
+(qemu) info mem
+vaddr            paddr            size             attr
+---------------- ---------------- ---------------- -------
+0000000000000000 0000000087f61000 0000000000001000 rwxu-a-
+0000000000001000 0000000087f5e000 0000000000001000 rwxu-a-
+0000000000002000 0000000087f5d000 0000000000001000 rwx----
+0000000000003000 0000000087f5c000 0000000000001000 rwxu-ad
+0000003fffffe000 0000000087f70000 0000000000001000 rw---ad
+0000003ffffff000 0000000080007000 0000000000001000 r-x--a-
+</code></pre>
+<p><strong>As you can see that, this is a very small page table that contains only six mappings, if you check that user-level process memory layout figure above, from top to bottom:</strong></p>
+<ul>
+<li><strong><code>0x0000000000000000</code> to <code>0x0000000000001000</code> refers to the shell's instructions (text).</strong></li>
+<li><strong><code>0x0000000000001000</code> to <code>0x0000000000002000</code> refers to the shell's data.</strong></li>
+<li><strong><code>0x0000000000002000</code> to <code>0x0000000000003000</code> refers to the stack guard page</strong>
+<ul>
+<li>which is invalid, since it doesn't have the <code>u</code> flag set.</li>
+<li>the user code can only get at pte entries for which the <code>u</code> flag is set.</li>
+</ul>
+</li>
+<li><strong><code>0x0000000000003000</code> to <code>0x0000000000004000</code> refers to the stack page, which can grow dynamically.</strong></li>
+<li><strong><code>0x0000003fffffe000</code> to <code>0x0000003ffffff000</code> refers to the trap frame page.</strong></li>
+<li><strong><code>0x0000003ffffff000</code> to <code>0x0000004000000000</code> refers to the trampoline page.</strong></li>
+</ul>
+<p><strong>Now let's step further, and execute that <code>ecall</code> instruction:</strong></p>
+<pre><code>(gdb) stepi
+0x0000003ffffff000 in ?? ()
+=&gt; 0x0000003ffffff000:  73 15 05 14     csrrw   a0,sscratch,a0
+(gdb) print $pc
+$2 = (void (*)()) 0x3ffffff000
+(gdb) x/6i 0x3ffffff000
+=&gt; 0x3ffffff000:        csrrw   a0,sscratch,a0
+   0x3ffffff004:        sd      ra,40(a0)
+   0x3ffffff008:        sd      sp,48(a0)
+   0x3ffffff00c:        sd      gp,56(a0)
+   0x3ffffff010:        sd      tp,64(a0)
+   0x3ffffff014:        sd      t0,72(a0)
+</code></pre>
+<p><strong>As we can see, the value <code>$stvec</code> register is the current <code>$pc</code> register value, which is the begining of trampoline page. And that is the reason why we ended up executing at this particular place.</strong></p>
+<pre><code>(gdb) print/x $stvec
+$4 = 0x3ffffff000
+(gdb) print/x $sepc
+$5 = 0xdea
+(gdb) print/x $sscratch
+$6 = 0x3fffffe000
+</code></pre>
+<p><strong>Another thing is we can see is that the <code>ecall</code> hardware instruction has already helped us storing the previous <code>$pc</code> into <code>$sepc</code>.</strong></p>
 <h2>2. Trampoline</h2>
 	</section>
 	</div>
