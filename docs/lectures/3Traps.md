@@ -598,6 +598,238 @@ $6 = 0x3fffffe000
 
 ## 2. Trampoline
 
+**We're executing in the "trampoline" page, which contains the start of the kernel's trap handling code**, `ecall` does as little as possible to allow maximum flexibility to the operating system programmer to design the os however they like.
+
+What need to happen now?
+* **Save the 32 user register values.** (so we can later restore them and when we want to resume the user code)
+    * we need to save those registers because we are going to run C code inside kernel, which will use all these registers.
+* **Switch to the kernel page table.**
+* Set up stack for kernel C code.
+* Jump to some sensible place in the C code in the kernel.
+
+### i. The Trap frame
+
+* **We don't even know the address of the kernel page table** 
+* We need some spare registers in order to execute change `$satp` instruction.
+
+**The xv6 maps a page, called trapframe into every user page table, it has space to to hold the saved registers**, the kernel gives each process a different trapframe page.
+
+The virtual address of that trapframe is stored in the **`$sscrach`** register, and you can find the struct trapframe in `kernel/proc.h`.
+
+```c
+// per-process data for the trap handling code in trampoline.S.
+// sits in a page by itself just under the trampoline page in the
+// user page table. not specially mapped in the kernel page table.
+// the sscratch register points here.
+// uservec in trampoline.S saves user registers in the trapframe,
+// then initializes registers from the trapframe's
+// kernel_sp, kernel_hartid, kernel_satp, and jumps to kernel_trap.
+// usertrapret() and userret in trampoline.S set up
+// the trapframe's kernel_*, restore user registers from the
+// trapframe, switch to the user page table, and enter user space.
+// the trapframe includes callee-saved user registers like s0-s11 because the
+// return-to-user path via usertrapret() doesn't return through
+// the entire kernel call stack.
+struct trapframe {
+  /*   0 */ uint64 kernel_satp;   // kernel page table
+  /*   8 */ uint64 kernel_sp;     // top of process's kernel stack
+  /*  16 */ uint64 kernel_trap;   // usertrap()
+  /*  24 */ uint64 epc;           // saved user program counter
+  /*  32 */ uint64 kernel_hartid; // saved kernel tp
+  /*  40 */ uint64 ra;
+  /*  48 */ uint64 sp;
+  /*  56 */ uint64 gp;
+  /*  64 */ uint64 tp;
+  /*  72 */ uint64 t0;
+  /*  80 */ uint64 t1;
+  /*  88 */ uint64 t2;
+  /*  96 */ uint64 s0;
+  /* 104 */ uint64 s1;
+  /* 112 */ uint64 a0;
+  /* 120 */ uint64 a1;
+  /* 128 */ uint64 a2;
+  /* 136 */ uint64 a3;
+  /* 144 */ uint64 a4;
+  /* 152 */ uint64 a5;
+  /* 160 */ uint64 a6;
+  /* 168 */ uint64 a7;
+  /* 176 */ uint64 s2;
+  /* 184 */ uint64 s3;
+  /* 192 */ uint64 s4;
+  /* 200 */ uint64 s5;
+  /* 208 */ uint64 s6;
+  /* 216 */ uint64 s7;
+  /* 224 */ uint64 s8;
+  /* 232 */ uint64 s9;
+  /* 240 */ uint64 s10;
+  /* 248 */ uint64 s11;
+  /* 256 */ uint64 t3;
+  /* 264 */ uint64 t4;
+  /* 272 */ uint64 t5;
+  /* 280 */ uint64 t6;
+};
+
+```
+
+
+### ii. The Trampoline
+
+**After `ecall`, as we mentioned before, the hardware set `$pc` to `$stvec`, which is the begining of the trapoline page**.
+
+The first instruction, `csrrw`. swap `$a0` register and `$sscratch`, as we can see, after executing this very first instruction, the `$a0` becomes `0x3fffffe000`, which is the begining of the trap page. And `$sscratch` is 2, which is the first argument of this `write` system call -- the file descriptor `2`.
+
+```
+(gdb) print/x $a0 
+$1 = 0x3fffffe000
+
+(gdb) print $sscratch
+$2 = 2
+```
+
+The very next 32 `sd` instructions in this trampoline code, store every 64-bit register to a different offset in the trap frame page.
+
+```assembly
+.globl trampoline
+trampoline:
+.align 4
+.globl uservec
+uservec:    
+	#
+        # trap.c sets stvec to point here, so
+        # traps from user space start here,
+        # in supervisor mode, but with a
+        # user page table.
+        #
+        # sscratch points to where the process's p->trapframe is
+        # mapped into user space, at TRAPFRAME.
+        #
+        
+	# swap a0 and sscratch
+        # so that a0 is TRAPFRAME
+        csrrw a0, sscratch, a0
+
+        # save the user registers in TRAPFRAME
+        sd ra, 40(a0)
+        sd sp, 48(a0)
+        sd gp, 56(a0)
+        sd tp, 64(a0)
+        sd t0, 72(a0)
+        sd t1, 80(a0)
+        sd t2, 88(a0)
+        sd s0, 96(a0)
+        sd s1, 104(a0)
+        sd a1, 120(a0)
+        sd a2, 128(a0)
+        sd a3, 136(a0)
+        sd a4, 144(a0)
+        sd a5, 152(a0)
+        sd a6, 160(a0)
+        sd a7, 168(a0)
+        sd s2, 176(a0)
+        sd s3, 184(a0)
+        sd s4, 192(a0)
+        sd s5, 200(a0)
+        sd s6, 208(a0)
+        sd s7, 216(a0)
+        sd s8, 224(a0)
+        sd s9, 232(a0)
+        sd s10, 240(a0)
+        sd s11, 248(a0)
+        sd t3, 256(a0)
+        sd t4, 264(a0)
+        sd t5, 272(a0)
+        sd t6, 280(a0)
+
+	# save the user a0 in p->trapframe->a0
+        csrr t0, sscratch
+        sd t0, 112(a0)
+
+        # restore kernel stack pointer from p->trapframe->kernel_sp
+        ld sp, 8(a0)
+
+        # make tp hold the current hartid, from p->trapframe->kernel_hartid
+        ld tp, 32(a0)
+
+        # load the address of usertrap(), p->trapframe->kernel_trap
+        ld t0, 16(a0)
+
+        # restore kernel page table from p->trapframe->kernel_satp
+        ld t1, 0(a0)
+        csrw satp, t1
+        sfence.vma zero, zero
+
+        # a0 is no longer valid, since the kernel page
+        # table does not specially map p->tf.
+
+        # jump to usertrap(), which does not return
+        jr t0
+```
+
+After save those 32 general-purpose registers, we need to restore some important register by execute `ld` instrucions, which will be used in the kernel space later on.
+
+#### Process's kernel stack pointer
+
+```
+(gdb) print/x $sp
+$5 = 0x3fffffc000
+```
+The process's kernel stack is up in high memory, because xv6 treats kernel stack especially so that it can put a guard page under each kernel stack.
+
+#### Process's current core
+
+```
+(gdb) print/x $tp
+$6 = 0x0
+```
+Since there is no direct way in RISC-V to figure out which of the multiple cores you're running on, xv6 actually keeps the core number called `kernel_hartid` in the `$tp` register.
+
+
+#### User trap
+
+```
+(gdb) print/x $t0
+$7 = 0x80001c38
+```
+
+Then we load the user trap c function address into `$t0`, which we'll jump to that location later on.
+
+#### Kernel page table
+
+```
+(gdb) print/x $satp
+$8 = 0x8000000000087fff
+```
+
+**As soon as the `ld` and `csrw` instruction executes, we'll switch page table from the user page table to kernel page table, after these instructions finished, we can see now we are in the kernel page table**. And now we are pretty much ready to execute c code in the kernel.
+
+```
+(qemu) info mem
+vaddr            paddr            size             attr
+---------------- ---------------- ---------------- -------
+000000000c000000 000000000c000000 0000000000001000 rw---ad
+000000000c001000 000000000c001000 0000000000001000 rw-----
+000000000c002000 000000000c002000 0000000000001000 rw---ad
+000000000c003000 000000000c003000 00000000001fe000 rw-----
+000000000c201000 000000000c201000 0000000000001000 rw---ad
+000000000c202000 000000000c202000 00000000001fe000 rw-----
+0000000010000000 0000000010000000 0000000000002000 rw---ad
+0000000080000000 0000000080000000 0000000000007000 r-x--a-
+0000000080007000 0000000080007000 0000000000001000 r-x----
+0000000080008000 0000000080008000 0000000000012000 rw---ad
+000000008001a000 000000008001a000 0000000000001000 rw-----
+000000008001b000 000000008001b000 0000000000005000 rw---ad
+0000000080020000 0000000080020000 0000000000006000 rw-----
+0000000080026000 0000000080026000 0000000000001000 rw---ad
+0000000080027000 0000000080027000 0000000007f35000 rw-----
+0000000087f5c000 0000000087f5c000 000000000001c000 rw---ad
+0000000087f78000 0000000087f78000 0000000000088000 rw-----
+0000003ffff7f000 0000000087f78000 000000000003e000 rw-----
+0000003fffffb000 0000000087fb6000 0000000000002000 rw---ad
+0000003ffffff000 0000000080007000 0000000000001000 r-x--a-
+```
+
+**Note that we just switched the page table while executing the code in trampoline page, you may wonder that why isn't there a crash at this point.**
+**The reason is that both kernel page table and user page table maps the trampoline page (same va) into same pa. (bottom of two page tables, both of them maps `0000003ffffff000` into `0000000080007000`)**
 
 
 
