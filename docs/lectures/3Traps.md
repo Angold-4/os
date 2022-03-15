@@ -837,6 +837,8 @@ vaddr            paddr            size             attr
 
 ## 3. usertrap
 
+**After the last `jr t0` instruction in trampoline, we are now in the `usertrap` c code in the kernel.**
+
 ```c
 // kernel/trap.c
 //
@@ -892,14 +894,349 @@ usertrap(void)
 
   usertrapret();
 }
-
 ```
 
+### i. Switch to kernel trap handler
+
+```c
+  // send interrupts and exceptions to kerneltrap(),
+  // since we're now in the kernel.
+  w_stvec((uint64)kernelvec);
+```
+
+The way xv6 handles traps is different depending on whether they come from user space or from the kernel. Since we are now in the kernel space, we change the `stvec` to point to this `kernelvec` which is the kernel trap handler rather than current user trap handler.
+
+### ii. Figure out current running process
+
+```c
+  struct proc *p = myproc();
+```
+
+We need to figure out what process we're running by calling that **`myproc`** function. **`myproc`** actually use the current cpu id by read the `$tp` which we set in trampoline page, to index the current process id.
+
+
+### iii. Save the user program counter
+
+```c
+  p->trapframe->epc = r_sepc();
+```
+
+As we can see in **`ecall`** the saved user pc is still sitting there in `$sepc`, but one of the thing that could happen while we are in the kernel is that we might switch to another process. And that process might going to that process'user space and may make a system call which causes `$sepc` to be overwritten. **We have to save our `$sepc` in some memory associate with this process.**
+
+
+### iv. Figure out why we came here
+
+```c
+  if(r_scause() == 8){
+    // system call
+
+    if(p->killed)
+      exit(-1);
+
+    // sepc points to the ecall instruction,
+    // but we want to return to the next instruction.
+    p->trapframe->epc += 4;
+
+    // an interrupt will change sstatus &c registers,
+    // so don't enable until done with those registers.
+    intr_on();
+
+    syscall();
+```
+
+**When `ecall` being executed, despite the 3 most important instructions, actually the machine will set `$scause` to reflect the trap's cause.**
+If `$scause` is equal to 8, which means we came here because of a system call, so we're gonna execute this if statement.
+
+After we set the `pc+4`, which make sure that after the whole system call return, we will resume our user code, and enable interrupts. We are now in the entry of the system call handler -> **`syscall`**.
+
+
+## 4. syscall
+
+```c
+// kernel/syscall.c
+void
+syscall(void)
+{
+  int num;
+  struct proc *p = myproc();
+
+  num = p->trapframe->a7;
+  if(num > 0 && num < NELEM(syscalls) && syscalls[num]) {
+    p->trapframe->a0 = syscalls[num]();
+  } else {
+    printf("%d %s: unknown sys call %d\n",
+            p->pid, p->name, num);
+    p->trapframe->a0 = -1;
+  }
+}
+```
+
+**The `syscall` function is simple, after get current process, it just retrieves that `$a7` register which we was saved away in the trap frame by the trampoline code. And then indexes into that syscalls table, and then calls that function.** And the return value of that syscall function is stored in register `$a0` of that trap frame.
+
+```
+(gdb) stepi
+sys_write () at kernel/sysfile.c:83
+```
+
+If we use gdb to step into that function, now we are in **`sys_write`**, which is the kernel implementation of the `write` system call.
+
+```c
+// kernel/sysfile.c
+uint64
+sys_write(void)
+{
+  struct file *f;
+  int n;
+  uint64 p;
+
+  if(argfd(0, 0, &f) < 0 || argint(2, &n) < 0 || argaddr(1, &p) < 0)
+    return -1;
+
+  return filewrite(f, p, n);
+}
+```
+
+Since we are now only interested in getting into and out of the kernel, we are going to step over the actual implementation of system call.
+
+
+## 5. usertrapret
+
+```c
+// kernel/trap.c
+void
+usertrapret(void)
+{
+  struct proc *p = myproc();
+
+  // we're about to switch the destination of traps from
+  // kerneltrap() to usertrap(), so turn off interrupts until
+  // we're back in user space, where usertrap() is correct.
+  intr_off();
+
+  // send syscalls, interrupts, and exceptions to trampoline.S
+  w_stvec(TRAMPOLINE + (uservec - trampoline));
+
+  // set up trapframe values that uservec will need when
+  // the process next re-enters the kernel.
+  p->trapframe->kernel_satp = r_satp();         // kernel page table
+  p->trapframe->kernel_sp = p->kstack + PGSIZE; // process's kernel stack
+  p->trapframe->kernel_trap = (uint64)usertrap;
+  p->trapframe->kernel_hartid = r_tp();         // hartid for cpuid()
+
+  // set up the registers that trampoline.S's sret will use
+  // to get to user space.
+  
+  // set S Previous Privilege mode to User.
+  unsigned long x = r_sstatus();
+  x &= ~SSTATUS_SPP; // clear SPP to 0 for user mode
+  x |= SSTATUS_SPIE; // enable interrupts in user mode
+  w_sstatus(x);
+
+  // set S Exception Program Counter to the saved user pc.
+  w_sepc(p->trapframe->epc);
+
+  // tell trampoline.S the user page table to switch to.
+  uint64 satp = MAKE_SATP(p->pagetable);
+
+  // jump to trampoline.S at the top of memory, which 
+  // switches to the user page table, restores user registers,
+  // and switches to user mode with sret.
+  uint64 fn = TRAMPOLINE + (userret - trampoline);
+  ((void (*)(uint64,uint64))fn)(TRAPFRAME, satp);
+}
+```
+
+### i. Change stvec to the user trap handler
+
+```c
+  // send syscalls, interrupts, and exceptions to trampoline.S
+  w_stvec(TRAMPOLINE + (uservec - trampoline));
+```
+
+The reason we turn off interrupts because once we changed the user trap handler, we're still executing in the kernel, and if an interrupt occur then it would go to the user trap handler even though we're executing in the kernel.
+
+
+### ii. Prepare the trap frame for the next kernel re-entering 
+```c
+  // set up trapframe values that uservec will need when
+  // the process next re-enters the kernel.
+  p->trapframe->kernel_satp = r_satp();         // kernel page table
+  p->trapframe->kernel_sp = p->kstack + PGSIZE; // process's kernel stack
+  p->trapframe->kernel_trap = (uint64)usertrap;
+  p->trapframe->kernel_hartid = r_tp();         // hartid for cpuid()
+```
+
+### iii. Ready to execute the userret asm code in `trampoline.s`
+
+```c
+  // set S Exception Program Counter to the saved user pc.
+  w_sepc(p->trapframe->epc);
+
+  // tell trampoline.S the user page table to switch to.
+  uint64 satp = MAKE_SATP(p->pagetable);
+
+  // jump to trampoline.S at the top of memory, which 
+  // switches to the user page table, restores user registers,
+  // and switches to user mode with sret.
+  uint64 fn = TRAMPOLINE + (userret - trampoline);
+  ((void (*)(uint64,uint64))fn)(TRAPFRAME, satp);
+```
+
+* Write the resume user-code pc which located in `$epc` to the `$satp` so that the **`sret`** instruction can assign that value into pc when switching to the user space.
+* Cook up the `$satp`, which will be used in the trampoline code later.
+* Get the location of **`userret`** in trampoline.s, and then call that function with the `TRAPFRAME` and `satp` arguments passing.
 
 
 
+## 6. userret
+
+```
+.globl userret
+userret:
+        # userret(TRAPFRAME, pagetable)
+        # switch from kernel to user.
+        # usertrapret() calls here.
+        # a0: TRAPFRAME, in user page table.
+        # a1: user page table, for satp.
+
+        # switch to the user page table.
+        csrw satp, a1
+        sfence.vma zero, zero
+
+        # put the saved user a0 in sscratch, so we
+        # can swap it with our a0 (TRAPFRAME) in the last step.
+        ld t0, 112(a0)
+        csrw sscratch, t0
+
+        # restore all but a0 from TRAPFRAME
+        ld ra, 40(a0)
+        ld sp, 48(a0)
+        ld gp, 56(a0)
+        ld tp, 64(a0)
+        ld t0, 72(a0)
+        ld t1, 80(a0)
+        ld t2, 88(a0)
+        ld s0, 96(a0)
+        ld s1, 104(a0)
+        ld a1, 120(a0)
+        ld a2, 128(a0)
+        ld a3, 136(a0)
+        ld a4, 144(a0)
+        ld a5, 152(a0)
+        ld a6, 160(a0)
+        ld a7, 168(a0)
+        ld s2, 176(a0)
+        ld s3, 184(a0)
+        ld s4, 192(a0)
+        ld s5, 200(a0)
+        ld s6, 208(a0)
+        ld s7, 216(a0)
+        ld s8, 224(a0)
+        ld s9, 232(a0)
+        ld s10, 240(a0)
+        ld s11, 248(a0)
+        ld t3, 256(a0)
+        ld t4, 264(a0)
+        ld t5, 272(a0)
+        ld t6, 280(a0)
+
+	# restore user a0, and save TRAPFRAME in sscratch
+        csrrw a0, sscratch, a0
+        
+        # return to user mode and user pc.
+        # usertrapret() set up sstatus and sepc.
+        sret
+```
+
+After the first instruction, as we can see, now we are in the much smaller user page table but luckily still with the trampoline page map so we don't crash on the next instruction.
+
+```
+(qemu) info mem
+vaddr            paddr            size             attr
+---------------- ---------------- ---------------- -------
+0000000000000000 0000000087f61000 0000000000001000 rwxu-a-
+0000000000001000 0000000087f5e000 0000000000001000 rwxu-a-
+0000000000002000 0000000087f5d000 0000000000001000 rwx----
+0000000000003000 0000000087f5c000 0000000000001000 rwxu-ad
+0000003fffffe000 0000000087f70000 0000000000001000 rw---ad
+0000003ffffff000 0000000080007000 0000000000001000 r-x--a-
+```
+
+Back to **4.syscall**, when we are executing the **`syscall`**, we store the return value into `p->trapframe->a0`.
+**Since the current value of `$a0` is the `TRAPFRAME` address, we cannot overwrite it, until we restore all saved registers. So we load the `p->trapframe->a0` into `$t0`, and then swap it with `$sscratch`.**
+
+```
+(gdb) print/x $a0
+$9 = 0x3fffffe000
+(gdb) print/x $sscratch
+$10 = 0x1
+```
+
+**After that, we restore all registers but `$a0` from `TRAPFRAME`, finally, we swap `$sscratch` and `$a0` both restore the correct return value of `syscall` and load the `TRAPFRAME` into `$sscratch`, so that the trap handling code that we talked about before will be able to use that `$sscratch` to get at the trap frame.**
+
+```
+(gdb) print/x $sscratch
+$11 = 0x3fffffe000
+```
+
+```
+ra             0xe82    0xe82
+sp             0x3e90   0x3e90
+gp             0x505050505050505        0x505050505050505
+tp             0x505050505050505        0x505050505050505
+t0             0x505050505050505        361700864190383365
+t1             0x505050505050505        361700864190383365
+t2             0x505050505050505        361700864190383365
+fp             0x3eb0   0x3eb0
+s1             0x12e1   4833
+a0             0x1      1
+a1             0x3e9f   16031
+a2             0x1      1
+a3             0x505050505050505        361700864190383365
+a4             0x505050505050505        361700864190383365
+a5             0x2      2
+a6             0x505050505050505        361700864190383365
+a7             0x10     16
+s2             0x24     36
+s3             0x0      0
+s4             0x25     37
+s5             0x2      2
+s6             0x3f50   16208
+s7             0x1480   5248
+s8             0x15     21
+s9             0x1428   5160
+s10            0x10     16
+s11            0x28     40
+t3             0x505050505050505        361700864190383365
+t4             0x505050505050505        361700864190383365
+t5             0x505050505050505        361700864190383365
+t6             0x505050505050505        361700864190383365
+pc             0x3ffffff10e     0x3ffffff10e
+```
+
+**Now all these 32 general-purpose registers happen to be the same set of registers before we make that system call in user space. We are now ready to jump back to user code and resume the procedure after system call.**
+
+## 7. sret
+
+**Same as `ecall`, the `sret` instruction does many things for us.**
+1. **Switch to user mode.**
+2. **Copy `$sepc` to `$pc`.**
+
+```
+(gdb) stepi
+0x0000000000000dee in ?? ()
+=> 0x0000000000000dee:  82 80   ret
+(gdb) print/x $pc
+$12 = 0xdee
+```
+
+Now we are back to the shell, just at the very next instruction of **`ecall`.** And that is the whole procedure of a **Trap.**
+
+![traps](Sources/traps.png)
 
 
+## 8. Summary
 
+**To wrap up, the system calls are sort of look like function calls but the user-kernel transitions are much more complex than normal function calls are.**
 
-
+**A lot of the complexities due to the requirement for isolation, because the kernel just can't trust anything in user space, that makes many instructions cannot be executed in user space.**
