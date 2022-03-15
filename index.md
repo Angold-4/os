@@ -5,7 +5,7 @@
 ## MIT 6.S081 Lecture Notes
 * **[1. Introduction](docs/lectures/1Introduction.html)**
 * **[2. Virtual Memory](docs/lectures/2VirtualMemory.html)**
-* [3. Special Topic: Traps](docs/lectures/3Traps.html)
+* **[3. Special Topic: Traps](docs/lectures/3Traps.html)**
 
 ## MIT 6.004 Lecture Notes
 * **[1. The Power of Abstraction](6004/lectures/1Abstraction.html)**
