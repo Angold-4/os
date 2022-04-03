@@ -4,8 +4,8 @@
 
 There are three kinds of event which cause the CPU to set aside ordinary execution of instructions and force a transfer of control to special code that handles the event:
 1. **System Call:** When a user program executes the **`ecall`** instruction to ask the kernel to do something for it.
-2. **Exception:** When an instruction (user/kernel) does something illegal, such as divide by zero or use an invalid virtual address.
-* **Interrupt:** When a device signals that it needs attention.
+2. **Exception:** When an instruction (user/kernel) does something illegal, such as divide by zero or use an invalid virtual address, or page fault.
+3. **Interrupt:** When a device signals that it needs attention.
 
 **Trap is a generic term for these situations.**
 Typically, whatever code was executing at the time of the trap will later need to resume, and shouldn't need to be aware that anything special happends.

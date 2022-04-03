@@ -71,11 +71,9 @@
 <p>There are three kinds of event which cause the CPU to set aside ordinary execution of instructions and force a transfer of control to special code that handles the event:</p>
 <ol>
 <li><strong>System Call:</strong> When a user program executes the <strong><code>ecall</code></strong> instruction to ask the kernel to do something for it.</li>
-<li><strong>Exception:</strong> When an instruction (user/kernel) does something illegal, such as divide by zero or use an invalid virtual address.</li>
-</ol>
-<ul>
+<li><strong>Exception:</strong> When an instruction (user/kernel) does something illegal, such as divide by zero or use an invalid virtual address, or page fault.</li>
 <li><strong>Interrupt:</strong> When a device signals that it needs attention.</li>
-</ul>
+</ol>
 <p><strong>Trap is a generic term for these situations.</strong>
 Typically, whatever code was executing at the time of the trap will later need to resume, and shouldn't need to be aware that anything special happends.</p>
 <p><strong>In this topic, we'll step into the actual <code>xv6</code> code and check the details of how traps were implemented by walking through a whole <code>SYS_write</code> system call procedule when we booting the <code>xv6</code>.</strong></p>
