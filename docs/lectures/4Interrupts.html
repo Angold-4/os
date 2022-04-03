@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:og="http://ogp.me/ns#"
+      xmlns:fb="https://www.facebook.com/2008/fbml">
+<head>
+    <title>Angold-4 Organization</title>
+    <!-- Using the latest rendering mode for IE -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link href="../../../images/favicon.png" rel="icon">
+
+<link rel="canonical" href=".">
+        <meta name="author" content="Angold Wang" />
+
+    <meta property="og:site_name" content="Angold-4" />
+<!--     <meta property="og:type" content="article"/> -->
+    <meta property="og:title" content="Angold-4 Organization"/>
+    <meta property="og:url" content="."/>
+
+    <!-- Bootstrap -->
+        <link rel="stylesheet" href="../../../theme/css/bootstrap.flatly.min.css" type="text/css"/>
+    <link href="../../../theme/css/font-awesome.min.css" rel="stylesheet">
+<!--     <link href="https://cdnjs.cloudflare.com/ajax/libs/typicons/2.0.9/typicons.min.css" rel="stylesheet"> -->
+
+    <link href="../../../theme/css/pygments/monokai.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../../theme/css/style.css" type="text/css"/>
+
+</head>
+<body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<!-- <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script> -->
+
+<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="http://angold4.org" class="navbar-brand">
+<img src="../../../images/logo.png" width="32"/> Angold4            </a>
+        </div>
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav">
+			    <li><a href="../../../about.html">About</a>
+                            <li><a href="../../../blogs.html">Blogs</a>
+                            <li><a href="../../../projects.html">Projects</a>
+
+	    </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li> <a title="Youtube" href="https://www.youtube.com/channel/UC3ZAjh2LHhm-FrgxgBtgMzQ" target="_new"><i class="fa fa-youtube"></i> Youtube</a>
+		</li>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+</div> <!-- /.navbar -->
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12">
+	<section id="content" class="body">
+
+
+<h1>4. Interrupts</h1>
+<h5>04/03/2022 By Angold Wang</h5>
+<p>In the previous post, <strong><a href="https://a4org.github.io/os/docs/lectures/3Traps.html">3. Traps</a></strong>, we went through the actual xv6 code to illustrate the actual mechanics in the system call.
+I also mentioned at the begin of prev post, <strong>The &quot;traps&quot; mechanisim is used in 3 different situations</strong>:</p>
+<ol>
+<li><strong>System Call</strong></li>
+<li><strong>Device Interrupt</strong></li>
+<li><strong>Fault and Exceptions</strong></li>
+</ol>
+<p>Since the previous article covered the whole trap procedure (trampoline, recovery...) with actual xv6 code. Which is pretty much the same in these 3 situations. I'll treat the <strong>&quot;Trap&quot;</strong> as an abstract procedure and this lecture will focus on things other than traps.</p>
+<h2>0. Device Driver (UART)</h2>
+<p><strong>A driver is the code in an operating system that manages a particular device. Which:</strong></p>
+<ol>
+<li>Configures the device hardware.</li>
+<li>Handles the resulting interrupts.</li>
+<li>Tells the device to perform operations.</li>
+<li><strong>Interacts with processes that may be waiting for the I/O from the device.</strong></li>
+</ol>
+<p><strong>While booting, xv6's <code>main</code> calls <code>consoleinit</code> to initialize the <a href="https://en.wikipedia.org/wiki/Universal_asynchronous_receiver-transmitter">UART</a> hardware:</strong></p>
+<ul>
+<li><strong>Generating a recieve interrupt when the UART receives each byte of input. (In RHR)</strong></li>
+<li><strong>Generating a transmit complete interrupt each time the UART finishes sending a byte of output. (In THR)</strong></li>
+</ul>
+<p><img src="Sources/uart.png" alt="uart"></p>
+<h2>1. System Call</h2>
+<p><strong>A system call will pause the current user-process, cause a trap which saves user's current state... and jump to kernel space in order to execute the kernel syscall.</strong></p>
+<p>Let's continue the actual <strong><code>write()</code></strong> system call we mentioned last article. The way that shell indicate that it is ready for user input is to print &quot;$&quot; in the console.</p>
+<p>In the xv6 implementation, the shell calls <code>fprintf</code> function, which will eventually make a system call <code>write(2, &quot;$&quot;, 1)</code>.</p>
+<pre><code class="language-c">  fprintf(2, &quot;$&quot;);
+</code></pre>
+<p>Now we are in the kernel code, the <code>write</code> system call eventually arrives at <strong><code>consolewrite()</code></strong> located in <code>kernel/console.c</code>, which will write the stuff byte-by-byte by calling <strong><code>uartputc(c)</code></strong>.</p>
+<p>Like I show in the figure, the UART device maintains an output buffer (<code>uart_tx_buf</code>) so that <strong>writing processes do not have to wait for the UART to finish sending,</strong> this mechanism, called <strong>asynchrony</strong>, separates device activity from process activity through <strong>buffering</strong> and <strong>interrupts</strong>. Instead, <strong><code>uartputc</code></strong> appends each character to the buffer, kick the UART hardware to start transmitting by calling <strong><code>uartstart()</code></strong>.</p>
+<p>Basically, <strong><code>uartstart()</code></strong> writes the byte pointed to by the current write pointer into the <code>THE</code>, which is the transmit holding register. In our system, <strong>once you write that byte into <code>THR</code>, the UART hardware will send the data to the Console (Monitor) to draw that byte on your monitor.</strong></p>
+<p>Each time UART finishes sending a byte to console, it generates an interrupt. After the trap <strong><code>uartintr()</code></strong> calls <strong><code>uartstart()</code></strong> again, which hands the device the next buffered output character... It will keep that loop (the yellow arrow showing on the figure) until no data in the buffer (writep == readp).</p>
+<p><img src="Sources/writesyscall.png" alt="writesyscall"></p>
+<h2>2. Device Interrupts</h2>
+<p>There are basically two kinds of device interrupts -- The <strong>Timer interrupts</strong> and <strong>others</strong>.</p>
+<h3>i. Device interrupts</h3>
+<p>For the device interrups, typically, when a user types <strong>&quot;ls&quot;</strong>, press enter in their keyboard and wants to pass this command to the shell. The UART hardware asks the RISC=V to raise an interrupt, The current user process will be interrupted and the xv6's trap handler will be activated. The trap handler calls <strong><code>devintr</code></strong> (<code>kernel/trap.c</code>), which looks at the RISC-V <code>scause</code> register to discover that the interrupt is from an external device. Then it asks a hardware unit called the <code>PLIC</code> to tell it which device interrupted. In this case, it was the UART, <strong><code>devintr</code></strong> calls <strong><code>uartintr</code></strong>.</p>
+<p><strong><code>uartintr</code></strong> reads any waiting input characters from the UART hardware and hands them to <strong><code>consoleintr</code></strong>, which <strong>accumulate input characters in <code>cons.buf</code> until a whole line arrives.</strong> The way is that <strong><code>consoleintr</code></strong> treats backspace and a few other characters specially. When a newline arrives, it wakes up a waiting <strong><code>consoleread</code></strong> (if there is one)(<code>p-&gt;status = RUNNABLE</code>), then back to the trap ret, and resume the interrupted process.</p>
+<p>Once woken, <strong><code>consoleread</code></strong> will observe a full line in <code>cons.buf</code>, copy it to user space, and return from the trap to the user space.</p>
+<p><img src="Sources/keyboard.png" alt="keyboard"></p>
+<h3>ii. Timer interrupts</h3>
+<p>Xv6 uses <strong>timer interrupts</strong> to switch among different <strong>compute-bound process</strong>.</p>
+<p>The code <strong><code>timerinit</code></strong> in <code>kernel/start.c</code> initializing the clock hardware. Basically, it sets <code>mtvec</code> to <strong><code>timervec</code></strong> (kernel/kernelvec.S) in order to deal with each clock interrupts.</p>
+<p><strong>A timer interrpt can occur at any point when user or kernel code is executing.</strong> The basic strategy to handle a clock interrupt is to ask the RISC-V to <strong>raise a &quot;software interrupt&quot;</strong> and then immediately return (<strong>then switch to the sheduler's context by calling <code>yield()</code></strong> which we will talk in great amount of details next post). The RISC-V delivers software interrupts to the kernel with the <strong>ordinary trap mechanism</strong>, and allows the kernel to disable them (very important for code executing in critical section).</p>
+<p><img src="Sources/timer.png" alt="timer"></p>
+<h2>3. Fault and Exceptions</h2>
+	</section>
+	</div>
+    </div>
+</div>
+<footer>
+   <div class="well well-lg" id="footer-well">
+      <div class="container">
+
+
+      <div class="row">
+         <div class="col-xs-6">
+            <a href="https://angold4.org" title="Angold-4 Organization" class="image-link"><img src="../../../images/logo.png" class="cmudb-logo" /></a>
+         </div>
+         <div class="col-xs-6">
+            <p class="pull-right"><i class="fa fa-arrow-up"></i> <a href="#">Back to top</a></p>
+        </div>
+      </div>
+   </div>
+   </div>
+</footer>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="../../../theme/js/bootstrap.min.js"></script>
+
+<!-- Enable responsive features in IE8 with Respond.js (https://github.com/scottjehl/Respond) -->
+<script src="../../../theme/js/respond.min.js"></script>
+
+<!-- Fix scrolling issues to internal HREFs that get positioned behind navbar -->
+<!-- http://stackoverflow.com/questions/10732690/offsetting-an-html-anchor-to-adjust-for-fixed-header -->
+<script src="../../../theme/js/href_scroll.js"></script>
+
+<!-- You know what this is and you know what he did to me... -->
+<script src="../../../theme/js/tim-kraska-betrayed-me.js"></script>
+</body>
+</html>
