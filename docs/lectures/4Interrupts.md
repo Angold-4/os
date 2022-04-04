@@ -70,5 +70,47 @@ The code **`timerinit`** in `kernel/start.c` initializing the clock hardware. Ba
 
 ![timer](Sources/timer.png)
 
+The xv6 makes sure that there will always be an interrupt while the code executing in the user space. 
+
 ## 3. Fault and Exceptions
+Xv6's response to exceptions is quite boring:
+* **If an exception happens in user space, the kernel kills the faulting process.**
+* **If an exception happens in the kernel, the kernel panics.**
+
+In the real sophisticated operating system, fault and exceptions often be responded in much more interesting ways.
+
+### i. Copy-on-Write
+
+#### The problem
+The `fork()` system call in xv6 copies all of the parent process's user-space memory into the child. If the parent is large, copying can take a long time. Worse, the work is often largely wasted; for example, a `fork()` followed by `exec()` in the child will cause the child to discard the copied memory, probably without ever using most of it. On the other hand, if both parent and child use a page, and one or both writes it, a copy is truly needed.
+
+#### The solution
+The goal of copy-on-write (COW) `fork()` is to defer allocating and copying physical memory pages for the child until the copies are actually needed, if ever.
+COW `fork()` creates just a pagetable for the child, with PTEs for user memory pointing to the parent's physical pages. COW `fork()` marks all the user PTEs in both parent and child as not writable. 
+
+When either process tries to write one of these COW pages, the CPU will force a page fault. The kernel page-fault handler detects this case, allocates a page of physical memory for the faulting process, copies the original page into the new page, and modifies the relevant PTE in the faulting
+
+process to refer to the new page, this time with the PTE marked writeable. When the page fault handler returns, the user process will be able to write its copy of the page.
+
+**[6.S081 Lab6 Copy-on-write fork](https://pdos.csail.mit.edu/6.828/2020/labs/cow.html)**
+
+**[Personal Implementation](https://a4org.github.io/os/docs/labs/cow.html)**
+
+
+### ii. Lazy Allocation
+One of the many neat tricks an O/S can play with page table hardware is **lazy allocation** of user-space heap memory. 
+
+Xv6 applications ask the kernel for heap memory using the `sbrk()` system call. In the kernel we've given you, `sbrk()` allocates physical memory and maps it into the process's virtual address space. It can take a long time for a kernel to allocate and map memory for a large request. Consider, for example, that a gigabyte consists of `262,144 4096-byte pages`; that's a huge number of allocations even if each is individually cheap. 
+
+In addition, some programs allocate more memory than they actually use (e.g., to implement sparse arrays), or allocate memory well in advance of use. To allow `sbrk()` to complete more quickly in these cases, sophisticated kernels allocate user memory lazily. That is, `sbrk()` doesn't allocate physical memory, but just remembers which user addresses are allocated and marks those addresses as invalid in the user page table. 
+
+When the process first tries to use any given page of lazily-allocated memory, the CPU generates a page fault, which the kernel handles by allocating physical memory, zeroing it, and mapping it.
+
+
+**[6.S081 Lab6 Lazy Allocation](https://pdos.csail.mit.edu/6.828/2020/labs/lazy.html)**
+
+**[Personal Implementation](https://a4org.github.io/os/docs/labs/lazy.html)**
+
+
+
 

@@ -113,7 +113,31 @@ I also mentioned at the begin of prev post, <strong>The &quot;traps&quot; mechan
 <p>The code <strong><code>timerinit</code></strong> in <code>kernel/start.c</code> initializing the clock hardware. Basically, it sets <code>mtvec</code> to <strong><code>timervec</code></strong> (kernel/kernelvec.S) in order to deal with each clock interrupts.</p>
 <p><strong>A timer interrpt can occur at any point when user or kernel code is executing.</strong> The basic strategy to handle a clock interrupt is to ask the RISC-V to <strong>raise a &quot;software interrupt&quot;</strong> and then immediately return (<strong>then switch to the sheduler's context by calling <code>yield()</code></strong> which we will talk in great amount of details next post). The RISC-V delivers software interrupts to the kernel with the <strong>ordinary trap mechanism</strong>, and allows the kernel to disable them (very important for code executing in critical section).</p>
 <p><img src="Sources/timer.png" alt="timer"></p>
+<p>The xv6 makes sure that there will always be an interrupt while the code executing in the user space.</p>
 <h2>3. Fault and Exceptions</h2>
+<p>Xv6's response to exceptions is quite boring:</p>
+<ul>
+<li><strong>If an exception happens in user space, the kernel kills the faulting process.</strong></li>
+<li><strong>If an exception happens in the kernel, the kernel panics.</strong></li>
+</ul>
+<p>In the real sophisticated operating system, fault and exceptions often be responded in much more interesting ways.</p>
+<h3>i. Copy-on-Write</h3>
+<h4>The problem</h4>
+<p>The <code>fork()</code> system call in xv6 copies all of the parent process's user-space memory into the child. If the parent is large, copying can take a long time. Worse, the work is often largely wasted; for example, a <code>fork()</code> followed by <code>exec()</code> in the child will cause the child to discard the copied memory, probably without ever using most of it. On the other hand, if both parent and child use a page, and one or both writes it, a copy is truly needed.</p>
+<h4>The solution</h4>
+<p>The goal of copy-on-write (COW) <code>fork()</code> is to defer allocating and copying physical memory pages for the child until the copies are actually needed, if ever.
+COW <code>fork()</code> creates just a pagetable for the child, with PTEs for user memory pointing to the parent's physical pages. COW <code>fork()</code> marks all the user PTEs in both parent and child as not writable.</p>
+<p>When either process tries to write one of these COW pages, the CPU will force a page fault. The kernel page-fault handler detects this case, allocates a page of physical memory for the faulting process, copies the original page into the new page, and modifies the relevant PTE in the faulting</p>
+<p>process to refer to the new page, this time with the PTE marked writeable. When the page fault handler returns, the user process will be able to write its copy of the page.</p>
+<p><strong><a href="https://pdos.csail.mit.edu/6.828/2020/labs/cow.html">6.S081 Lab6 Copy-on-write fork</a></strong></p>
+<p><strong><a href="https://a4org.github.io/os/docs/labs/cow.html">Personal Implementation</a></strong></p>
+<h3>ii. Lazy Allocation</h3>
+<p>One of the many neat tricks an O/S can play with page table hardware is <strong>lazy allocation</strong> of user-space heap memory.</p>
+<p>Xv6 applications ask the kernel for heap memory using the <code>sbrk()</code> system call. In the kernel we've given you, <code>sbrk()</code> allocates physical memory and maps it into the process's virtual address space. It can take a long time for a kernel to allocate and map memory for a large request. Consider, for example, that a gigabyte consists of <code>262,144 4096-byte pages</code>; that's a huge number of allocations even if each is individually cheap.</p>
+<p>In addition, some programs allocate more memory than they actually use (e.g., to implement sparse arrays), or allocate memory well in advance of use. To allow <code>sbrk()</code> to complete more quickly in these cases, sophisticated kernels allocate user memory lazily. That is, <code>sbrk()</code> doesn't allocate physical memory, but just remembers which user addresses are allocated and marks those addresses as invalid in the user page table.</p>
+<p>When the process first tries to use any given page of lazily-allocated memory, the CPU generates a page fault, which the kernel handles by allocating physical memory, zeroing it, and mapping it.</p>
+<p><strong><a href="https://pdos.csail.mit.edu/6.828/2020/labs/lazy.html">6.S081 Lab6 Lazy Allocation</a></strong></p>
+<p><strong><a href="https://a4org.github.io/os/docs/labs/lazy.html">Personal Implementation</a></strong></p>
 	</section>
 	</div>
     </div>

@@ -67,7 +67,7 @@
 
 
 <h1>5. Scheduler</h1>
-<h5>04/03/2022 By Angold Wang</h5>
+<h5>04/04/2022 By Angold Wang</h5>
 <p>The OS brings an illusion to user that there are many processes (larger than CPU cores) running at the same time by switching between them very quickly. There are two kinds of processes: -- <strong>I/O bound</strong> and <strong>CPU bound</strong>. Each of them has different mechanisms to manage by the scheduler.</p>
 <ul>
 <li><strong>For the I/O bound processes:</strong>
@@ -83,6 +83,77 @@
 </ul>
 </li>
 </ul>
+<h2>1. Multiplexing - Threads</h2>
+<h5>Thread: one serial execution</h5>
+<ul>
+<li>PC: Where is it in its execution.</li>
+<li>Registers: The compiler uses registers to hold variables.</li>
+<li>Stack: Each thread has its own stack dedicated to executing. Where records the record of function calls.</li>
+</ul>
+<h3>i. Interleaving</h3>
+<p>The Threading System: <strong>Manage the interleaving of multiple threads.</strong>
+We'd like to fire up hundred or thousand threads and have the threading system figure out how to juggle all those threads and cause them all to make progress.</p>
+<p>Typically, there are two levels of interleaving:</p>
+<ol>
+<li>Multi-Core: Each threads runs on its CPU, and automatically get its one PC, Registers and Stack.</li>
+<li><strong>Switching: How each CPU is going to switch among different threads.</strong></li>
+</ol>
+<p>Here is a high-level picture of thread switching in xv6:</p>
+<p><img src="Sources/threadhlp.png" alt="threadhlp"></p>
+<h3>ii. Example: Switching in a Single-Core Machine</h3>
+<p>This piece of code, which can be found in <a href="https://github.com/Angold-4/6s081labs/blob/pgtbl/user/spin.c"><code>user/spin.c</code></a>.
+And what it does is basically <strong><code>fork</code></strong> the parent process and then both parent and child process echo '/' or '\'. Let's call them <strong><code>spin1</code></strong> and <strong><code>spin2</code></strong>, as you can see from the program, both of them were simulate two essentially <strong>CPU-bound</strong> process and may need to let CPU switch between them (since it will compute forever), rather than wait them to finish.</p>
+<pre><code class="language-c">int 
+main(int argc, char* argv[]) {
+    int pid;
+    char c;
+    pid = fork();
+    if (pid == 0) {
+        // child
+        c = '/';
+    } else {
+        printf(&quot;parent pid is %d, child is %d\n&quot;, getpid(), pid);
+        c = '\\';
+    }
+    for (int i = 0; ;i++) {
+        if ((i % 1000000) == 0)
+            write(2, &amp;c, 1);
+    }
+    exit(0);
+}
+</code></pre>
+<p>If we run this user-level program in xv6, and make qemu to simulate a single core machine:</p>
+<p><img src="Sources/single.png" alt="single"></p>
+<p>As we can see, every once a while, the xv6 is switching between them.
+<strong>(forward slash -&gt; timer interrupt -&gt; backward slash)</strong>.</p>
+<h2>2. Context Switching</h2>
+<h3>i. Switching</h3>
+<p><img src="Sources/thread.png" alt="thread"></p>
+<p>The above figure outlines the steps involved in switching from one user process to another:</p>
+<ol>
+<li>**A user-kernel transition (system call or interrupt) to the old process's kernel thread. **</li>
+<li><strong>A context switch to the current CPU's scheduler thread.</strong></li>
+<li><strong>A context switch to a new process's kernel thread.</strong></li>
+<li><strong>A trap return to the user-level process.</strong></li>
+</ol>
+<h3>ii. Two Handy Points</h3>
+<h4>1. Every core can just execute one thing at a time. It either running some processes' user thread, some processes' kernel thread or that core's scheduler thread.</h4>
+<h4>2. In xv6, a process is either executing instructions in user level, or it is executing instructions in the kernel, or it is not executing at all and its state has been saved away into this combination of <code>context</code> and <code>trapframe</code>.</h4>
+<h2>3. Scheduling</h2>
+<p>After introducing the abstract mechanisims in thread switching. In this section, we are going to look at the low-level details(code) of switching.</p>
+<p>The xv6 scheduler implements a simple scheduling policy, <strong>which runs each process in turn.</strong> This policy is called <em>round robin</em>. Real operating systems implement more sophisticated policies.</p>
+<h3>i. Preempt</h3>
+<p>When a timer interrupt come, like we just saw in the last article <strong><a href="https://a4org.github.io/os/docs/lectures/4Interrupts.html">os4. Interrupts</a></strong>, When a timer interrupts come, if the interrupts hasn't be unabled, the current running process will cause a trap, using the mechanisims we introduced in <strong><a href="https://a4org.github.io/os/docs/lectures/3Traps.html">os3. Traps</a></strong> and after saving all its context in <code>trapframe</code>, it eventually come to <strong><code>devintr()</code></strong> and then return <code>2</code> to the <code>which_dev</code> variable after checking that it is an timer interrupt.</p>
+<p>After that, both <strong><code>usertrap()</code></strong> (trap in user space) and <strong><code>kerneltrap()</code></strong> will see that <code>which_dev</code> is <code>2</code> and immediatly call <strong><code>yield()</code> to let this process gives up the CPU and switch to the scheduler.</strong></p>
+<p>One interesting mechanisim there is that the <strong><code>yield</code></strong> will make xv6 hold current process's <strong>lock</strong> (<code>p-&gt;lock</code>). And release that <strong>lock</strong> in the scheduler's context. Also next time when the scheduler decide to resume this interrupted user process, it will hold that (<code>p-&gt;lock</code>), and the resumed code in <strong><code>yield</code></strong> will release that lock. We need this because <code>p-&gt;lock</code> <strong>protects invariants on the process's <code>state</code> and <code>context</code> fields. Imagine if the lock is not held: a different CPU might decide to run the process after yield had set its state to <code>RUNNABLE</code>, which will cause two CPUs running on the same stack and cause chaos.</strong></p>
+<h3>ii. Sleep and Wake up</h3>
+<p>Scheduling and locks help multiple CPUs switching among different <strong><code>RUNNABLE</code></strong> processess. But we also need some abstractions that help threads intentionally interact.
+For example, the <code>printf($)</code> case we mentioned in the last article, after the <code>UART</code> hardware finish sending the <code>$</code> to the monitor, it will generate an interrupt in order to make <strong><code>consoleintr</code></strong> call <strong><code>wakeup</code></strong> to wake up all process that called <strong><code>sleep</code></strong> and waiting for this char.</p>
+<p>The implementation is pretty much the same as the thread switching we mentioned above: If a process make a <strong><code>wait</code></strong> system call, eventually it will come to <strong><code>sleep</code></strong> function inside kernel, after set its state to <code>SLEEPING</code>, it will call <strong><code>sched()</code></strong> and then switch to the <strong>scheduler</strong>.</p>
+<h2>4. Kernel Pgtbl Per User Process</h2>
+<p>Xv6 has a single kernel page table that's used whenever it executes in the kernel. The kernel page table is a direct mapping to physical addresses, so that kernel virtual address <code>x</code> maps to physical address <code>x</code>. Xv6 also has a <strong>separate page table for each process's user address space</strong>, containing only mappings for that process's user memory, starting at virtual address zero. Because the kernel page table doesn't contain these mappings, user addresses are not valid in the kernel. Thus, when the kernel needs to use a user pointer passed in a system call (e.g., the buffer pointer passed to <strong><code>write()</code></strong>), the kernel must first translate the pointer to a physical address. The goal of this section and the next is to allow the kernel to directly dereference user pointers <strong>by adding a kernel page table per process.</strong></p>
+<p><strong><a href="https://pdos.csail.mit.edu/6.828/2020/labs/pgtbl.html">6.S081 Lab3 Page Table</a></strong></p>
+<p><strong><a href="https://a4org.github.io/os/docs/labs/pgtbl.html">Personal Implementation and Notes</a></strong></p>
 	</section>
 	</div>
     </div>
