@@ -72,7 +72,7 @@ As we can see, every once a while, the xv6 is switching between them.
 ![thrswitch](Sources/thrswitch.png)
 
 The above figure outlines the steps involved in switching from one user process to another: 
-1. **A user-kernel transition (system call or interrupt) to the old process's kernel thread. **
+1. **A user-kernel transition (system call or interrupt) to the old process's kernel thread.**
 2. **A context switch to the current CPU's scheduler thread.** 
 3. **A context switch to a new process's kernel thread.**
 4. **A trap return to the user-level process.**

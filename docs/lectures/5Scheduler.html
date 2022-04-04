@@ -131,7 +131,7 @@ main(int argc, char* argv[]) {
 <p><img src="Sources/thrswitch.png" alt="thrswitch"></p>
 <p>The above figure outlines the steps involved in switching from one user process to another:</p>
 <ol>
-<li>**A user-kernel transition (system call or interrupt) to the old process's kernel thread. **</li>
+<li><strong>A user-kernel transition (system call or interrupt) to the old process's kernel thread.</strong></li>
 <li><strong>A context switch to the current CPU's scheduler thread.</strong></li>
 <li><strong>A context switch to a new process's kernel thread.</strong></li>
 <li><strong>A trap return to the user-level process.</strong></li>
