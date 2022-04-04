@@ -69,7 +69,7 @@ As we can see, every once a while, the xv6 is switching between them.
 
 ### i. Switching
 
-![thread](Sources/thread.png)
+![thrswitch](Sources/thrswitch.png)
 
 The above figure outlines the steps involved in switching from one user process to another: 
 1. **A user-kernel transition (system call or interrupt) to the old process's kernel thread. **
