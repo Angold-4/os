@@ -4,19 +4,19 @@
 **[2011 (27th) Japan Prize; Dr. Ritchie / Dr. Thompson](https://www.youtube.com/watch?v=IjvjqAVkvYo)**
 
 ### **Dennis M. Ritchie**
-> Since its birth, Unix has been widely used by governments and civilians for over 40 years.\n
-I believe it became a successful unique system because it was developed by a small team for their own use,\n
-with a very simple design.\n
-I feel the long running success of UNIX can be credited to the research in which we had total freedom to research whatever we liked.\n
+> Since its birth, Unix has been widely used by governments and civilians for over 40 years.
+I believe it became a successful unique system because it was developed by a small team for their own use,
+with a very simple design.
+I feel the long running success of UNIX can be credited to the research in which we had total freedom to research whatever we liked.
 
 ### **Ken L. Thompson**
-> "Research" and "development" are two different things.\n
-"Development" has clear goals but "research" is goalless, because it's the act of discovering something new.\n
-If you are a researcher, you need to continue enjoying your research at hand.\n
-Other than Unix,\n
-I've had many research topics like voice recognition, language, searching, security, games, and whatever I found intersting.\n
-Unix resulted from a research on new thing we were merely interested in,\n
-and we are very luckey it turned out to be very fruitful.\n
+> "Research" and "development" are two different things.
+"Development" has clear goals but "research" is goalless, because it's the act of discovering something new.
+If you are a researcher, you need to continue enjoying your research at hand.
+Other than Unix,
+I've had many research topics like voice recognition, language, searching, security, games, and whatever I found intersting.
+Unix resulted from a research on new thing we were merely interested in,
+and we are very luckey it turned out to be very fruitful.
 
 
 ## MIT 6.S081 Lecture Notes
