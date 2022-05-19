@@ -13,7 +13,7 @@
 * **Sharing**
 * **Security**
 * **Performance**
-    * Whatever services it provides, don't get in the way of applicatins getting high performance.
+    * Whatever services it provides, don't get in the way of applications getting high performance.
     * Maybe even help applications achieve good performance.
 * **Range of Uses**
 
