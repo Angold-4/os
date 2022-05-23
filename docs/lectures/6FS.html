@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:og="http://ogp.me/ns#"
+      xmlns:fb="https://www.facebook.com/2008/fbml">
+<head>
+    <title>Angold-4 Organization</title>
+    <!-- Using the latest rendering mode for IE -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link href="../../../images/favicon.png" rel="icon">
+
+<link rel="canonical" href=".">
+        <meta name="author" content="Angold Wang" />
+
+    <meta property="og:site_name" content="Angold-4" />
+<!--     <meta property="og:type" content="article"/> -->
+    <meta property="og:title" content="Angold-4 Organization"/>
+    <meta property="og:url" content="."/>
+
+    <!-- Bootstrap -->
+        <link rel="stylesheet" href="../../../theme/css/bootstrap.flatly.min.css" type="text/css"/>
+    <link href="../../../theme/css/font-awesome.min.css" rel="stylesheet">
+<!--     <link href="https://cdnjs.cloudflare.com/ajax/libs/typicons/2.0.9/typicons.min.css" rel="stylesheet"> -->
+
+    <link href="../../../theme/css/pygments/monokai.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../../theme/css/style.css" type="text/css"/>
+
+</head>
+<body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<!-- <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script> -->
+
+<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="http://angold4.org" class="navbar-brand">
+<img src="../../../images/logo.png" width="32"/> Angold4            </a>
+        </div>
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav">
+			    <li><a href="../../../about.html">About</a>
+                            <li><a href="../../../blogs.html">Blogs</a>
+                            <li><a href="../../../projects.html">Projects</a>
+
+	    </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li> <a title="Youtube" href="https://www.youtube.com/channel/UC3ZAjh2LHhm-FrgxgBtgMzQ" target="_new"><i class="fa fa-youtube"></i> Youtube</a>
+		</li>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+</div> <!-- /.navbar -->
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12">
+	<section id="content" class="body">
+
+
+
+<h1>6. File System</h1>
+<h5>05/20/2022 By Angold Wang</h5>
+<p><strong>File Systems</strong> is one of the most special place in Operating System, it organize the stored data in hard disk, and maintain the <strong>persistence</strong> so that after a reboot, the data is still available.</p>
+<p>The xv6 file system implementation is organized in <strong>seven</strong> layers, shown in the following figure.</p>
+<p><img src="Sources/fslayer.png" alt="fslayer"></p>
+<h3>Layer 1&amp;2: Buffer Cache &amp; Disk Driver</h3>
+<p><strong>Accessing a disk is orders of magnitude slower than accessing memory, so the file system must maintain an in-memory cache of popular blocks</strong>, the buffer cache layer caches disk blocks and synchronizes access to them, making sure that only one kernel process at a time can modify the data stored in any particular block.</p>
+<h3>Layer 3: Logging</h3>
+<p>The Logging layer helps the file system to support <strong>Crash Recovery</strong>, that is, <strong>allow higher layers to wrap updates to several blocks in a transactions, and ensures that the blocks are updated atomically in the face of crashes</strong> (i.e., all of them are updated or none).</p>
+<p>If a crash (e.g., power failure) occurs, the file system must still work correctly after restart. The risk is that a crash might interrupt a sequence of updates and leave <strong>inconsistent</strong> on-disk data structures (e.g., a block that is both used in a file and marked free).</p>
+<h3>Layer 4&amp;5&amp;6&amp;7: Inode &amp; Path</h3>
+<p>The file system needs on-disk data structures to represent the tree of named directories and files, to record the identities of the blocks that hold each file's content, and to record which areas of the disk are free.</p>
+<p>In xv6, each file will be represented as an <strong>Inode</strong>, and the directory is a special kind of inde whose content is a sequence of directory entries. And the pathname layer provides hierachical path names like <code>/usr/angold/xv6/fs.c</code>, and resolves them with recursive look up. Finally, at the very top layer, the <strong>file descriptor</strong> abstracts many Unix resources (e.g., pipes, devices, files.) using the lower-layers interface we mentioned above, <strong>simplifying the lives of application programmers.</strong></p>
+<h3>Accumulated Complexity</h3>
+<p>There are two ways to understand the file system: <strong>Bottom-up</strong> and <strong>Top-down</strong>, we call the former &quot;OS Designer's Perspective&quot; and the latter &quot;Application's Programmer's perspective&quot;.</p>
+<p>In the <strong>Top-down</strong> View, each API at the top layer (<strong><code>write</code></strong>, <strong><code>open</code></strong>, <strong><code>close</code></strong>) will be treated as serial instructions, that is: the <strong>call stack</strong> (<code>fn1()</code> -&gt; <code>fn2()</code> -&gt;... etc,.), which is relatively easy to figure out <strong>how does the fs works</strong> (by going through each routines), but it is very hard to understand <strong>what is the design purpose of each layer</strong> due to the accumlation of complexity at the high level. (it may also costs much time to walk through each
+routines, especially in some big
+systems)</p>
+<p>In the <strong>Bottom-up</strong> View, when you start at the lowest level, the complexity is usually relatively small (code size, less routines...), and one more important thing is that <strong>the higher level usually depends on the lower level underneath, which means after you understand these low-level stuff, the upper layer code seems highly structured.</strong>  (lower layers ease the design of higher ones)</p>
+<p>In this article, we will study the xv6 File System in both <strong>Top-down</strong> and <strong>Bottom-up</strong> view in order to have a fully understanding of File System, and answer questions like: <strong>&quot;how does file system works&quot;</strong> and <strong>&quot;why it looks like that (the design choice)&quot;</strong>. I believe the File System is a brilliant example to learn the &quot;Accumulated Complexity&quot; in System Engineering.</p>
+<h2>1. Buffer Cache</h2>
+<h3>i. Disk Driver</h3>
+<p><strong>Disk hardware traditionally presents the data on disk as a numbered sequence of <em>512-byte</em> blocks (sectors).</strong></p>
+<blockquote>
+<p>The <strong>block</strong> size that an operating system uses for its file system maybe different than the sector size that a disk uses, but typically the block size is a multiple of the sector size.</p>
+</blockquote>
+<p>Each block on Disk has its own unique <code>blockno</code>, indicating the offset of specific data in disk. (sector 0 is the first 512 bytes, sector 1 is the next, and so on...)</p>
+<p>The file system must have a plan for where it stores specific data (i.e., indes, data) on the disk, to do so, when xv6 boots, the <code>mkfs</code> (<code>kernel/mkfs.c</code>) will build the entile file system, you should see the following output from <code>mkfs</code> in the make output:</p>
+<pre><code>nmeta 70 (boot, super, log blocks 30 inode blocks 13, bitmap blocks 25) blocks 199930 total 200000
+</code></pre>
+<p>As you can see, xv6 divides the disk into several sections, as Figure 8.2 shows. The fils system does not use block 0 (it holds the boot sector). <strong>Block 1 is called super block; it contains metadata about the file system:</strong></p>
+<ul>
+<li>The number of data blocks</li>
+<li>The number of inodes</li>
+<li>The number of blocks in the log</li>
+<li>...</li>
+</ul>
+<p><img src="Sources/disk.png" alt="disk"></p>
+<p>The code of disk driver of xv6 is in <code>kernel/virtio_disk.c</code>, typically, anytime the xv6 wants to read/write the data from disk, it will call <code>virtio_disk_rw(struct buf *b, int write)</code>, the data structure <code>buf</code> contains a specific buffer inside the buffer cache, where contains the target <code>blockno</code>.</p>
+<h3>ii. Buffer Cache</h3>
+<p>The Buffer Cache has two jobs:</p>
+<ol>
+<li><strong>Cache popular blocks so that they don't need to be re-read from the slow disk.</strong></li>
+<li><strong>Synchronize access to disk block to ensure that only one copy of a block is in memory and that only one kernel thread at a time uses that copy.</strong></li>
+</ol>
+<p><strong>The buffer cache has a fixed number of buffers to hold disk blocks</strong>, which means that if the file system asks for a block that is not already in the cache, the buffer cache must recycle a buffer currently holding some other block. <strong>The buffer cache recycles the least recently used (LRU) buffer for the new block.</strong></p>
+<p><img src="Sources/buffer.png" alt="buffer"></p>
+<h4>Buffer</h4>
+<pre><code class="language-c">// kernel/buf.h
+struct buf {
+  int valid;   // has data been read from disk?
+  int disk;    // does disk &quot;own&quot; buf?
+  uint dev;
+  uint blockno; // disk hardware can use blockno to find data
+  struct sleeplock lock;
+  uint refcnt;
+  struct buf *prev;  // LRU cache list
+  struct buf *next;
+  uchar data[BSIZE]; // the stored 512 byte data
+};
+</code></pre>
+<p>A buffer has two state fields associated with it:</p>
+<p><strong>The field <code>refcnt</code> indicates that how many process currently own that buffer.</strong> ( means doing some read/write on it )</p>
+<p><strong>The field <code>valid</code> indicates that the buffer contains a copy of the block.</strong>, the <strong><code>valid</code></strong> is set to 1 when someone read specific disk data into block by calling <strong><code>bread()</code></strong>, and will be set to 0 if its <strong><code>refcnt</code></strong> equal to 0 and being recycled.</p>
+<h4>Lock (Prevent Multiple Access)</h4>
+<p>As we said before, one of the main purpose of buffer cache is to prevent multiple kernel thread use that copy of disk block, and this mechanism is supported by the <strong>Lock</strong>.</p>
+<p><strong><code>bget</code></strong> (<code>kernel/bio.c</code>) <strong>returns a free buffer in the buffer cache</strong>, it scans the buffer list for a buffer with the given divice and sector numbers. If there is such buffer, <strong><code>bget</code></strong> acquires the <strong><code>sleep-lock</code></strong> for the buffer <strong>to prevent multiple access (different kernel thread)</strong> and then returns the locked buffer.
+If there is no cached buffer for the given sector, bget must make one by reusing a buffer that held a different sector. (<strong>LRU</strong>).</p>
+<p><strong><code>bread</code></strong> (<code>kernel/bio.c</code>) calls <strong><code>bget</code></strong> to get a locked buffer from buffer cache for the given sector, and then call <code>virtio_disk_rw</code> to read the data from disk.</p>
+<p>Once <strong><code>bread</code></strong> has read the disk and returned the locked buffer to its caller, the caller has exclusive use of the buffer and can read or write the data bytes. <strong>If the caller does modify the buffer, it must call <code>bwrite</code> to write the changed data to disk before releasing the buffer.</strong></p>
+<p><strong>Notice that there is at most one cached buffer per disk sector</strong>, to ensure that readers see writes, and because the file system uses locks on buffers for synchronization. <strong><code>bget</code>  ensures this invariant by holding the <code>bcache.lock</code> continuously during the whole procedure of <code>bget</code></strong>.</p>
+<h4>LRU Buffer Cache</h4>
+<p><strong>The Buffer Cache is a doubly-linked list of buffers, (more precisely, a Circular linked list)</strong>,</p>
+<pre><code class="language-c">// kernel/bio.c
+struct {
+  struct spinlock lock;
+  struct buf buf[NBUF]; // 13
+
+  // Double Linked list of all buffers, through prev/next.
+  // Sorted by how recently the buffer was used.
+  // head.next is most recent, head.prev is least.
+  struct buf head;
+} bcache;
+</code></pre>
+<p><img src="Sources/brelse.png" alt="brelse"></p>
+<p>When the caller is done with a buffer, it must call <strong><code>brelse</code></strong>(<code>kernel/bio.c</code>) to release it, which will release the <code>sleep-lock</code> first in order to allow other kernel thread using that buffer, The <strong><code>brelse</code></strong> decreasing the <code>refcnt</code> of that buffer, if it reaches zero, <strong><code>brelse</code></strong> will <strong>move the buffer to the front of the linked list.</strong></p>
+<p><strong>Moving the buffer causes the list to be ordered by how recently the buffers were used</strong>: The first buffer in the list is the most recently used and the last is the least recently used.</p>
+<p>The two loops in <strong><code>bget</code></strong> take advantage of this:</p>
+<ul>
+<li>
+<p><strong>In the first loop, we want to check whether there is a valid cached block. If we check the most recently used buffers first</strong> (starting at <code>bcache.head</code> and following <code>next</code> pointers) <strong>will reduce the scan time, where there is a good locality of reference.</strong></p>
+</li>
+<li>
+<p>If the first failed, <strong>In the second loop, we want to pick a reusable block (<code>refcnt==0</code>). If we check the least recently used buffers first</strong> (starting at <code>bcache.head</code> and following <code>prev</code> pointers) <strong>will also reduce the scan time.</strong></p>
+</li>
+</ul>
+<pre><code class="language-c">  // See whether it is cached.
+  for(b = bcache.head.next; b != &amp;bcache.head; b = b-&gt;next){
+    if(b-&gt;dev == dev &amp;&amp; b-&gt;blockno == blockno){
+      b-&gt;refcnt++;
+      release(&amp;bcache.lock);
+      acquiresleep(&amp;b-&gt;lock);
+      return b;
+    }
+  }
+
+  // Not cached.
+  for(b = bcache.head.prev; b != &amp;bcache.head; b = b-&gt;prev){
+    if(b-&gt;refcnt == 0) { 
+      b-&gt;dev = dev;
+      b-&gt;blockno = blockno;
+      b-&gt;valid = 0;
+      b-&gt;refcnt = 1;
+      release(&amp;bcache.lock);
+      acquiresleep(&amp;b-&gt;lock);
+      return b;
+    }
+  }
+
+
+</code></pre>
+<h2>2. Crash Recovery</h2>
+<h2>3. Inode and Path</h2>
+<h2>4. System Calls</h2>
+	</section>
+	</div>
+    </div>
+
+<div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+this.page.url = "https://angold4.org/os/docs/lectures/6FS.html"
+this.page.identifier = "os/docs/lectures/6FS.html"
+
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+    var d = document, s = d.createElement('script');
+    s.src = 'https://angold.disqus.com/embed.js';
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+</div>
+<footer>
+   <div class="well well-lg" id="footer-well">
+      <div class="container">
+
+
+      <div class="row">
+         <div class="col-xs-6">
+            <a href="https://angold4.org" title="Angold-4 Organization" class="image-link"><img src="../../../images/logo.png" class="cmudb-logo" /></a>
+         </div>
+         <div class="col-xs-6">
+            <p class="pull-right"><i class="fa fa-arrow-up"></i> <a href="#">Back to top</a></p>
+        </div>
+      </div>
+   </div>
+   </div>
+</footer>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="../../../theme/js/bootstrap.min.js"></script>
+
+<!-- Enable responsive features in IE8 with Respond.js (https://github.com/scottjehl/Respond) -->
+<script src="../../../theme/js/respond.min.js"></script>
+
+<!-- Fix scrolling issues to internal HREFs that get positioned behind navbar -->
+<!-- http://stackoverflow.com/questions/10732690/offsetting-an-html-anchor-to-adjust-for-fixed-header -->
+<script src="../../../theme/js/href_scroll.js"></script>
+
+<!-- You know what this is and you know what he did to me... -->
+<script src="../../../theme/js/tim-kraska-betrayed-me.js"></script>
+</body>
+</html>
+
