@@ -25,6 +25,7 @@ and we are very luckey it turned out to be very fruitful.
 * **[3. Special Topic: Traps](docs/lectures/3Traps.html)**
 * **[4. Interrupts](docs/lectures/4Interrupts.html)**
 * **[5. Scheduler](docs/lectures/5Scheduler.html)**
+* **[6. File System](docs/lectures/6FS.html)**
 
 ## MIT 6.004 Lecture Notes
 * **[1. The Power of Abstraction](6004/lectures/1Abstraction.html)**
