@@ -129,8 +129,14 @@ struct buf {
 };
 </code></pre>
 <p>A buffer has two state fields associated with it:</p>
-<p><strong>The field <code>refcnt</code> indicates that how many process currently own that buffer.</strong> ( means doing some read/write on it )</p>
-<p><strong>The field <code>valid</code> indicates that the buffer contains a copy of the block.</strong>, the <strong><code>valid</code></strong> is set to 1 when someone read specific disk data into block by calling <strong><code>bread()</code></strong>, and will be set to 0 if its <strong><code>refcnt</code></strong> equal to 0 and being recycled.</p>
+<ul>
+<li>
+<p><strong><code>buf.refcnt</code> indicates that how many process currently own that buffer.</strong> ( means doing some read/write on it )</p>
+</li>
+<li>
+<p><strong><code>buf.valid</code> indicates that the buffer contains a copy of the block.</strong>, the <strong><code>valid</code></strong> is set to 1 when someone read specific disk data into block by calling <strong><code>bread()</code></strong>, and will be set to 0 if its <strong><code>refcnt</code></strong> equal to 0 and being recycled.</p>
+</li>
+</ul>
 <h4>Lock (Prevent Multiple Access)</h4>
 <p>As we said before, one of the main purpose of buffer cache is to prevent multiple kernel thread use that copy of disk block, and this mechanism is supported by the <strong>Lock</strong>.</p>
 <p><strong><code>bget</code></strong> (<code>kernel/bio.c</code>) <strong>returns a free buffer in the buffer cache</strong>, it scans the buffer list for a buffer with the given divice and sector numbers. If there is such buffer, <strong><code>bget</code></strong> acquires the <strong><code>sleep-lock</code></strong> for the buffer <strong>to prevent multiple access (different kernel thread)</strong> and then returns the locked buffer.
@@ -139,7 +145,7 @@ If there is no cached buffer for the given sector, bget must make one by reusing
 <p>Once <strong><code>bread</code></strong> has read the disk and returned the locked buffer to its caller, the caller has exclusive use of the buffer and can read or write the data bytes. <strong>If the caller does modify the buffer, it must call <code>bwrite</code> to write the changed data to disk before releasing the buffer.</strong></p>
 <p><strong>Notice that there is at most one cached buffer per disk sector</strong>, to ensure that readers see writes, and because the file system uses locks on buffers for synchronization. <strong><code>bget</code>  ensures this invariant by holding the <code>bcache.lock</code> continuously during the whole procedure of <code>bget</code></strong>.</p>
 <h4>LRU Buffer Cache</h4>
-<p><strong>The Buffer Cache is a doubly-linked list of buffers, (more precisely, a Circular linked list)</strong>,</p>
+<p><strong>The Buffer Cache is a doubly-linked list of buffers (more precisely, a circular linked list)</strong>.</p>
 <pre><code class="language-c">// kernel/bio.c
 struct {
   struct spinlock lock;
@@ -186,9 +192,108 @@ struct {
     }
   }
 
-
 </code></pre>
 <h2>2. Crash Recovery</h2>
+<h3>i. Problem: Inconsistent State on Disk</h3>
+<p>Imagine you are running <code>$make</code> interacting with the file system, and somewhere doing that thing, a power failure happends(run out of battery). After that, you plugin and reboot your machine, when you run <code>$ls</code>, you hope your file system is in the good state. <strong>A tricky case is that many file system operations have multi-step operations, if we crash just in the wrong place in these multi-step operations, the file system actually may end up being on this inconsistent for that short
+period of time, and if the power failure just happend there, something bad could happends.</strong></p>
+<h3>ii. Solution: Logging</h3>
+<p>Xv6 solves the problem of crashes during file-system operations with a simple form of <strong>logging</strong>, which is originally coming out of the database world, and a lot of file systems using logging these days, one of the reason it is popular because it ia a very principled solution.</p>
+<p><strong>An xv6 system call does not directly write the on-disk file system data structures. Instead, it places a description of all the disk writes it wishes to make in a log on the disk, once the system call has logged all of its writes, it writes a special commit record to the disk indicating that the log contains a complete operation.</strong> At that point the system the system call copies the writes to the on-disk file system data structures and finally erase the log on disk.</p>
+<h3>iii. Log Design</h3>
+<pre><code class="language-c">// kernel/log.c
+struct logheader {
+  int n;
+  int block[LOGSIZE];
+};
+
+struct log {
+  struct spinlock lock;
+  int start;
+  int size;
+  int outstanding; // how many FS sys calls are executing.
+  int committing;  // in commit(), please wait.
+  int dev;
+  struct logheader lh;
+};
+</code></pre>
+<p>The two main data structures of log is <strong><code>logheader</code></strong> and <strong><code>log</code></strong>, all of them are in <code>kernel/log.c</code>.</p>
+<ul>
+<li><strong><code>log.start</code> indicate the start <code>blockno</code> inside disk,</strong> which will be used when writing log to the disk.</li>
+<li><strong><code>log.outstanding</code> counts the number of system calls that have reserved log space.</strong>
+<ul>
+<li>Incrementing <code>log.outstanding</code> both reserves space and prevents a commit from occuring during this system call.</li>
+<li>Decrementing <code>log.outstanding</code> when a file system call finish its write/read operations and ready to be commit.</li>
+</ul>
+</li>
+<li><strong><code>log.lh.n</code> indicate the current log size of file system.</strong> If it is greater than zero, we know that there are some blocks in the log that need to be installed to the disk.</li>
+<li><strong><code>log.lh.block[i]</code> stores the <code>blockno</code> of the <code>start+i</code> log in the disk,</strong> which we will discuss later.</li>
+</ul>
+<p>The log resides at a known fixed location, specified in the superblock. <strong>It consists of a header block followed by a sequence of updated block copies</strong> (&quot;logged blocks&quot;). The header block contains an array of sector numbers (<code>log.lh.block</code>), one for each of the logged blocks, and the count of log blocks (<code>log.lh.n</code>). The count in the header block on disk is either zero, indicating that there is no transaction in the log, or non-zero, indicating that the log contains a complete committed transaction with the indicated number of logged blocks.</p>
+<p>Here is a High-level picture of logging in xv6.</p>
+<p><img src="Sources/dflog.png" alt="dflog"></p>
+<h3>iv. Log Implementation</h3>
+<p>There are four phases in logging. Almost all related code are in <code>kernel/log.c</code>:</p>
+<p><strong>Each system call's code indicates the start and end of the sequence of writes that must be atomic with respect to crashes</strong>. The <strong><code>begin_op()</code></strong> and <strong><code>end_op()</code></strong> will guarentee that all writes to the disk blocks between this two functions calls will be atomic.</p>
+<p>A typical use of the log in a system call looks like this:</p>
+<pre><code class="language-c">begin_op();
+...
+bp = bread(...);
+bp-&gt;data[...] = ...;
+log_write(bp);
+...
+end_op();
+
+</code></pre>
+<p>The <strong><code>begin_op()</code></strong> waits until the logging system is not currently commiting (<code>log.commiting</code>) or there is enough space in the log (<code>LOGSIZE</code>). <strong>It record the current logging by increasing the <code>log.outstanding</code> value.</strong></p>
+<h4>1. Log writes</h4>
+<p>There are three phases in <strong>log writes</strong>:</p>
+<h5>1). <code>log_write()</code></h5>
+<p>Every time the syscall calls <strong><code>bwrite</code></strong> to write some data into buffer cache, after that, it will call <strong><code>log_write</code></strong> in order to record that change. The <strong><code>log_write</code></strong> will not write anything to disk. <strong>It just record the <code>blockno</code> that has been written to disk in <code>log.block[i]</code>, which will reserve a slot in the log in disk.</strong>, and pins the buffer in the buffer cache to prevent the bcache from evicting it.</p>
+<blockquote>
+<p><strong>Log Absorption:</strong> The <code>log_write</code> notices when a block is written multiple times during a single transaction, and allocates that block the same slot in the log. By absorbing several disk writes into one, <strong>the file system can save log space and achieve better performance because only one copy of disk must be written to disk.</strong></p>
+</blockquote>
+<h5>2). <code>end_op()</code></h5>
+<p>Like I mentioned before, after a system call finishes all writes to buffer cache by calling <strong><code>bwrite</code></strong>, finally, it will call <strong><code>end_op</code></strong> to write (commit) it to disk.</p>
+<p><strong><code>end_op()</code></strong> first decrements the count of outstanding system calls (<code>log.outstanding</code>). If the count is now zero, which means all current system calls finish their writes to disk, <strong>it commits the current transaction by calling <code>commit()</code></strong>.</p>
+<blockquote>
+<p><strong>Group Commit:</strong>, To allow concurrent execution of file-system operations by different processes, the logging system can accumulate the writes of multiple system calls into one transaction. <strong>Thus a single commit may involve the writes of multiple complete system calls.</strong> Group commit reduces the number of disk operations because it amortizes the fixed cost of a commit over multiple operations.</p>
+</blockquote>
+<h5>3). <code>write_log()</code></h5>
+<p>If the current log number is greater than zero (<code>log.lh.n &gt; 0</code>), The first thing <strong><code>commit()</code></strong> will do is <strong>copy the transaction buffers into their own log block in the disk</strong> by calling <strong><code>write_log()</code></strong>.</p>
+<p><strong>The <code>write_log()</code> copies each block modified in the transaction from the buffer cache to its slot in the log on disk.</strong></p>
+<h4>2. Commit Operation</h4>
+<p>The file system finish its commit by calling <strong><code>write_head()</code></strong> in order to <strong>writes the header block (<code>log.lh</code>) from the buffer cache to its slot in the log on disk.</strong> At the point the file system do commit, all the writes are in the log.</p>
+<p>This step is pretty simple, but also quite important. <strong>Since imagine that if we crash at the middle of the write-to-disk commit operation. The header in the disk won't record the correct information of the file system.</strong></p>
+<p>The file system solving this problem by writing this special log header <strong><code>log.hl</code></strong> into disk, <strong>which is a copy of a single sector on the disk</strong>, And one standard assumption that file system make is that <strong>a single block write is an atomic operation</strong>, meaning that if you write that, the whole sector will be written or none of the sector will be written. (the sector will never be written partially).</p>
+<h4>3. Install Transaction</h4>
+<p>After the commit, all logs are stored on the disk (the log header, log sectors). We can now do the actual <strong>installation</strong>, which means write the actual transaction data into its sectors on disk.</p>
+<p><strong><code>install_trans()</code> reads each block from the log in disk and writes it to the proper place in the file system.</strong></p>
+<h4>4. Clean Log</h4>
+<p>After all transactions have been written to the disk, we clear the log number stored in the disk. (<strong><code>log.lh.n = 0</code></strong>).</p>
+<p><img src="Sources/logging.png" alt="logging"></p>
+<h3>v. Crash Recovery</h3>
+<p><strong>This scheme is good because it actually ensures that no matter where a crash happends, we either install all the blocks of the writes or we install none of them. We'll never end up in a situation where we installed some of the writes but not all of them.</strong></p>
+<p>The function <strong><code>recover_from_log</code></strong> is responsible to recover the file system in case there are any crash happends.</p>
+<pre><code class="language-c">static void
+recover_from_log(void)
+{
+  read_head();
+  install_trans(1); // if committed, copy from log to disk
+  log.lh.n = 0;
+  write_head(); // clear the log
+}
+</code></pre>
+<ul>
+<li>If a crash happends during step 1:
+<ul>
+<li>If in <strong><code>log_write</code></strong>, since we are not writing anything on disk at that time, all in memory. after the power off, all data in mem are gone, the file system will see nothing and that transaction will be treat as never happends before.</li>
+<li>If in <strong><code>write_log</code></strong>, since we haven't write the <strong>log header</strong> into disk by calling <strong><code>write_head</code></strong> (we do not commit at that specific time).</li>
+</ul>
+</li>
+<li>If a crash happends between step 1 and 2, <strong>The <code>recover_from_log</code> will see nothing in log header in the disk (<code>lh.n = 0</code>) and will never write any data into disk.</strong></li>
+<li>If a crash happends between step 2 and 3. <strong>The <code>recover_from_log</code> will see the header block that indicates there are some data in log blocks (written by <code>write_log()</code>) and haven't be written into its proper location on disk. After that, the <code>install_trans</code> will continue install the stopped transactions into disk.</strong></li>
+</ul>
 <h2>3. Inode and Path</h2>
 <h2>4. System Calls</h2>
 	</section>
