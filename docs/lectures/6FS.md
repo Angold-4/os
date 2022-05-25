@@ -205,15 +205,94 @@ The log resides at a known fixed location, specified in the superblock. **It con
 
 Here is a High-level picture of logging in xv6.
 
-![logging](Sources/logging.png)
 
+![dflog](Sources/dflog.png)
 
 ### iv. Log Implementation
 
-All logging code are in **`kernel/log.c`**, the following figure shows the detailed structure and data flow of logging in xv6.
+There are four phases in logging. Almost all related code are in `kernel/log.c`:
+
+**Each system call's code indicates the start and end of the sequence of writes that must be atomic with respect to crashes**. The **`begin_op()`** and **`end_op()`** will guarentee that all writes to the disk blocks between this two functions calls will be atomic.
+
+A typical use of the log in a system call looks like this:
+
+```c
+begin_op();
+...
+bp = bread(...);
+bp->data[...] = ...;
+log_write(bp);
+...
+end_op();
+
+```
+
+The **`begin_op()`** waits until the logging system is not currently commiting (`log.commiting`) or there is enough space in the log (`LOGSIZE`). **It record the current logging by increasing the `log.outstanding` value.**
+
+#### 1. Log writes
+
+There are three phases in **log writes**: 
+
+##### 1). `log_write()`
+Every time the syscall calls **`bwrite`** to write some data into buffer cache, after that, it will call **`log_write`** in order to record that change. The **`log_write`** will not write anything to disk. **It just record the `blockno` that has been written to disk in `log.block[i]`, which will reserve a slot in the log in disk.**, and pins the buffer in the buffer cache to prevent the bcache from evicting it.
+
+> **Log Absorption:** The `log_write` notices when a block is written multiple times during a single transaction, and allocates that block the same slot in the log. By absorbing several disk writes into one, **the file system can save log space and achieve better performance because only one copy of disk must be written to disk.**
+
+##### 2). `end_op()`
+Like I mentioned before, after a system call finishes all writes to buffer cache by calling **`bwrite`**, finally, it will call **`end_op`** to write (commit) it to disk.
+
+**`end_op()`** first decrements the count of outstanding system calls (`log.outstanding`). If the count is now zero, which means all current system calls finish their writes to disk, **it commits the current transaction by calling `commit()`**. 
+
+> **Group Commit:**, To allow concurrent execution of file-system operations by different processes, the logging system can accumulate the writes of multiple system calls into one transaction. **Thus a single commit may involve the writes of multiple complete system calls.** Group commit reduces the number of disk operations because it amortizes the fixed cost of a commit over multiple operations.
 
 
-![logdf](Sources/logdf.png)
+##### 3). `write_log()`
+If the current log number is greater than zero (`log.lh.n > 0`), The first thing **`commit()`** will do is **copy the transaction buffers into their own log block in the disk** by calling **`write_log()`**.
+
+**The `write_log()` copies each block modified in the transaction from the buffer cache to its slot in the log on disk.**
+
+
+#### 2. Commit Operation
+The file system finish its commit by calling **`write_head()`** in order to **writes the header block (`log.lh`) from the buffer cache to its slot in the log on disk.** At the point the file system do commit, all the writes are in the log.
+
+This step is pretty simple, but also quite important. **Since imagine that if we crash at the middle of the write-to-disk commit operation. The header in the disk won't record the correct information of the file system.**
+
+
+The file system solving this problem by writing this special log header **`log.hl`** into disk, **which is a copy of a single sector on the disk**, And one standard assumption that file system make is that **a single block write is an atomic operation**, meaning that if you write that, the whole sector will be written or none of the sector will be written. (the sector will never be written partially).
+
+#### 3. Install Transaction
+After the commit, all logs are stored on the disk (the log header, log sectors). We can now do the actual **installation**, which means write the actual transaction data into its sectors on disk.
+
+**`install_trans()` reads each block from the log in disk and writes it to the proper place in the file system.**
+
+
+#### 4. Clean Log
+After all transactions have been written to the disk, we clear the log number stored in the disk. (**`log.lh.n = 0`**).
+
+![logging](Sources/logging.png)
+
+### v. Crash Recovery
+**This scheme is good because it actually ensures that no matter where a crash happends, we either install all the blocks of the writes or we install none of them. We'll never end up in a situation where we installed some of the writes but not all of them.**
+
+The function **`recover_from_log`** is responsible to recover the file system in case there are any crash happends.
+```c
+static void
+recover_from_log(void)
+{
+  read_head();
+  install_trans(1); // if committed, copy from log to disk
+  log.lh.n = 0;
+  write_head(); // clear the log
+}
+```
+
+* If a crash happends during step 1:
+    * If in **`log_write`**, since we are not writing anything on disk at that time, all in memory. after the power off, all data in mem are gone, the file system will see nothing and that transaction will be treat as never happends before.
+    * If in **`write_log`**, since we haven't write the **log header** into disk by calling **`write_head`** (we do not commit at that specific time).
+* If a crash happends between step 1 and 2, **The `recover_from_log` will see nothing in log header in the disk (`lh.n = 0`) and will never write any data into disk.**
+* If a crash happends between step 2 and 3. **The `recover_from_log` will see the header block that indicates there are some data in log blocks (written by `write_log()`) and haven't be written into its proper location on disk. After that, the `install_trans` will continue install the stopped transactions into disk.**
+
+
 
 
 
