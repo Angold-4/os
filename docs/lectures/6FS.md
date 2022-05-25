@@ -1,8 +1,11 @@
-# 6. File System 
+# 6. File System (i)
 
 ##### 05/20/2022 By Angold Wang
 
-**File Systems** is one of the most special place in Operating System, it organize the stored data in hard disk, and maintain the **persistence** so that after a reboot, the data is still available.
+
+
+**File Systems** is one of the most special place in Operating System. 
+it organize the stored data in hard disk, and maintain the **persistence** so that after a reboot, the data is still available.
 
 The xv6 file system implementation is organized in **seven** layers, shown in the following figure. 
 
@@ -31,7 +34,7 @@ systems)
 
 In the **Bottom-up** View, when you start at the lowest level, the complexity is usually relatively small (code size, less routines...), and one more important thing is that **the higher level usually depends on the lower level underneath, which means after you understand these low-level stuff, the upper layer code seems highly structured.**  (lower layers ease the design of higher ones)
 
-In this article, we will study the xv6 File System in both **Top-down** and **Bottom-up** view in order to have a fully understanding of File System, and answer questions like: **"how does file system works"** and **"why it looks like that (the design choice)"**. I believe the File System is a brilliant example to learn the "Accumulated Complexity" in System Engineering.
+In the following two articles (fs(i) & fs(2)), we will study the xv6 File System in both **Top-down** and **Bottom-up** view in order to have a fully understanding of File System, and answer questions like: **"how does file system works"** and **"why it looks like that (the design choice)"**. I believe the File System is a brilliant example to learn the "Accumulated Complexity" in System Engineering.
 
 
 ## 1. Buffer Cache
@@ -43,7 +46,7 @@ In this article, we will study the xv6 File System in both **Top-down** and **Bo
 
 Each block on Disk has its own unique `blockno`, indicating the offset of specific data in disk. (sector 0 is the first 512 bytes, sector 1 is the next, and so on...)
 
-The file system must have a plan for where it stores specific data (i.e., indes, data) on the disk, to do so, when xv6 boots, the `mkfs` (`kernel/mkfs.c`) will build the entile file system, you should see the following output from `mkfs` in the make output:
+The file system must have a plan for where it stores specific data (i.e., indes, data) on disk, to do so, when xv6 boots, the `mkfs` (`kernel/mkfs.c`) will build the entile file system, you should see the following output from `mkfs` in the make output:
 
 ```
 nmeta 70 (boot, super, log blocks 30 inode blocks 13, bitmap blocks 25) blocks 199930 total 200000
@@ -127,7 +130,9 @@ struct {
 
 When the caller is done with a buffer, it must call **`brelse`**(`kernel/bio.c`) to release it, which will release the `sleep-lock` first in order to allow other kernel thread using that buffer, The **`brelse`** decreasing the `refcnt` of that buffer, if it reaches zero, **`brelse`** will **move the buffer to the front of the linked list.**
 
-**Moving the buffer causes the list to be ordered by how recently the buffers were used**: The first buffer in the list is the most recently used and the last is the least recently used.
+**Moving the buffer causes the list to be ordered by how recently the buffers were used**: 
+
+The first buffer in the list is the most recently used and the last is the least recently used.
 
 The two loops in **`bget`** take advantage of this:
 * **In the first loop, we want to check whether there is a valid cached block. If we check the most recently used buffers first** (starting at `bcache.head` and following `next` pointers) **will reduce the scan time, where there is a good locality of reference.**
@@ -171,7 +176,7 @@ period of time, and if the power failure just happend there, something bad could
 
 Xv6 solves the problem of crashes during file-system operations with a simple form of **logging**, which is originally coming out of the database world, and a lot of file systems using logging these days, one of the reason it is popular because it ia a very principled solution.
 
-**An xv6 system call does not directly write the on-disk file system data structures. Instead, it places a description of all the disk writes it wishes to make in a log on the disk, once the system call has logged all of its writes, it writes a special commit record to the disk indicating that the log contains a complete operation.** At that point the system the system call copies the writes to the on-disk file system data structures and finally erase the log on disk.
+**An xv6 system call does not directly write the on-disk file system data structures. Instead, it places a description of all the disk writes it wishes to make in a log on disk, once the system call has logged all of its writes, it writes a special commit record to the disk indicating that the log contains a complete operation.** At that point the system the system call copies the writes to the on-disk file system data structures and finally erase the log on disk.
 
 ### iii. Log Design
 ```c
@@ -198,7 +203,7 @@ The two main data structures of log is **`logheader`** and **`log`**, all of the
     * Incrementing `log.outstanding` both reserves space and prevents a commit from occuring during this system call.
     * Decrementing `log.outstanding` when a file system call finish its write/read operations and ready to be commit.
 * **`log.lh.n` indicate the current log size of file system.** If it is greater than zero, we know that there are some blocks in the log that need to be installed to the disk.
-* **`log.lh.block[i]` stores the `blockno` of the `start+i` log in the disk,** which we will discuss later.
+* **`log.lh.block[i]` stores the `blockno` of the `start+i` log on disk,** which will be discussed later.
 
 
 The log resides at a known fixed location, specified in the superblock. **It consists of a header block followed by a sequence of updated block copies** ("logged blocks"). The header block contains an array of sector numbers (`log.lh.block`), one for each of the logged blocks, and the count of log blocks (`log.lh.n`). The count in the header block on disk is either zero, indicating that there is no transaction in the log, or non-zero, indicating that the log contains a complete committed transaction with the indicated number of logged blocks.
@@ -224,7 +229,6 @@ bp->data[...] = ...;
 log_write(bp);
 ...
 end_op();
-
 ```
 
 The **`begin_op()`** waits until the logging system is not currently commiting (`log.commiting`) or there is enough space in the log (`LOGSIZE`). **It record the current logging by increasing the `log.outstanding` value.**
@@ -247,7 +251,7 @@ Like I mentioned before, after a system call finishes all writes to buffer cache
 
 
 ##### 3). `write_log()`
-If the current log number is greater than zero (`log.lh.n > 0`), The first thing **`commit()`** will do is **copy the transaction buffers into their own log block in the disk** by calling **`write_log()`**.
+If the current log number is greater than zero (`log.lh.n > 0`), The first thing **`commit()`** will do is **copy the transaction buffers into their own log block on disk** by calling **`write_log()`**.
 
 **The `write_log()` copies each block modified in the transaction from the buffer cache to its slot in the log on disk.**
 
@@ -255,19 +259,19 @@ If the current log number is greater than zero (`log.lh.n > 0`), The first thing
 #### 2. Commit Operation
 The file system finish its commit by calling **`write_head()`** in order to **writes the header block (`log.lh`) from the buffer cache to its slot in the log on disk.** At the point the file system do commit, all the writes are in the log.
 
-This step is pretty simple, but also quite important. **Since imagine that if we crash at the middle of the write-to-disk commit operation. The header in the disk won't record the correct information of the file system.**
+This step is pretty simple, but also quite important. **Since imagine that if we crash at the middle of the write-to-disk commit operation. The header on disk won't record the correct information of the file system.**
 
 
-The file system solving this problem by writing this special log header **`log.hl`** into disk, **which is a copy of a single sector on the disk**, And one standard assumption that file system make is that **a single block write is an atomic operation**, meaning that if you write that, the whole sector will be written or none of the sector will be written. (the sector will never be written partially).
+The file system solving this problem by writing this special log header **`log.hl`** into disk, **which is a copy of a single sector on disk**, And one standard assumption that file system make is that **a single block write is an atomic operation**, meaning that if you write that, the whole sector will be written or none of the sector will be written. (the sector will never be written partially).
 
 #### 3. Install Transaction
-After the commit, all logs are stored on the disk (the log header, log sectors). We can now do the actual **installation**, which means write the actual transaction data into its sectors on disk.
+After the commit, all logs are stored on disk (the log header, log sectors). We can now do the actual **installation**, which means write the actual transaction data into its sectors on disk.
 
 **`install_trans()` reads each block from the log in disk and writes it to the proper place in the file system.**
 
 
 #### 4. Clean Log
-After all transactions have been written to the disk, we clear the log number stored in the disk. (**`log.lh.n = 0`**).
+After all transactions have been written to the disk, we clear the log number stored on disk. (**`log.lh.n = 0`**).
 
 ![logging](Sources/logging.png)
 
@@ -289,29 +293,5 @@ recover_from_log(void)
 * If a crash happends during step 1:
     * If in **`log_write`**, since we are not writing anything on disk at that time, all in memory. after the power off, all data in mem are gone, the file system will see nothing and that transaction will be treat as never happends before.
     * If in **`write_log`**, since we haven't write the **log header** into disk by calling **`write_head`** (we do not commit at that specific time).
-* If a crash happends between step 1 and 2, **The `recover_from_log` will see nothing in log header in the disk (`lh.n = 0`) and will never write any data into disk.**
+* If a crash happends between step 1 and 2, **The `recover_from_log` will see nothing in log header on disk (`lh.n = 0`) and will never write any data into disk.**
 * If a crash happends between step 2 and 3. **The `recover_from_log` will see the header block that indicates there are some data in log blocks (written by `write_log()`) and haven't be written into its proper location on disk. After that, the `install_trans` will continue install the stopped transactions into disk.**
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-## 3. Inode and Path
-
-## 4. System Calls

@@ -67,43 +67,62 @@
 
 
 
-<h1>os</h1>
-<h2>To young researchers around the world</h2>
-<p><strong><a href="https://www.youtube.com/watch?v=IjvjqAVkvYo">2011 (27th) Japan Prize; Dr. Ritchie / Dr. Thompson</a></strong></p>
-<h3><strong>Dennis M. Ritchie</strong></h3>
-<blockquote>
-<p>Since its birth, Unix has been widely used by governments and civilians for over 40 years.
-I believe it became a successful unique system because it was developed by a small team for their own use,
-with a very simple design.
-I feel the long running success of UNIX can be credited to the research in which we had total freedom to research whatever we liked.</p>
-</blockquote>
-<h3><strong>Ken L. Thompson</strong></h3>
-<blockquote>
-<p>&quot;Research&quot; and &quot;development&quot; are two different things.
-&quot;Development&quot; has clear goals but &quot;research&quot; is goalless, because it's the act of discovering something new.
-If you are a researcher, you need to continue enjoying your research at hand.
-Other than Unix,
-I've had many research topics like voice recognition, language, searching, security, games, and whatever I found intersting.
-Unix resulted from a research on new thing we were merely interested in,
-and we are very luckey it turned out to be very fruitful.</p>
-</blockquote>
-<h2>MIT 6.S081 Lecture Notes</h2>
+<h1>File System (ii)</h1>
+<h5>05/25/2022 By Angold Wang</h5>
+<p><img src="Sources/fslayer.png" alt="fslayer"></p>
+<h2>3. Inode and Path</h2>
+<p><strong>Up until log, these lower layers are all interacting with disk blocks (sectors) with a specific <code>blockno</code>.</strong> But in the file systems that we are using in our daily life, seems that we are manipulating data on specific <strong>files</strong>, and finding them using <strong>path names</strong>.</p>
+<p>The upper layers (layer 4, 5, 6, 7) is trying to ease the user by providing <strong>path, file, directory, etc,</strong> which we are familar with.</p>
+<h3>i. Block Allocator</h3>
+<p>File and directory is stored in <strong>disk blocks</strong>, which must be allocated from a free pool. Xv6's block allocator maintains a <strong>bitmap</strong> on disk, <strong>with one bit per block.</strong> A zero bit indicates that the corresponding block is free; a one bit indicates that it is in use.</p>
+<p>The main API function that the block allocator provided is <strong><code>balloc()</code></strong> which allocates a new disk block and return its <strong><code>blockno</code></strong>. The loop inside <code>balloc</code> is split into two pieces:</p>
 <ul>
-<li><strong><a href="docs/lectures/1Introduction.html">1. Introduction</a></strong></li>
-<li><strong><a href="docs/lectures/2VirtualMemory.html">2. Virtual Memory</a></strong></li>
-<li><strong><a href="docs/lectures/3Traps.html">3. Special Topic: Traps</a></strong></li>
-<li><strong><a href="docs/lectures/4Interrupts.html">4. Interrupts</a></strong></li>
-<li><strong><a href="docs/lectures/5Scheduler.html">5. Scheduler</a></strong></li>
-<li><strong><a href="docs/lectures/6FS.html">6. File System - Part i</a></strong></li>
-<li><strong><a href="docs/lectures/7FSii.html">7. File System - Part ii</a></strong></li>
+<li>The outer loop reads each block of bitmap bits (on disk).</li>
+<li><strong>The inner loop checks all Bits-Per-Block(BPB) bits in a single bitmap block.</strong></li>
 </ul>
-<h2>MIT 6.004 Lecture Notes</h2>
-<ul>
-<li><strong><a href="6004/lectures/1Abstraction.html">1. The Power of Abstraction</a></strong></li>
-</ul>
+<p>The loop looks for a block whose bitmap bit is zero, indicating that it is free. If <strong><code>balloc</code></strong> finds such a block, it updates the block and writes it to the disk (<code>log_write</code>) then return the <code>blockno</code> of that block.</p>
+<pre><code class="language-c">// kernel/fs.c:
+  for(b = 0; b &lt; sb.size; b += BPB){
+    // for each bitmap block
+    bp = bread(dev, BBLOCK(b, sb));
+    for(bi = 0; bi &lt; BPB &amp;&amp; b + bi &lt; sb.size; bi++){
+      m = 1 &lt;&lt; (bi % 8);
+      if((bp-&gt;data[bi/8] &amp; m) == 0){  // Is block free?
+        bp-&gt;data[bi/8] |= m;  // Mark block in use.
+        log_write(bp); // write to the log buffer (bitmap -&gt; disk)
+        brelse(bp);
+        bzero(dev, b + bi);
+        return b + bi;
+      }
+    }
+  }
+</code></pre>
+<h3>ii. Inode</h3>
+<h3>iii. Directory</h3>
+<h3>iv. Path Name</h3>
+<h3>v. File Descriptor</h3>
+<h2>4. System Calls</h2>
 	</section>
 	</div>
     </div>
+
+<div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+this.page.url = "https://angold4.org/os/docs/lectures/7FSii.html"
+this.page.identifier = "os/docs/lectures/7FSii.html"
+
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+    var d = document, s = d.createElement('script');
+    s.src = 'https://angold.disqus.com/embed.js';
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
 </div>
 <footer>
    <div class="well well-lg" id="footer-well">
