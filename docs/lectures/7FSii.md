@@ -72,11 +72,10 @@ log write block: 33  // by iupdate: update inode
 
 #### 1. Inode Design
 
-The term *inode* stands for two things in Xv6:
+The term *inode* stands for two things in xv6:
 * **On-disk datastructure** containing a file's size and list of data block numbers
 * **In-memory copy of this disk inode in the inode table** contains extra informantion needed within the kernel.
 
-The on-disk inodes are packed into a contiguous area of disk called the **inode blocks**. Just like block, every inode is in the same size
 
 ##### Disk Inode `dinode`
 ```c
@@ -92,6 +91,17 @@ struct dinode {
 };
 
 ```
+The on-disk inodes are packed into a contiguous area of disk called the **inode blocks**. Just like block, every inode is in the same size, so it is easy, given a number n, to find the nth node on the disk. And this number n, called the inode number of i-number (`inum`).
+
+This on-disk inode structure, **`dinode`**, contains a size and an array of block numbers. (the green part of the following figure). The inode data is found in block listed in the **`dinode`**'s' **`addr`** array, and every elements of this array is a **`blockno`** referring to a block in the disk.
+
+* The first `NDIRECT` blocks of data are listed in the first `NDIRECT` entries in the array, called **direct blocks**.
+    * size of the direct blocks: **`12`** `(NDIRECT)` `*` **`1024`** `(BSIZE) = ` **`12KB`**.   
+* The next `NINDIRECT` blocks of data are listed in the last entry in the **`addrs`** array are address of the **indirect blocks.**
+    * size of the indirect blocks: **`1024 / 4`** `(BSIZE / sizeof(uint) *` **`1024`** `(BSIZE) = ` **`256KB`**.
+* **So the Maximum size of a file in xv6 is `12KB + 256KB = 268KB`**.
+
+![inode](Sources/inode.png)
 
 ##### In-memory Inode `inode`
 ```c
@@ -114,6 +124,11 @@ struct inode {
 };
 ```
 
+The **`inode`** is the in-memory copy of the **`dinode`** on disk with some extra attributes for **File Systems** to manipulate them:
+* **The `inum` record the inode number of that inode in order to read/write them to/from disk.**
+* **`ref` field counts the number of C pointers referring this in-memory inode.**
+
+
 ##### Inode Table `itable`
 ```c
 // kernel/fs.c
@@ -123,10 +138,40 @@ struct {
 } itable;
 ```
 
+**An inode describes a single file or directory, the kernel keeps a table in-use inodes in memory called `itable` to provide a place for synchronization access.** (also cache frequently-used inodes) The kernel stores an inode in memory only if **there are C pointers referring to that inode. (`open`)**.
 
-![inode](Sources/inode.png)
+
+#### 2. Inode Implementation
+There are several api functions in the Inode layer, although xv6 uses very straightforward but non-efficient algorithms in the most part of its implementation, it is still quite hard to understand all of them with a simple description of each of them.
+
+The following figure shows the all procedures related to inode when a user process make a **write** system call.
+
+![syswrite](Sources/syswrite.png)
+
+There are many functions related to the inode, all of them are in **`kernel/fs.c`**. If you are trying to understand the actual implementation, I highly recommend you to read the source code, just like I said before, it is pretty straightforward. There are three functions worth mentioning:**`bmap`**,  **`ilock`** and **`iput`**.
+
+##### `bmap(ip, f->off/BSIZE)`: returns the blockno of specific offset of inode `ip`.
+The function **`bmap`** manage the complexity of blocks representation in **`inode.addr[]`** so that higher-level routines, such as **`readi`** and **`writei`**, do not need to deal with this complexity. **`bmap(ip, bn)`** returns the disk block number of the **`bn`**'th data block for the inode **`ip`**. If **`ip`** does not have such a block yet, **`bmap`** allocates one.
+
+> **Bigfile**: Note that in the current xv6 implementation, the files are limited to *268KB*, this limit comes from the fact that an xv6 inode contains 12 "direct" block number and one "singly-indirect" block number, which refers to a block that holds up to 256 more block numbers. If we want to increase the maximum size of an xv6 file, like adding a "double-indirect" block in each inode, containing 256 addresses of singly-indirect blocks, each of which can contain up to 256 addresses of
+data blocks. The result will be consist of up to (`256*256 + 11 + 256`) **65803** blocks, We can do this by changing this **`bmap`** function to make it support **double indirection**, you can see a implementation here: **[bigfile](https://github.com/Angold-4/6s081labs/pull/6/commits/921a16e0e8276473e5b9f02c85cc541df2ccca0d)**.
 
 
+##### `ilock(ip)`: lock the given inode and reads the inode from disk.
+Typically, the **lock** is used to prevent some harzards come from synchronization access of shared data, which make sure that at any time, only one process that holding the lock can change that the protected data.
+
+But too much locking especially locking for too long may also cause many problems such as **deadlock.** In the **1. buffer cache** part, I said the way to prevent multiple kernel thread use that copy of disk block is everytime when **`bwrite`** wants to write something to the disk, it should always call **`bread`**, and **`bread`** will call **`bget`** to return a locked buffer in the buffer cache, after writes finished, it will call **`brelse`** to release that buffer lock.
+
+And the situation is a little bit different here: If you want to write something to a file (i.e., calling **`file_write`**), you always need to first open that file (`sys_open`) and you cannot hold the lock when open it because you don't know when you gonna write something to it. So when you call **`iget`** in order to get a entry in the global inode table (**`itable`**), you cannot hold the lock of that inode because you don't know when to release it. If you keep holding it, it may causes **deadlock** and **races** when you do some operations like directory lookup, etc.
+
+The xv6 prevent this from happening by seperating the **`ilock`** and **`iget`** so that the system call can get **a long-term reference to an inode (as for an open file), and only lock it for a short period when needed (e.g., in `read()`)**. And **`iget`** only increments the `ip->ref` so that the inode stays in the table and pointers to it remain valid.
+
+![ilock](Sources/ilock.png)
+
+Worth mentioning that another thing **`ilock`** will do is read the inode data from the disk **`dinode`**, that is because we do not keep holding that **`ip.lock`** before and this inode may have changed by another process and we have to get those changes from disk.
+
+##### `iput(ip)`: drop a reference to an in-memory inode and free it (also its content) in disk if ref goes 0.
+**`iput`** releases a C pointer to an inode and that the inode has no links to it **(i.e., no directory has link to it)**, if this is the last reference, then the inode and its data blocks must be freed. **`iput`** calls **`itrunc`** to truncatre the file to zero bytes, freeing the data blocks; sets the inode type to 0 (unallocated); and writes the inode to disk.
 
 ### iii. Directory
 
