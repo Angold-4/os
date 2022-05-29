@@ -325,35 +325,55 @@ The file descriptor layer provides the **top-level** API functions to allocate a
 
 ## 4. System Calls
 
+All files related to File System's syscall is in **`kernel/sysfile.c`**. And they just the very-top level layer which uses the lower-layer services.
+
 With the functions that the lower layers provide the implementation of most system calls is trivial. Like what I mentioned in the intro part of **[6. File Systems (i)](https://angold4.org/os/docs/lectures/6FS.html), this bottom-up view will help you to understand the design purpose of each layers.**
 
-Now lets 
+Now lets take a **top-down** view of the whole file system by walking through the actual implementation of System calls, just to make this all concrete. I am using the same example here - the **`echo "hi"`** example we've seen in the **inode** part of this article. But this time, we track the `bwrite()` instead of the `log_write()`,  which shows all the writes to disk in the buffer cache. And we can see the trace of what actual disk writes are.
 
+
+This trace is way longer than the trace that we've looked at last time:
 
 ```
 $ echo "hi" > x
 
-bwrite: 3
-bwrite: 4
-bwrite: 5
-bwrite: 2
-bwrite: 33
-bwrite: 70
-bwrite: 32
-bwrite: 2
-bwrite: 3
-bwrite: 4
-bwrite: 5
-bwrite: 2
-bwrite: 45
-bwrite: 628
-bwrite: 33
-bwrite: 2
-bwrite: 3
-bwrite: 4
-bwrite: 2
-bwrite: 628
-bwrite: 33
-bwrite: 2
+// create the file
+bwrite: 3    // write_log: new allocated inode block 33 -> log 3 in disk (by ialloc + iupdate)
+bwrite: 4    // write_log: directory inode 70 -> log 4 in disk (directory data) (by dirlink + writei)
+bwrite: 5    // write_log: directory inode 32 -> log 5 in disk (directory inode) (by dirlink + iupdate)
+bwrite: 2    // write_head: actual commit to the log header
+bwrite: 33   // bwrite (iupdate): allocate inode and update inode for x (log absorption)
+bwrite: 70   // bwrite (writei): write to the data block of this directory entry
+bwrite: 32   // bwrite (iupdate): update the directory inode since we change the size of it
+bwrite: 2    // write_head: clear the log (make log "empty")
+
+// write "hi" to file x
+bwrite: 3    // write_log: set the bit of new allocated block in 45 bitmap -> log 3 in disk (by bmap + balloc)
+bwrite: 4    // write_log: zero that block and then write hi to it -> log 4 in disk (by bzero + writei)
+bwrite: 2    // write_head: actual commit to the header
+bwrite: 45   // bwrite (balloc): allocate a block in bitmap block 45
+bwrite: 628  // bwrite (writei): zero the allocated block and write "hi"
+bwrite: 33   // bwrite (iupdate): update the inode of file x
+bwrite: 2    // write_head: clear the log (make log "empty")
+
+// write "\n" to file x
+bwrite: 3    // write_log: zero that block and then write hi to it -> log 3 in disk (by bzero + writei)
+bwrite: 4    // write_log: update the file's inode 33 -> log 4 in disk (by iupdate)
+bwrite: 2    // write_head: actual commit to the header
+bwrite: 628  // bwrite (writei): write "\n"
+bwrite: 33   // bwrite (iupdate): update the inode of file x
+bwrite: 2    // write_head: clear the log (make log "empty")
 ```
 
+![cdisk](Sources/cdisk.png)
+
+If you walkthough all block writes above, and you can both tell "**After write that block, what we can get?**" and more important, "**Why we should write that block?**", I believe that can makes you to have a comprehensive understanding of xv6 File System with both view to it, and hope it will benefit your journey in **database world, modern operating system world, or even any system design world...**
+
+**Although most part of xv6 uses very straightforward and inefficient implementation for simplicity, it still shares the same purpose and some design choice at each layer with the mordern operating systems, which is significantly more complex than xv6's.**
+
+Thanks for your reading! If you have any questions or promlems in this article, just feel free to mail me at [wangold4w@gmail.com](mailto:wangold4w@gmail.com) or comment below. I'm happy to see that :). 
+
+See you next time.
+
+* 
+**this page was last edited on 29 May 2022, at 11:45 (UTC), by [Angold Wang](https://github.com/Angold-4).**

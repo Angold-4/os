@@ -130,7 +130,7 @@ log write block: 33  // by iupdate: update inode
 <li><strong>On-disk datastructure</strong> containing a file's size and list of data block numbers</li>
 <li><strong>In-memory copy of this disk inode in the inode table</strong> contains extra informantion needed within the kernel.</li>
 </ul>
-<h5>Disk Inode <code>dinode</code></h5>
+<p><strong>Disk Inode <code>dinode</code></strong></p>
 <pre><code class="language-c">// kernel/fs.h
 // On-disk inode structure
 struct dinode {
@@ -159,7 +159,7 @@ struct dinode {
 <li><strong>So the Maximum size of a file in xv6 is <code>12KB + 256KB = 268KB</code></strong>.</li>
 </ul>
 <p><img src="Sources/inode.png" alt="inode"></p>
-<h5>In-memory Inode <code>inode</code></h5>
+<p><strong>In-memory Inode <code>inode</code></strong></p>
 <pre><code class="language-c">// kernel/file.h
 // in-memory copy of an inode
 struct inode {
@@ -183,7 +183,7 @@ struct inode {
 <li><strong>The <code>inum</code> record the inode number of that inode in order to read/write them to/from disk.</strong></li>
 <li><strong><code>ref</code> field counts the number of C pointers referring this in-memory inode.</strong></li>
 </ul>
-<h5>Inode Table <code>itable</code></h5>
+<p><strong>Inode Table <code>itable</code></strong></p>
 <pre><code class="language-c">// kernel/fs.c
 struct {
   struct spinlock lock;
@@ -196,25 +196,187 @@ struct {
 <p>The following figure shows the all procedures related to inode when a user process make a <strong>write</strong> system call.</p>
 <p><img src="Sources/syswrite.png" alt="syswrite"></p>
 <p>There are many functions related to the inode, all of them are in <strong><code>kernel/fs.c</code></strong>. If you are trying to understand the actual implementation, I highly recommend you to read the source code, just like I said before, it is pretty straightforward. There are three functions worth mentioning:<strong><code>bmap</code></strong>,  <strong><code>ilock</code></strong> and <strong><code>iput</code></strong>.</p>
-<h5><code>bmap(ip, f-&gt;off/BSIZE)</code>: returns the blockno of specific offset of inode <code>ip</code>.</h5>
+<ul>
+<li><strong><code>bmap(ip, f-&gt;off/BSIZE)</code>: returns the blockno of specific offset of inode <code>ip</code>.</strong></li>
+</ul>
 <p>The function <strong><code>bmap</code></strong> manage the complexity of blocks representation in <strong><code>inode.addr[]</code></strong> so that higher-level routines, such as <strong><code>readi</code></strong> and <strong><code>writei</code></strong>, do not need to deal with this complexity. <strong><code>bmap(ip, bn)</code></strong> returns the disk block number of the <strong><code>bn</code></strong>'th data block for the inode <strong><code>ip</code></strong>. If <strong><code>ip</code></strong> does not have such a block yet, <strong><code>bmap</code></strong> allocates one.</p>
 <blockquote>
 <p><strong>Bigfile</strong>: Note that in the current xv6 implementation, the files are limited to <em>268KB</em>, this limit comes from the fact that an xv6 inode contains 12 &quot;direct&quot; block number and one &quot;singly-indirect&quot; block number, which refers to a block that holds up to 256 more block numbers. If we want to increase the maximum size of an xv6 file, like adding a &quot;double-indirect&quot; block in each inode, containing 256 addresses of singly-indirect blocks, each of which can contain up to 256 addresses of
 data blocks. The result will be consist of up to (<code>256*256 + 11 + 256</code>) <strong>65803</strong> blocks, We can do this by changing this <strong><code>bmap</code></strong> function to make it support <strong>double indirection</strong>, you can see a implementation here: <strong><a href="https://github.com/Angold-4/6s081labs/pull/6/commits/921a16e0e8276473e5b9f02c85cc541df2ccca0d">bigfile</a></strong>.</p>
 </blockquote>
-<h5><code>ilock(ip)</code>: lock the given inode and reads the inode from disk.</h5>
+<ul>
+<li><strong><code>ilock(ip)</code>: lock the given inode and reads the inode from disk.</strong></li>
+</ul>
 <p>Typically, the <strong>lock</strong> is used to prevent some harzards come from synchronization access of shared data, which make sure that at any time, only one process that holding the lock can change that the protected data.</p>
 <p>But too much locking especially locking for too long may also cause many problems such as <strong>deadlock.</strong> In the <strong>1. buffer cache</strong> part, I said the way to prevent multiple kernel thread use that copy of disk block is everytime when <strong><code>bwrite</code></strong> wants to write something to the disk, it should always call <strong><code>bread</code></strong>, and <strong><code>bread</code></strong> will call <strong><code>bget</code></strong> to return a locked buffer in the buffer cache, after writes finished, it will call <strong><code>brelse</code></strong> to release that buffer lock.</p>
 <p>And the situation is a little bit different here: If you want to write something to a file (i.e., calling <strong><code>file_write</code></strong>), you always need to first open that file (<code>sys_open</code>) and you cannot hold the lock when open it because you don't know when you gonna write something to it. So when you call <strong><code>iget</code></strong> in order to get a entry in the global inode table (<strong><code>itable</code></strong>), you cannot hold the lock of that inode because you don't know when to release it. If you keep holding it, it may causes <strong>deadlock</strong> and <strong>races</strong> when you do some operations like directory lookup, etc.</p>
 <p>The xv6 prevent this from happening by seperating the <strong><code>ilock</code></strong> and <strong><code>iget</code></strong> so that the system call can get <strong>a long-term reference to an inode (as for an open file), and only lock it for a short period when needed (e.g., in <code>read()</code>)</strong>. And <strong><code>iget</code></strong> only increments the <code>ip-&gt;ref</code> so that the inode stays in the table and pointers to it remain valid.</p>
 <p><img src="Sources/ilock.png" alt="ilock"></p>
 <p>Worth mentioning that another thing <strong><code>ilock</code></strong> will do is read the inode data from the disk <strong><code>dinode</code></strong>, that is because we do not keep holding that <strong><code>ip.lock</code></strong> before and this inode may have changed by another process and we have to get those changes from disk.</p>
-<h5><code>iput(ip)</code>: drop a reference to an in-memory inode and free it (also its content) in disk if ref goes 0.</h5>
+<ul>
+<li><strong><code>iput(ip)</code>: drop a reference to an in-memory inode and free it (also its content) in disk if ref goes 0.</strong></li>
+</ul>
 <p><strong><code>iput</code></strong> releases a C pointer to an inode and that the inode has no links to it <strong>(i.e., no directory has link to it)</strong>, if this is the last reference, then the inode and its data blocks must be freed. <strong><code>iput</code></strong> calls <strong><code>itrunc</code></strong> to truncatre the file to zero bytes, freeing the data blocks; sets the inode type to 0 (unallocated); and writes the inode to disk.</p>
 <h3>iii. Directory</h3>
+<p>A directory is implemented internally much like a file. Its inode has type <code>T_DIR</code> and its data in the data block is a sequence of directory entries. <strong>Each entry is a struct <code>dirent</code>, which contains a name (<code>name</code>) its inode number (<code>inum</code>).</strong> The name is at most <code>DIRSIZ(14)</code> characters; if shorter, it is terminated by a <code>NUL(0)</code> byte. Directory entries with inode number zero are free.</p>
+<pre><code class="language-c">// kernel/fs.h
+struct dirent {
+  ushort inum;
+  char name[DIRSIZ]; // 14
+};
+</code></pre>
+<p>There are two main API functions in this layer: <strong><code>dirlookup</code></strong> and <strong><code>dirlink</code></strong>.</p>
+<ul>
+<li><strong><code>dirlookup</code>: look for a directory entry/file inode in a directory.</strong></li>
+</ul>
+<pre><code class="language-c">// kernel/fs.c
+  for(off = 0; off &lt; dp-&gt;size; off += sizeof(de)){
+    // the data inside directory inode (addr) is the address of dirent
+    if(readi(dp, 0, (uint64)&amp;de, off, sizeof(de)) != sizeof(de))
+      // read data from disk inode to de
+      panic(&quot;dirlookup read&quot;);
+    if(de.inum == 0)
+      continue;
+    if(namecmp(name, de.name) == 0){
+      // entry matches path element
+      if(poff)
+        *poff = off;
+      inum = de.inum; // directory entry
+      return iget(dp-&gt;dev, inum);
+      // allocate a inode in the inode table
+      // and then return the address of that inode in the table
+    }
+  }
+</code></pre>
+<p>The main loop is also very straightforward: it searches a directory for an entry with the given name. It it finds one, it updates <code>*poff</code> to the byte offset of the entry within the directory(in case the caller wishes to edit it) and returns an unlocked inode in the <strong><code>itable</code></strong> obtained via <strong><code>iget</code></strong>.</p>
+<p>Here <strong><code>dirlookup</code></strong> is one reason that <strong><code>iget</code></strong> returns unlocked inodes that I mentioned before: <strong>Since everytime when a system call wants to call <code>dirlookup(ip, name)</code>, it should always hold the lock (<code>ip-&gt;lock</code>) before entering it to avoid other process changing its data while <code>dirlookup</code> is reading in it. Imagine the look up is for <code>.</code> (<code>$ls .</code>), an alias for the current directory, attemping to lock the inode before returning would try to re-lock <code>ip</code> (by <code>iget</code>) and deadlock.</strong></p>
+<ul>
+<li><strong><code>dirlink</code>: write a directory entry (name, inum) into the directory dp.</strong></li>
+</ul>
+<p>The main loop reads directory entries looking for a unallocated entry (<code>de.inum == 0</code>). The usually call stack will be:</p>
+<p><strong><code>dp = namex(path, name)</code> -&gt; <code>ip = ialloc(dp-&gt;dev)</code> -&gt; <code>dirlink(dp, name, ip-&gt;inum)</code></strong></p>
 <h3>iv. Path Name</h3>
+<p>Path name lookup (<strong><code>namex</code></strong>) involves a sucession of calls to <strong><code>dirlookup</code></strong> (iteration), <strong><code>namei</code></strong> evaluetes <code>path</code> and returns the corresponding <strong><code>inode</code></strong>.</p>
+<p>Here again we see why the separation between <strong><code>iget</code></strong> and <strong><code>ilock</code></strong> is important:</p>
+<p>The procedure <strong><code>namex</code></strong> may take a long time to complete: it should involve several disk operations to read inodes and directory blocks for the directories traversed in the pathname (if they are not in the buffer cache). So we must allow parallel pathname lookup, which means lookups in different directoryies can proceed in parallel.</p>
+<p>Let's look at <strong><code>namex()</code> (<code>kernel/fs.c</code>)</strong>:</p>
+<pre><code class="language-c">// kernel/fs.c
+
+  if(*path == '/')
+    ip = iget(ROOTDEV, ROOTINO);
+  else
+    ip = idup(myproc()-&gt;cwd);
+
+  while((path = skipelem(path, name)) != 0){
+    ilock(ip); // read the inode from disk
+    ...
+    if((next = dirlookup(ip, name, 0)) == 0){
+      iunlockput(ip);
+      return 0;
+    }
+    iunlockput(ip);
+    ip = next; // next -&gt; iteration
+    ...
+  }
+  return ip;
+
+</code></pre>
+<ol>
+<li><strong><code>iget(ip)</code></strong>: get the directory inode at in creasing its <code>ref</code> in the inode table.</li>
+<li><strong><code>ilock(ip)</code></strong>: locks current directory.</li>
+<li><strong><code>dirlookup(ip, name)</code></strong>: find next directory inode.</li>
+<li><strong><code>iunlockput(ip)</code></strong>: unlock current directory.</li>
+</ol>
+<p>Another process may unlink the next inode, but inode won't be deleted, because inode's <code>ref</code> &gt; 0 (by <strong><code>iget()</code></strong>). and finally the <code>iunlockput()</code> will both call <code>iunlock()</code> and <code>iput()</code> to unlock it and decreasing its <code>ref</code>.</p>
+<p>Also same as the <strong>deadlock.</strong> For example, <code>next</code> points to te same inode as <strong><code>ip</code></strong> when looking up &quot;<code>.</code>&quot;. Locking <code>next</code> before releasing the lock on <code>ip</code> would result in a deadlock. To avoid this deadlock, <strong><code>namex</code></strong> unlocks the directory before obtaining a lock on <code>next</code>, just as we've seen before.</p>
+<blockquote>
+<p>Key Idea: <strong>getting a reference separately from locking</strong></p>
+</blockquote>
+<p>The <strong><code>skipelem(path, name)</code></strong> is used for managing the complexity of pathname.</p>
+<p>For example: to resolve <strong><code>path = skipelem(path, name)</code></strong>, where <code>path</code> = <code>os/docs/lectures/6FS.md</code>.
+this <strong><code>skipelem</code></strong> will return the <code>path</code> equal to <code>docs/lectures/6FS.md</code> and setting <code>name</code> equal to <code>os</code>.</p>
 <h3>v. File Descriptor</h3>
+<p>A cool aspect of Unix interface is that <strong>most resources in Unix are represented as files</strong>. Including devices such as the console, pipes, and of course, real files. The <strong>File Descriptor</strong> layer is the layer that achieves this uniformity.</p>
+<p>In xv6, each process has its own table of open files (<code>*ofile[NOFILE]; (16)</code>), so-called <strong>file descriptors</strong>, <strong>which is just a wrapper around either an inode or a pipe, plus an I/O offset, and previlegies like <code>readable</code> and <code>writeable</code></strong>.</p>
+<pre><code>// kernel/proc.h
+// Per-process state
+struct proc {
+  ...
+  struct file *ofile[NOFILE];  // Open files
+  ...
+}
+
+</code></pre>
+<pre><code class="language-c">// kernel/file.h
+struct file {
+  // which is wrapper around either an inode or a pipe,
+  // plus an I/O offset
+  enum { FD_NONE, FD_PIPE, FD_INODE, FD_DEVICE } type;
+  int ref; // reference count
+  char readable;
+  char writable;
+  struct pipe *pipe; // FD_PIPE
+  struct inode *ip;  // FD_INODE and FD_DEVICE
+  uint off;          // FD_INODE
+  short major;       // FD_DEVICE
+};
+
+</code></pre>
+<p>This brings two &quot;independency&quot;:</p>
+<ul>
+<li><strong>If multiple processes open the same file independently, the different instance will have differnt I/O offsets.</strong></li>
+<li><strong>A single open file can appear multiple times in one process's file table, and <code>dup</code> can use this to create alias.</strong></li>
+</ul>
+<p>Just as xv6 implemented in <strong>lower layers.</strong> (<strong><code>bcache</code>, <code>logheader</code> and <code>itable</code></strong>), there also a place to store all opened files, and this global file table called <strong><code>ftable</code>,</strong> make sure that only one copy of the disk file (inode) resides in the file system (for synchronization access).</p>
+<pre><code class="language-c">struct {
+  struct spinlock lock;
+  struct file file[NFILE];
+} ftable;
+
+</code></pre>
+<p>The file descriptor layer provides the <strong>top-level</strong> API functions to allocate a file (<strong><code>filealloc</code></strong>), create a duplicate reference (<strong><code>filedup</code></strong>), release a reference (<strong><code>fileclose</code></strong>), and read and write data (<strong><code>fileread</code></strong> and <strong><code>filewrite</code></strong>). All of them will call the APIs that lower-level provides to do the actual work.</p>
 <h2>4. System Calls</h2>
+<p>All files related to File System's syscall is in <strong><code>kernel/sysfile.c</code></strong>. And they just the very-top level layer which uses the lower-layer services.</p>
+<p>With the functions that the lower layers provide the implementation of most system calls is trivial. Like what I mentioned in the intro part of <strong><a href="https://angold4.org/os/docs/lectures/6FS.html">6. File Systems (i)</a>, this bottom-up view will help you to understand the design purpose of each layers.</strong></p>
+<p>Now lets take a <strong>top-down</strong> view of the whole file system by walking through the actual implementation of System calls, just to make this all concrete. I am using the same example here - the <strong><code>echo &quot;hi&quot;</code></strong> example we've seen in the <strong>inode</strong> part of this article. But this time, we track the <code>bwrite()</code> instead of the <code>log_write()</code>,  which shows all the writes to disk in the buffer cache. And we can see the trace of what actual disk writes are.</p>
+<p>This trace is way longer than the trace that we've looked at last time:</p>
+<pre><code>$ echo &quot;hi&quot; &gt; x
+
+// create the file
+bwrite: 3    // write_log: new allocated inode block 33 -&gt; log 3 in disk (by ialloc + iupdate)
+bwrite: 4    // write_log: directory inode 70 -&gt; log 4 in disk (directory data) (by dirlink + writei)
+bwrite: 5    // write_log: directory inode 32 -&gt; log 5 in disk (directory inode) (by dirlink + iupdate)
+bwrite: 2    // write_head: actual commit to the log header
+bwrite: 33   // bwrite (iupdate): allocate inode and update inode for x (log absorption)
+bwrite: 70   // bwrite (writei): write to the data block of this directory entry
+bwrite: 32   // bwrite (iupdate): update the directory inode since we change the size of it
+bwrite: 2    // write_head: clear the log (make log &quot;empty&quot;)
+
+// write &quot;hi&quot; to file x
+bwrite: 3    // write_log: set the bit of new allocated block in 45 bitmap -&gt; log 3 in disk (by bmap + balloc)
+bwrite: 4    // write_log: zero that block and then write hi to it -&gt; log 4 in disk (by bzero + writei)
+bwrite: 2    // write_head: actual commit to the header
+bwrite: 45   // bwrite (balloc): allocate a block in bitmap block 45
+bwrite: 628  // bwrite (writei): zero the allocated block and write &quot;hi&quot;
+bwrite: 33   // bwrite (iupdate): update the inode of file x
+bwrite: 2    // write_head: clear the log (make log &quot;empty&quot;)
+
+// write &quot;\n&quot; to file x
+bwrite: 3    // write_log: zero that block and then write hi to it -&gt; log 3 in disk (by bzero + writei)
+bwrite: 4    // write_log: update the file's inode 33 -&gt; log 4 in disk (by iupdate)
+bwrite: 2    // write_head: actual commit to the header
+bwrite: 628  // bwrite (writei): write &quot;\n&quot;
+bwrite: 33   // bwrite (iupdate): update the inode of file x
+bwrite: 2    // write_head: clear the log (make log &quot;empty&quot;)
+</code></pre>
+<p><img src="Sources/cdisk.png" alt="cdisk"></p>
+<p>If you walkthough all block writes above, and you can both tell &quot;<strong>After write that block, what we can get?</strong>&quot; and more important, &quot;<strong>Why we should write that block?</strong>&quot;, I believe that can makes you to have a comprehensive understanding of xv6 File System with both view to it, and hope it will benefit your journey in <strong>database world, modern operating system world, or even any system design world...</strong></p>
+<p><strong>Although most part of xv6 uses very straightforward and inefficient implementation for simplicity, it still shares the same purpose and some design choice at each layer with the mordern operating systems, which is significantly more complex than xv6's.</strong></p>
+<p>Thanks for your reading! If you have any questions or promlems in this article, just feel free to mail me at <a href="mailto:wangold4w@gmail.com">wangold4w@gmail.com</a> or comment below. I'm happy to see that :).</p>
+<p>See you next time.</p>
+<ul>
+<li></li>
+</ul>
 	</section>
 	</div>
     </div>
