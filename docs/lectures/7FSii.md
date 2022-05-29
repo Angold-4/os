@@ -375,5 +375,4 @@ Thanks for your reading! If you have any questions or promlems in this article, 
 
 See you next time.
 
-* 
 **this page was last edited on 29 May 2022, at 11:45 (UTC), by [Angold Wang](https://github.com/Angold-4).**
