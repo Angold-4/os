@@ -1,5 +1,5 @@
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <errno.h>
 #include <unistd.h>
 #include <string.h>
@@ -31,7 +31,7 @@ struct elem *readptr(struct elem **ptr);
 struct elem *new();
 
 //
-// Mutator
+// Mutator - the application
 //
 
 // The roots of the mutator
@@ -57,17 +57,18 @@ check_clist(int l) {
   do {
     sum += readptr(&e)->val;
     e = readptr(&e)->next;
-  } while (readptr(&e) != root_head);
+  } while (readptr(&e) != root_head); // go through the linked list
   assert(sum == (l * (l-1))/2);
 }
 
 
-// Make a circular list
+// Make a circular linked list
 void
 make_clist(void) {
   struct elem *e;
 
   root_head = new();
+  // every pointer needs to be wrapped in this readptr check
   readptr(&root_head)->val = 0;
   readptr(&root_head)->next = readptr(&root_head);
   root_last = readptr(&root_head);
@@ -84,6 +85,9 @@ make_clist(void) {
 
 void *
 app_thread(void *x) {
+  // generates a lot of garbage
+  // every iteration, it is going to make a new one
+  // so the last list is basically garbage
   for (int i = 0; i < 1000; i++) {
     make_clist();
     check_clist(LISTSZ);
@@ -139,7 +143,7 @@ appaddr(void *a) {
 // Convert from app address to gc address
 void *
 gcaddr(void *a) {
-  assert(a >= mutator && a < mutator + TOFROM);
+  assert(a >= mutator && a < mutator + TOFROM); // inside from and to space
   return (a - mutator) + collector;
 }
 
@@ -153,7 +157,7 @@ alloc() {
 
 struct obj *
 copy(struct obj *o) {
-  struct obj *n = gcaddr(alloc());
+  struct obj *n = gcaddr(alloc()); // the alloc will allocate a new object in the to space
   n->e = o->e;
   o->newaddr = n;
   n->newaddr = NULL;
@@ -175,7 +179,7 @@ forward(struct obj *o) {
   struct obj *n = o;
   if (in_from(o)) {
     if (o->newaddr == 0) {   // not copied yet?
-      n = copy(o);
+      n = copy(o); // copy it to the new to space
       printf("forward: copy %p (%d) to %p\n", o, o->e.val, n);
     } else {
       n = o->newaddr;
@@ -190,15 +194,17 @@ forward(struct obj *o) {
 int
 scan(void *start) {
   int sz = 0;
-  void *next = gcaddr(start);
+  void *next = gcaddr(start); // translate to gc addr
   printf("scan %p unscanned %p\n", gcaddr(start), gcaddr(to_free_start));
+
   while (next < gcaddr(start)+PGSIZE && next < gcaddr(to_free_start)) {
     struct obj *o = (struct obj *) next;
     if(o->e.next != 0)
       printf("scan: %p %d %p\n", o, o->e.val, o->e.next);
-    o->e.next = (struct elem *) forward((struct obj *) (o->e.next));
+    o->e.next = (struct elem *) forward((struct obj *) (o->e.next)); // forward it to the to space
     next += sizeof(struct obj);
   }
+
   scanned = appaddr(next);
   printf("scan done %p\n", to_free_start);
 }
@@ -206,7 +212,7 @@ scan(void *start) {
 void
 end_collecting() {
   printf("collection done\n");
-  memset(from, 0, SPACESZ);
+  memset(from, 0, SPACESZ); // clear the from space
   collecting = 0;
 }
 
@@ -220,14 +226,14 @@ flip() {
 
   // swap from and to
   to = from;
-  to_free_start = from;
+  to_free_start = from; // key: update the to_free_start to the beginning of from space
   from = tmp;
 
-  collecting = 1;
+  collecting = 1; // ready to start the collector
   scanned = to;
 
 #ifdef VM
-  if (mprotect(to, SPACESZ, PROT_NONE) < 0) {
+  if (mprotect(to, SPACESZ, PROT_NONE) < 0) { // key: map the new to into PROT_NONE
     fprintf(stderr, "Couldn't unmap to space; %s\n", strerror(errno));
     exit(EXIT_FAILURE);
   }
@@ -237,7 +243,8 @@ flip() {
   root_head = (struct elem *) forward((struct obj *)root_head);
   root_last = (struct elem *) forward((struct obj *)root_last);
 
-  pthread_cond_broadcast(&cond);
+  pthread_cond_broadcast(&cond); // wake up the collector thread to do gc
+  // concurrent
 }
 
 // Without VM: check if pointer should be forwarded.  With VM, do
@@ -249,9 +256,12 @@ readptr(struct elem **p) {
 #ifndef VM
   // if we do not using vm, we need to first check
   // that whether it is in to space
+  // which is an very expensive check
   struct obj *o = forward((struct obj *) (*p));
   *p = (struct elem *) o;
 #endif
+
+  // with VM, there is no check whatsoever
   return *p;
 }
 
@@ -262,15 +272,19 @@ new(void) {
   pthread_mutex_lock(&lock);
   if (collecting && scanned < to_free_start) {
     scan(scanned);
-    if (scanned >= to_free_start) {
+    if (scanned >= to_free_start) { // all new to space object has been scanned
+      // we can now clean the from space (with live objects being moved into to space)
       end_collecting();
     }
   }
+
   if (to_free_start + sizeof(struct obj) >= to + SPACESZ) {
+    // no free space left
     // we need to do forwarding
     flip();
   }
-  n = (struct elem *) alloc();
+
+  n = (struct elem *) alloc(); // will increase the to_free_start
   pthread_mutex_unlock(&lock);
   
   return n;
@@ -283,6 +297,7 @@ collector_thread(void *x) {
     pthread_mutex_lock(&lock);
     if (collecting && scanned < to_free_start) {
       printf("collector: scan\n");
+      // scan the unscanned page
       scan(scanned);
       if (scanned >= to_free_start) {
         end_collecting();
@@ -302,6 +317,8 @@ collector_thread(void *x) {
 static void
 handle_sigsegv(int sig, siginfo_t *si, void *ctx)
 {
+  // if some addr causes a page fault
+  // the whole page need to be sacnned
   uintptr_t fault_addr = (uintptr_t)si->si_addr;
   double *page_base = (double *)align_down(fault_addr, PGSIZE);
 
@@ -312,6 +329,7 @@ handle_sigsegv(int sig, siginfo_t *si, void *ctx)
   pthread_mutex_unlock(&lock);
   
   if (mprotect(page_base, PGSIZE, PROT_READ|PROT_WRITE) < 0) {
+    // make this page accessible to the user application
     fprintf(stderr, "Couldn't mprotect to-space page; %s\n", strerror(errno));
     exit(EXIT_FAILURE);
   }
@@ -343,7 +361,13 @@ setup_spaces(void)
     exit(EXIT_FAILURE);
   }
 
+  // the nature of shared memory (map2):
+  // 2 (or more) shared memory resides in the same page table
+  // but they have the physical memory mapped in two different virtual address
+  // in the page table (mutator && collector) -> shm in this example
+
   // map it once for mutator
+  // the return value of mmap is an virtual address
   mutator = mmap(NULL, TOFROM, PROT_READ|PROT_WRITE, MAP_SHARED, shm, 0);
   if (mutator == MAP_FAILED) {
     fprintf(stderr, "Couldn't mmap() from space; %s\n", strerror(errno));
@@ -351,6 +375,7 @@ setup_spaces(void)
   }
 
   // map it once for collector
+  // the return value of mmap is an virtual address
   collector = mmap(NULL, TOFROM, PROT_READ|PROT_WRITE, MAP_SHARED, shm, 0);
   if (collector == MAP_FAILED) {
     fprintf(stderr, "Couldn't mmap() from space; %s\n", strerror(errno));
@@ -359,7 +384,7 @@ setup_spaces(void)
 
   from = mutator;
   to = mutator + SPACESZ;
-  to_free_start = to;
+  to_free_start = to; // can-allocate start
 
   // Register a signal handler to capture SIGSEGV.
   act.sa_sigaction = handle_sigsegv;
