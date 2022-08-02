@@ -10,7 +10,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <link href="../../../images/favicon.png" rel="icon">
-
 <link rel="canonical" href=".">
         <meta name="author" content="Angold Wang" />
 
@@ -26,6 +25,128 @@
 
     <link href="../../../theme/css/pygments/monokai.css" rel="stylesheet">
     <link rel="stylesheet" href="../../../theme/css/style.css" type="text/css"/>
+
+  <style>
+
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+
+    li {
+      font-size: 18px;
+    }
+
+    p {
+      font-size: 18px;
+    }
+
+    a {
+      font-size: 18px;
+    }
+
+    k
+
+    code {
+      font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
+      font-size: 85%;
+      margin: 0;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+    {   }
+
+    @media screen {
+      pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
 
 </head>
 <body>
@@ -64,11 +185,24 @@
     <div class="row">
         <div class="col-lg-12">
 	<section id="content" class="body">
-
-
-<h1>1. The Digital Abstraction</h1>
-<h5>16/02/2022 By Angold Wang</h5>
-<h2>1. Abstractions</h2>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#the-digital-abstraction"
+id="toc-the-digital-abstraction">1. The Digital Abstraction</a>
+<ul>
+<li><a href="#abstractions" id="toc-abstractions">1.
+Abstractions</a></li>
+<li><a href="#analog-vs.-digital-systems"
+id="toc-analog-vs.-digital-systems">2. Analog vs. Digital
+Systems</a></li>
+<li><a href="#using-voltages-digitally"
+id="toc-using-voltages-digitally">3. Using Voltages “Digitally”</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 id="the-digital-abstraction">1. The Digital Abstraction</h1>
+<h5 id="by-angold-wang">16/02/2022 By Angold Wang</h5>
+<h2 id="abstractions">1. Abstractions</h2>
 <pre><code>Computer Programs
 
 ======================&gt; Virtual Machines
@@ -89,36 +223,77 @@ combinational and sequencial circuits
 ======================&gt; Bits, logic gates
 
 Atoms, Materials
-
 </code></pre>
-<h4>These Abstractions:</h4>
+<h4 id="these-abstractions">These Abstractions:</h4>
 <ul>
-<li><strong>Are actually interfaces that let us reason about the behavior of our building blocks, without understanding the implementation details underneath.</strong></li>
-<li><strong>Are extremely long-lived, which live far longer than the specific implementations of these building blocks.</strong></li>
-<li><strong>Shielding the levels above from from the details of the implementation.</strong></li>
-<li><strong>Can limit complexity at each level, which shorten design time.</strong></li>
+<li><strong>Are actually interfaces that let us reason about the
+behavior of our building blocks, without understanding the
+implementation details underneath.</strong></li>
+<li><strong>Are extremely long-lived, which live far longer than the
+specific implementations of these building blocks.</strong></li>
+<li><strong>Shielding the levels above from from the details of the
+implementation.</strong></li>
+<li><strong>Can limit complexity at each level, which shorten design
+time.</strong></li>
 </ul>
-<h2>2. Analog vs. Digital Systems</h2>
+<h2 id="analog-vs.-digital-systems">2. Analog vs. Digital Systems</h2>
 <ul>
-<li><strong>Analog systems</strong> represent and process information using <strong>continuous signals</strong>.</li>
-<li><strong>Digital systems</strong> represent and process information using <strong>discrete symbols</strong>.</li>
+<li><strong>Analog systems</strong> represent and process information
+using <strong>continuous signals</strong>.</li>
+<li><strong>Digital systems</strong> represent and process information
+using <strong>discrete symbols</strong>.</li>
 </ul>
-<p>The reason why <strong>digital system</strong> are practically used <strong>everywhere</strong> and <strong>analog system</strong> are used only in very <strong>limited circumstances</strong>:</p>
-<h4>Digital Systems Tolerate Noise !!!</h4>
-<p>Which makes Digital systems can process information reliably at very high speeds.</p>
-<h2>3. Using Voltages &quot;Digitally&quot;</h2>
-<p><img src="Sources/dbits.png" alt="dbits"></p>
-<p><img src="Sources/way3.png" alt="way3"></p>
-<h4>Voltage Transfer Characteristic (VTC)</h4>
-<p><img src="Sources/vtc.png" alt="vtc"></p>
-<ol>
-<li><strong>VTC must avoid the shaded regions (aka &quot;forbidden zones&quot;) which correspond to valid inputs but invalid outputs</strong></li>
-<li><strong>The VTC can do anything when Vil &lt; Vin &lt; Vih.</strong></li>
-<li><strong>There's some amplification going on (ACTIVE, an amplifier or a transistor) which is injecting energy into the circuit when Vin &gt; Vil.</strong></li>
+<p>The reason why <strong>digital system</strong> are practically used
+<strong>everywhere</strong> and <strong>analog system</strong> are used
+only in very <strong>limited circumstances</strong>: #### Digital
+Systems Tolerate Noise !!!</p>
+<p>Which makes Digital systems can process information reliably at very
+high speeds.</p>
+<h2 id="using-voltages-digitally">3. Using Voltages “Digitally”</h2>
+<figure>
+<img src="Sources/dbits.png" alt="dbits" />
+<figcaption aria-hidden="true">dbits</figcaption>
+</figure>
+<figure>
+<img src="Sources/way3.png" alt="way3" />
+<figcaption aria-hidden="true">way3</figcaption>
+</figure>
+<h4 id="voltage-transfer-characteristic-vtc">Voltage Transfer
+Characteristic (VTC)</h4>
+<figure>
+<img src="Sources/vtc.png" alt="vtc" />
+<figcaption aria-hidden="true">vtc</figcaption>
+</figure>
+<ol type="1">
+<li><strong>VTC must avoid the shaded regions (aka “forbidden zones”)
+which correspond to valid inputs but invalid outputs</strong></li>
+<li><strong>The VTC can do anything when Vil &lt; Vin &lt;
+Vih.</strong></li>
+<li><strong>There’s some amplification going on (ACTIVE, an amplifier or
+a transistor) which is injecting energy into the circuit when Vin &gt;
+Vil.</strong></li>
 </ol>
 	</section>
 	</div>
     </div>
+
+<div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+this.page.url = "https://angold4.org/os/6004/lectures/1Abstraction.html"
+this.page.identifier = "os/6004/lectures/1Abstraction.html"
+
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+    var d = document, s = d.createElement('script');
+    s.src = 'https://angold.disqus.com/embed.js';
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
 </div>
 <footer>
    <div class="well well-lg" id="footer-well">
@@ -137,6 +312,10 @@ Atoms, Materials
    </div>
 </footer>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
+
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
 <script src="../../../theme/js/bootstrap.min.js"></script>
 
 <!-- Enable responsive features in IE8 with Respond.js (https://github.com/scottjehl/Respond) -->
@@ -150,3 +329,4 @@ Atoms, Materials
 <script src="../../../theme/js/tim-kraska-betrayed-me.js"></script>
 </body>
 </html>
+
