@@ -10,7 +10,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <link href="../../../images/favicon.png" rel="icon">
-
 <link rel="canonical" href=".">
         <meta name="author" content="Angold Wang" />
 
@@ -26,6 +25,128 @@
 
     <link href="../../../theme/css/pygments/monokai.css" rel="stylesheet">
     <link rel="stylesheet" href="../../../theme/css/style.css" type="text/css"/>
+
+  <style>
+
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+
+    li {
+      font-size: 18px;
+    }
+
+    p {
+      font-size: 18px;
+    }
+
+    a {
+      font-size: 18px;
+    }
+
+    k
+
+    code {
+      font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
+      font-size: 85%;
+      margin: 0;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+    {   }
+
+    @media screen {
+      pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
 
 </head>
 <body>
@@ -64,206 +185,308 @@
     <div class="row">
         <div class="col-lg-12">
 	<section id="content" class="body">
-
-
-
-<h1>3. Special Topic: Traps</h1>
-<h5>03/06/2022 By Angold Wang</h5>
-<p>There are three kinds of event which cause the CPU to set aside ordinary execution of instructions and force a transfer of control to special code that handles the event:</p>
-<ol>
-<li><strong>System Call:</strong> When a user program executes the <strong><code>ecall</code></strong> instruction to ask the kernel to do something for it.</li>
-<li><strong>Exception:</strong> When an instruction (user/kernel) does something illegal, such as divide by zero or use an invalid virtual address, or page fault.</li>
-<li><strong>Interrupt:</strong> When a device signals that it needs attention.</li>
-</ol>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#special-topic-traps" id="toc-special-topic-traps">3.
+Special Topic: Traps</a>
+<ul>
+<li><a href="#boot-xv6" id="toc-boot-xv6">0. Boot xv6</a>
+<ul>
+<li><a href="#i.-_entry" id="toc-i.-_entry">i.
+<code>_entry</code></a></li>
+<li><a href="#ii.-start" id="toc-ii.-start">ii.
+<code>start</code></a></li>
+<li><a href="#iii.-main" id="toc-iii.-main">iii.
+<code>main</code></a></li>
+<li><a href="#iv.-main-kvminit" id="toc-iv.-main-kvminit">iv.
+<code>main</code> – <code>kvminit()</code></a></li>
+<li><a href="#v.-main-userinit" id="toc-v.-main-userinit">v.
+<code>main</code> – <code>userinit()</code></a></li>
+</ul></li>
+<li><a href="#ecall" id="toc-ecall">1. ecall</a>
+<ul>
+<li><a href="#i.-user-level-process" id="toc-i.-user-level-process">i.
+User-level process</a></li>
+<li><a href="#ii.-risc-v-trap-machinery"
+id="toc-ii.-risc-v-trap-machinery">ii. RISC-V trap machinery</a></li>
+<li><a href="#iii.-traps-from-user-space"
+id="toc-iii.-traps-from-user-space">iii. Traps from user space</a></li>
+</ul></li>
+<li><a href="#trampoline" id="toc-trampoline">2. Trampoline</a>
+<ul>
+<li><a href="#i.-the-trap-frame" id="toc-i.-the-trap-frame">i. The Trap
+frame</a></li>
+<li><a href="#ii.-the-trampoline" id="toc-ii.-the-trampoline">ii. The
+Trampoline</a></li>
+</ul></li>
+<li><a href="#usertrap" id="toc-usertrap">3. usertrap</a>
+<ul>
+<li><a href="#i.-switch-to-kernel-trap-handler"
+id="toc-i.-switch-to-kernel-trap-handler">i. Switch to kernel trap
+handler</a></li>
+<li><a href="#ii.-figure-out-current-running-process"
+id="toc-ii.-figure-out-current-running-process">ii. Figure out current
+running process</a></li>
+<li><a href="#iii.-save-the-user-program-counter"
+id="toc-iii.-save-the-user-program-counter">iii. Save the user program
+counter</a></li>
+<li><a href="#iv.-figure-out-why-we-came-here"
+id="toc-iv.-figure-out-why-we-came-here">iv. Figure out why we came
+here</a></li>
+</ul></li>
+<li><a href="#syscall" id="toc-syscall">4. syscall</a></li>
+<li><a href="#usertrapret" id="toc-usertrapret">5. usertrapret</a>
+<ul>
+<li><a href="#i.-change-stvec-to-the-user-trap-handler"
+id="toc-i.-change-stvec-to-the-user-trap-handler">i. Change stvec to the
+user trap handler</a></li>
+<li><a
+href="#ii.-prepare-the-trap-frame-for-the-next-kernel-re-entering"
+id="toc-ii.-prepare-the-trap-frame-for-the-next-kernel-re-entering">ii.
+Prepare the trap frame for the next kernel re-entering</a></li>
+<li><a
+href="#iii.-ready-to-execute-the-userret-asm-code-in-trampoline.s"
+id="toc-iii.-ready-to-execute-the-userret-asm-code-in-trampoline.s">iii.
+Ready to execute the userret asm code in
+<code>trampoline.s</code></a></li>
+</ul></li>
+<li><a href="#userret" id="toc-userret">6. userret</a></li>
+<li><a href="#sret" id="toc-sret">7. sret</a></li>
+<li><a href="#summary" id="toc-summary">8. Summary</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 id="special-topic-traps">3. Special Topic: Traps</h1>
+<h5 id="by-angold-wang">03/06/2022 By Angold Wang</h5>
+<p>There are three kinds of event which cause the CPU to set aside
+ordinary execution of instructions and force a transfer of control to
+special code that handles the event: 1. <strong>System Call:</strong>
+When a user program executes the <strong><code>ecall</code></strong>
+instruction to ask the kernel to do something for it. 2.
+<strong>Exception:</strong> When an instruction (user/kernel) does
+something illegal, such as divide by zero or use an invalid virtual
+address, or page fault. 3. <strong>Interrupt:</strong> When a device
+signals that it needs attention.</p>
 <p><strong>Trap is a generic term for these situations.</strong>
-Typically, whatever code was executing at the time of the trap will later need to resume, and shouldn't need to be aware that anything special happends.</p>
-<p><strong>In this topic, we'll step into the actual <code>xv6</code> code and check the details of how traps were implemented by walking through a whole <code>SYS_write</code> system call procedule when we booting the <code>xv6</code>.</strong></p>
-<h2>0. Boot xv6</h2>
-<p>When the RISC-V computer powers on. It initializes itself and runs a boot loader which is stored in read-only memory. The boot loader loads the xv6 kernel into memory.</p>
-<p>The loader loads the xv6 kernel into memory at physical address <strong><code>0x80000000</code></strong>. The reason it places the kernel at <strong><code>0x80000000</code></strong> rather than <strong><code>0x0</code></strong> is because the address range <strong><code>0x0:0x80000000</code></strong> contains I/O devices.</p>
-<p><img src="Sources/addressxv6.png" alt="addressxv6"></p>
-<h3>i. <code>_entry</code></h3>
-<p>Then in <strong>machine mode</strong>. The CPU executes xv6 starting at <code>_entry</code> <strong>(kernel/entry.s)</strong></p>
-<pre><code class="language-asm">    # qemu -kernel loads the kernel at 0x80000000
-    # and causes each CPU to jump there.
-    # kernel.ld causes the following code to
-    # be placed at 0x80000000.
-.section .text
-.global _entry
-_entry:
-	# set up a stack for C.
-        # stack0 is declared in start.c,
-        # with a 4096-byte stack per CPU.
-        # sp = stack0 + (hartid * 4096)
-        la sp, stack0
-        li a0, 1024*4
-        csrr a1, mhartid
-        addi a1, a1, 1
-        mul a0, a0, a1
-        add sp, sp, a0
-	# jump to start() in start.c
-        call start
-spin:
-        j spin
-
-</code></pre>
+Typically, whatever code was executing at the time of the trap will
+later need to resume, and shouldn’t need to be aware that anything
+special happends.</p>
+<p><strong>In this topic, we’ll step into the actual <code>xv6</code>
+code and check the details of how traps were implemented by walking
+through a whole <code>SYS_write</code> system call procedule when we
+booting the <code>xv6</code>.</strong></p>
+<h2 id="boot-xv6">0. Boot xv6</h2>
+<p>When the RISC-V computer powers on. It initializes itself and runs a
+boot loader which is stored in read-only memory. The boot loader loads
+the xv6 kernel into memory.</p>
+<p>The loader loads the xv6 kernel into memory at physical address
+<strong><code>0x80000000</code></strong>. The reason it places the
+kernel at <strong><code>0x80000000</code></strong> rather than
+<strong><code>0x0</code></strong> is because the address range
+<strong><code>0x0:0x80000000</code></strong> contains I/O devices.</p>
+<figure>
+<img src="Sources/addressxv6.png" alt="addressxv6" />
+<figcaption aria-hidden="true">addressxv6</figcaption>
+</figure>
+<h3 id="i.-_entry">i. <code>_entry</code></h3>
+<p>Then in <strong>machine mode</strong>. The CPU executes xv6 starting
+at <code>_entry</code> <strong>(kernel/entry.s)</strong></p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode asm"><code class="sourceCode fasm"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>    # qemu <span class="op">-</span>kernel loads the kernel at <span class="bn">0x80000000</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    # <span class="bu">and</span> causes each CPU to jump there<span class="op">.</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    # kernel<span class="op">.</span>ld causes the following code to</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    # be placed at <span class="bn">0x80000000</span><span class="op">.</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>.<span class="bu">section</span> <span class="op">.</span>text</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>.global _entry</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">_entry:</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    # <span class="bu">set</span> up a stack for C<span class="op">.</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>        # stack0 is declared in start<span class="op">.</span>c<span class="op">,</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>        # with a <span class="dv">4096</span><span class="op">-</span><span class="dt">byte</span> stack per CPU<span class="op">.</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>        # sp <span class="op">=</span> stack0 <span class="op">+</span> <span class="op">(</span>hartid <span class="op">*</span> <span class="dv">4096</span><span class="op">)</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>        la <span class="kw">sp</span><span class="op">,</span> stack0</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>        li a0<span class="op">,</span> <span class="dv">1024</span><span class="op">*</span><span class="dv">4</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>        csrr a1<span class="op">,</span> mhartid</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>        addi a1<span class="op">,</span> a1<span class="op">,</span> <span class="dv">1</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>        <span class="bu">mul</span> a0<span class="op">,</span> a0<span class="op">,</span> a1</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>        <span class="bu">add</span> <span class="kw">sp</span><span class="op">,</span> <span class="kw">sp</span><span class="op">,</span> a0</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    # jump to start<span class="op">()</span> in start<span class="op">.</span>c</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>        <span class="cf">call</span> start</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="fu">spin:</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>        j spin</span></code></pre></div>
 <p><strong>Basically, this piece of code does two things:</strong></p>
-<ol>
-<li><strong>Set up a stack so that xv6 can run C code. and set the stack pointer <code>%sp</code> with the address <code>stack0 + 4096</code>.</strong>
+<ol type="1">
+<li><strong>Set up a stack so that xv6 can run C code. and set the stack
+pointer <code>%sp</code> with the address
+<code>stack0 + 4096</code>.</strong>
 <ul>
 <li>Set the stack in order to let xv6 run C code</li>
-<li>The <code>stack0</code> is defined in <code>kernel/start.c</code>, which is the initial stack of xv6.</li>
-</ul>
-</li>
-<li><strong>Then calls into C code at <code>start</code> at <code>kernel/start.c</code></strong></li>
+<li>The <code>stack0</code> is defined in <code>kernel/start.c</code>,
+which is the initial stack of xv6.</li>
+</ul></li>
+<li><strong>Then calls into C code at <code>start</code> at
+<code>kernel/start.c</code></strong></li>
 </ol>
-<h3>ii. <code>start</code></h3>
-<pre><code class="language-c">// entry.S jumps here in machine mode on stack0.
-void
-start()
-{
-  // set M Previous Privilege mode to Supervisor, for mret.
-  unsigned long x = r_mstatus();
-  x &amp;= ~MSTATUS_MPP_MASK;
-  x |= MSTATUS_MPP_S;
-  w_mstatus(x);
-
-  // set M Exception Program Counter to main, for mret.
-  // requires gcc -mcmodel=medany
-  w_mepc((uint64)main);
-
-  // disable paging for now.
-  w_satp(0);
-
-  // delegate all interrupts and exceptions to supervisor mode.
-  w_medeleg(0xffff);
-  w_mideleg(0xffff);
-  w_sie(r_sie() | SIE_SEIE | SIE_STIE | SIE_SSIE);
-
-  // configure Physical Memory Protection to give supervisor mode
-  // access to all of physical memory.
-  w_pmpaddr0(0x3fffffffffffffull);
-  w_pmpcfg0(0xf);
-
-  // ask for clock interrupts.
-  timerinit();
-
-  // keep each CPU's hartid in its tp register, for cpuid().
-  int id = r_mhartid();
-  w_tp(id);
-
-  // switch to supervisor mode and jump to main().
-  asm volatile(&quot;mret&quot;);
-}
-</code></pre>
-<p><strong>Machine Mode vs. Supervisor Mode</strong>: Machine mode has access to all the hardware features but does not have virtual-memory support.</p>
-<ol>
-<li><strong>Writing <code>main</code>'s address into register <code>%mepc</code> in order to return to <code>main</code> after <code>start</code> finished</strong></li>
-<li><strong>Writing <code>0</code> into the page-table register <code>satp</code> in order to disables virtual address translation</strong> (we haven't set the page table yet).</li>
+<h3 id="ii.-start">ii. <code>start</code></h3>
+<div class="sourceCode" id="cb2"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">// entry.S jumps here in machine mode on stack0.</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>start<span class="op">()</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="co">// set M Previous Privilege mode to Supervisor, for mret.</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">unsigned</span> <span class="dt">long</span> x <span class="op">=</span> r_mstatus<span class="op">();</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  x <span class="op">&amp;=</span> <span class="op">~</span>MSTATUS_MPP_MASK<span class="op">;</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  x <span class="op">|=</span> MSTATUS_MPP_S<span class="op">;</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  w_mstatus<span class="op">(</span>x<span class="op">);</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="co">// set M Exception Program Counter to main, for mret.</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="co">// requires gcc -mcmodel=medany</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  w_mepc<span class="op">((</span>uint64<span class="op">)</span>main<span class="op">);</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="co">// disable paging for now.</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  w_satp<span class="op">(</span><span class="dv">0</span><span class="op">);</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  <span class="co">// delegate all interrupts and exceptions to supervisor mode.</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  w_medeleg<span class="op">(</span><span class="bn">0xffff</span><span class="op">);</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  w_mideleg<span class="op">(</span><span class="bn">0xffff</span><span class="op">);</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  w_sie<span class="op">(</span>r_sie<span class="op">()</span> <span class="op">|</span> SIE_SEIE <span class="op">|</span> SIE_STIE <span class="op">|</span> SIE_SSIE<span class="op">);</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>  <span class="co">// configure Physical Memory Protection to give supervisor mode</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>  <span class="co">// access to all of physical memory.</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>  w_pmpaddr0<span class="op">(</span><span class="bn">0x3fffffffffffff</span><span class="bu">ull</span><span class="op">);</span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>  w_pmpcfg0<span class="op">(</span><span class="bn">0xf</span><span class="op">);</span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>  <span class="co">// ask for clock interrupts.</span></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>  timerinit<span class="op">();</span></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>  <span class="co">// keep each CPU&#39;s hartid in its tp register, for cpuid().</span></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> id <span class="op">=</span> r_mhartid<span class="op">();</span></span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>  w_tp<span class="op">(</span>id<span class="op">);</span></span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>  <span class="co">// switch to supervisor mode and jump to main().</span></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>  asm <span class="dt">volatile</span><span class="op">(</span><span class="st">&quot;mret&quot;</span><span class="op">);</span></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p><strong>Machine Mode vs. Supervisor Mode</strong>: Machine mode has
+access to all the hardware features but does not have virtual-memory
+support.</p>
+<ol type="1">
+<li><strong>Writing <code>main</code>’s address into register
+<code>%mepc</code> in order to return to <code>main</code> after
+<code>start</code> finished</strong></li>
+<li><strong>Writing <code>0</code> into the page-table register
+<code>satp</code> in order to disables virtual address
+translation</strong> (we haven’t set the page table yet).</li>
 <li>Program the clock chip to generate clock interrupt (0.1s).</li>
 </ol>
-<p>Although we haven't set any page table yet (even for kernel page table), we still can access some physical memory. The reason is that &quot;<strong>Identical Mapping</strong>&quot; in xv6, which  <strong>mapping the resources at virtual address between <code>0x80000000</code> to <code>0x86400000</code> that are equal to the physical address.</strong></p>
-<h3>iii. <code>main</code></h3>
-<pre><code class="language-c">// start() jumps here in supervisor mode on all CPUs.
-void
-main()
-{
-  if(cpuid() == 0){
-    consoleinit();
-    printfinit();
-    printf(&quot;\n&quot;);
-    printf(&quot;xv6 kernel is booting\n&quot;);
-    printf(&quot;\n&quot;);
-    kinit();         // physical page allocator
-    kvminit();       // create kernel page table
-    kvminithart();   // turn on paging
-    procinit();      // process table
-    trapinit();      // trap vectors
-    trapinithart();  // install kernel trap vector
-    plicinit();      // set up interrupt controller
-    plicinithart();  // ask PLIC for device interrupts
-    binit();         // buffer cache
-    iinit();         // inode table
-    fileinit();      // file table
-    virtio_disk_init(); // emulated hard disk
-    userinit();      // first user process
-    __sync_synchronize();
-    started = 1;
-  } else {
-    while(started == 0)
-      ;
-    __sync_synchronize();
-    printf(&quot;hart %d starting\n&quot;, cpuid());
-    kvminithart();    // turn on paging
-    trapinithart();   // install kernel trap vector
-    plicinithart();   // ask PLIC for device interrupts
-  }
-
-  scheduler();        
-}
-</code></pre>
-<p><strong>This is the <code>main()</code> boot sequence of xv6, We are going to only introduce two procedures since we only mentioned these two concepts before.</strong></p>
+<p>Although we haven’t set any page table yet (even for kernel page
+table), we still can access some physical memory. The reason is that
+“<strong>Identical Mapping</strong>” in xv6, which <strong>mapping the
+resources at virtual address between <code>0x80000000</code> to
+<code>0x86400000</code> that are equal to the physical
+address.</strong></p>
+<h3 id="iii.-main">iii. <code>main</code></h3>
+<div class="sourceCode" id="cb3"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">// start() jumps here in supervisor mode on all CPUs.</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>main<span class="op">()</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span><span class="op">(</span>cpuid<span class="op">()</span> <span class="op">==</span> <span class="dv">0</span><span class="op">){</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    consoleinit<span class="op">();</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    printfinit<span class="op">();</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    printf<span class="op">(</span><span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">);</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    printf<span class="op">(</span><span class="st">&quot;xv6 kernel is booting</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">);</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    printf<span class="op">(</span><span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">);</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    kinit<span class="op">();</span>         <span class="co">// physical page allocator</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    kvminit<span class="op">();</span>       <span class="co">// create kernel page table</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    kvminithart<span class="op">();</span>   <span class="co">// turn on paging</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    procinit<span class="op">();</span>      <span class="co">// process table</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    trapinit<span class="op">();</span>      <span class="co">// trap vectors</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    trapinithart<span class="op">();</span>  <span class="co">// install kernel trap vector</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    plicinit<span class="op">();</span>      <span class="co">// set up interrupt controller</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    plicinithart<span class="op">();</span>  <span class="co">// ask PLIC for device interrupts</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    binit<span class="op">();</span>         <span class="co">// buffer cache</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    iinit<span class="op">();</span>         <span class="co">// inode table</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    fileinit<span class="op">();</span>      <span class="co">// file table</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    virtio_disk_init<span class="op">();</span> <span class="co">// emulated hard disk</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>    userinit<span class="op">();</span>      <span class="co">// first user process</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    __sync_synchronize<span class="op">();</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    started <span class="op">=</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span><span class="op">(</span>started <span class="op">==</span> <span class="dv">0</span><span class="op">)</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>      <span class="op">;</span></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>    __sync_synchronize<span class="op">();</span></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>    printf<span class="op">(</span><span class="st">&quot;hart %d starting</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">,</span> cpuid<span class="op">());</span></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>    kvminithart<span class="op">();</span>    <span class="co">// turn on paging</span></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>    trapinithart<span class="op">();</span>   <span class="co">// install kernel trap vector</span></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>    plicinithart<span class="op">();</span>   <span class="co">// ask PLIC for device interrupts</span></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>  scheduler<span class="op">();</span>        </span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p><strong>This is the <code>main()</code> boot sequence of xv6, We are
+going to only introduce two procedures since we only mentioned these two
+concepts before.</strong> * <strong><code>kvminit()</code> for
+initializing kernel page table</strong> *
+<strong><code>userinit()</code> for making the first user system
+call</strong></p>
+<h3 id="iv.-main-kvminit">iv. <code>main</code> –
+<code>kvminit()</code></h3>
+<div class="sourceCode" id="cb4"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Initialize the one kernel_pagetable</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>kvminit<span class="op">(</span><span class="dt">void</span><span class="op">)</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  kernel_pagetable <span class="op">=</span> kvmmake<span class="op">();</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p><strong><code>main</code> calls <code>kvminit</code> to create the
+kernel’s page table using <code>kvmmake</code>, this call occurs before
+xv6 has enabled paging on the RISC-V, so the address refer directly to
+physical memory.</strong></p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Make a direct-map page table for the kernel.</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>pagetable_t</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>kvmmake<span class="op">(</span><span class="dt">void</span><span class="op">)</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  pagetable_t kpgtbl<span class="op">;</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  kpgtbl <span class="op">=</span> <span class="op">(</span>pagetable_t<span class="op">)</span> kalloc<span class="op">();</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  memset<span class="op">(</span>kpgtbl<span class="op">,</span> <span class="dv">0</span><span class="op">,</span> PGSIZE<span class="op">);</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="co">// uart registers</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  kvmmap<span class="op">(</span>kpgtbl<span class="op">,</span> UART0<span class="op">,</span> UART0<span class="op">,</span> PGSIZE<span class="op">,</span> PTE_R <span class="op">|</span> PTE_W<span class="op">);</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  <span class="co">// virtio mmio disk interface</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  kvmmap<span class="op">(</span>kpgtbl<span class="op">,</span> VIRTIO0<span class="op">,</span> VIRTIO0<span class="op">,</span> PGSIZE<span class="op">,</span> PTE_R <span class="op">|</span> PTE_W<span class="op">);</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>  <span class="co">// PLIC</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>  kvmmap<span class="op">(</span>kpgtbl<span class="op">,</span> PLIC<span class="op">,</span> PLIC<span class="op">,</span> <span class="bn">0x400000</span><span class="op">,</span> PTE_R <span class="op">|</span> PTE_W<span class="op">);</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>  <span class="co">// map kernel text executable and read-only.</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>  kvmmap<span class="op">(</span>kpgtbl<span class="op">,</span> KERNBASE<span class="op">,</span> KERNBASE<span class="op">,</span> <span class="op">(</span>uint64<span class="op">)</span>etext<span class="op">-</span>KERNBASE<span class="op">,</span> PTE_R <span class="op">|</span> PTE_X<span class="op">);</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>  <span class="co">// map kernel data and the physical RAM we&#39;ll make use of.</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>  kvmmap<span class="op">(</span>kpgtbl<span class="op">,</span> <span class="op">(</span>uint64<span class="op">)</span>etext<span class="op">,</span> <span class="op">(</span>uint64<span class="op">)</span>etext<span class="op">,</span> PHYSTOP<span class="op">-(</span>uint64<span class="op">)</span>etext<span class="op">,</span> PTE_R <span class="op">|</span> PTE_W<span class="op">);</span></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>  <span class="co">// map the trampoline for trap entry/exit to</span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>  <span class="co">// the highest virtual address in the kernel.</span></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>  kvmmap<span class="op">(</span>kpgtbl<span class="op">,</span> TRAMPOLINE<span class="op">,</span> <span class="op">(</span>uint64<span class="op">)</span>trampoline<span class="op">,</span> PGSIZE<span class="op">,</span> PTE_R <span class="op">|</span> PTE_X<span class="op">);</span></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>  <span class="co">// map kernel stacks</span></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>  proc_mapstacks<span class="op">(</span>kpgtbl<span class="op">);</span></span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> kpgtbl<span class="op">;</span></span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<ol type="1">
+<li><strong><code>kvmmake</code> first allocates a page of physical
+memory to hold the root page-table page.</strong></li>
+<li><strong>Then it calls <code>kvmmap</code> to install the
+translations(page tables) that the kernel needs:</strong>
 <ul>
-<li><strong><code>kvminit()</code> for initializing kernel page table</strong></li>
-<li><strong><code>userinit()</code> for making the first user system call</strong></li>
-</ul>
-<h3>iv. <code>main</code> -- <code>kvminit()</code></h3>
-<pre><code class="language-c">// Initialize the one kernel_pagetable
-void
-kvminit(void)
-{
-  kernel_pagetable = kvmmake();
-}
-</code></pre>
-<p><strong><code>main</code> calls <code>kvminit</code> to create the kernel's page table using <code>kvmmake</code>, this call occurs before xv6 has enabled paging on the RISC-V, so the address refer directly to physical memory.</strong></p>
-<pre><code class="language-c">// Make a direct-map page table for the kernel.
-pagetable_t
-kvmmake(void)
-{
-  pagetable_t kpgtbl;
-
-  kpgtbl = (pagetable_t) kalloc();
-  memset(kpgtbl, 0, PGSIZE);
-
-  // uart registers
-  kvmmap(kpgtbl, UART0, UART0, PGSIZE, PTE_R | PTE_W);
-
-  // virtio mmio disk interface
-  kvmmap(kpgtbl, VIRTIO0, VIRTIO0, PGSIZE, PTE_R | PTE_W);
-
-  // PLIC
-  kvmmap(kpgtbl, PLIC, PLIC, 0x400000, PTE_R | PTE_W);
-
-  // map kernel text executable and read-only.
-  kvmmap(kpgtbl, KERNBASE, KERNBASE, (uint64)etext-KERNBASE, PTE_R | PTE_X);
-
-  // map kernel data and the physical RAM we'll make use of.
-  kvmmap(kpgtbl, (uint64)etext, (uint64)etext, PHYSTOP-(uint64)etext, PTE_R | PTE_W);
-
-  // map the trampoline for trap entry/exit to
-  // the highest virtual address in the kernel.
-  kvmmap(kpgtbl, TRAMPOLINE, (uint64)trampoline, PGSIZE, PTE_R | PTE_X);
-
-  // map kernel stacks
-  proc_mapstacks(kpgtbl);
-  
-  return kpgtbl;
-}
-
-</code></pre>
-<ol>
-<li><strong><code>kvmmake</code> first allocates a page of physical memory to hold the root page-table page.</strong></li>
-<li><strong>Then it calls <code>kvmmap</code> to install the translations(page tables) that the kernel needs:</strong>
-<ul>
-<li>kernel's instructions and data.</li>
+<li>kernel’s instructions and data.</li>
 <li>physical memory up to <code>PHYSTOP</code></li>
 <li>memory ranges which are actually devices</li>
-</ul>
-</li>
-<li><strong>Finially it calls <code>proc_mapstacks</code> in order to allocate a kernel stack for each process.</strong></li>
+</ul></li>
+<li><strong>Finially it calls <code>proc_mapstacks</code> in order to
+allocate a kernel stack for each process.</strong></li>
 </ol>
 <ul>
-<li>After all these mappings are done, the kernel's page table should looks like this:</li>
+<li>After all these mappings are done, the kernel’s page table should
+looks like this:</li>
 </ul>
 <pre><code>(qemu) info mem
 vaddr            paddr            size             attr
@@ -277,149 +500,168 @@ vaddr            paddr            size             attr
 0000000080020000 0000000080020000 0000000007fe0000 rw-----
 0000003ffff7f000 0000000087f78000 0000000000040000 rw-----
 0000003ffffff000 0000000080007000 0000000000001000 r-x----
-
 </code></pre>
-<pre><code class="language-c">// add a mapping to the kernel page table.
-// only used when booting.
-// does not flush TLB or enable paging.
-void
-kvmmap(pagetable_t kpgtbl, uint64 va, uint64 pa, uint64 sz, int perm)
-{
-  if(mappages(kpgtbl, va, sz, pa, perm) != 0)
-    panic(&quot;kvmmap&quot;);
-}
-
-// Create PTEs for virtual addresses starting at va that refer to
-// physical addresses starting at pa. va and size might not
-// be page-aligned. Returns 0 on success, -1 if walk() couldn't
-// allocate a needed page-table page.
-int
-mappages(pagetable_t pagetable, uint64 va, uint64 size, uint64 pa, int perm)
-{
-  uint64 a, last;
-  pte_t *pte;
-
-  if(size == 0)
-    panic(&quot;mappages: size&quot;);
-  
-  a = PGROUNDDOWN(va);
-  last = PGROUNDDOWN(va + size - 1);
-  for(;;){
-    if((pte = walk(pagetable, a, 1)) == 0)
-      return -1;
-    if(*pte &amp; PTE_V)
-      panic(&quot;mappages: remap&quot;);
-    *pte = PA2PTE(pa) | perm | PTE_V;
-    if(a == last)
-      break;
-    a += PGSIZE;
-    pa += PGSIZE;
-  }
-  return 0;
-}
-</code></pre>
-<p><strong><code>kvmmap</code> calls <code>mappages</code>, which installs mappings into a page table for a range of virtual addresses to a corresponding range of physical addresses.</strong> It does this seperately for each virtual address in the range, at page intervals. For each virtual address to be mapped, <strong><code>mappages</code></strong> calls <strong><code>walk</code></strong> to find the address of the PTE for that address. It then initializes the PTE to hold the relevant physical page number, and set its desired permissions.</p>
-<p><strong>Basically, what the <code>mappages</code> does is that it creates many page tables by calling <code>walk</code>, in order to map <code>size</code> of memory from virtual address <code>va</code> to physical address <code>pa</code>.</strong></p>
-<pre><code class="language-c">// Return the address of the PTE in page table pagetable
-// that corresponds to virtual address va.  If alloc!=0,
-// create any required page-table pages.
-//
-// The risc-v Sv39 scheme has three levels of page-table
-// pages. A page-table page contains 512 64-bit PTEs.
-// A 64-bit virtual address is split into five fields:
-//   39..63 -- must be zero.
-//   30..38 -- 9 bits of level-2 index.
-//   21..29 -- 9 bits of level-1 index.
-//   12..20 -- 9 bits of level-0 index.
-//    0..11 -- 12 bits of byte offset within the page.
-pte_t *
-walk(pagetable_t pagetable, uint64 va, int alloc)
-{
-  if(va &gt;= MAXVA)
-    panic(&quot;walk&quot;);
-
-  for(int level = 2; level &gt; 0; level--) {
-    // 
-    // PX extract the three 9-bit page table indices from a virtual address.
-    pte_t *pte = &amp;pagetable[PX(level, va)];
-    if(*pte &amp; PTE_V) { // valid or not
-      pagetable = (pagetable_t)PTE2PA(*pte);
-    } else {
-      if(!alloc || (pagetable = (pde_t*)kalloc()) == 0)
-        return 0;
-      memset(pagetable, 0, PGSIZE);
-      *pte = PA2PTE(pagetable) | PTE_V;
-    }
-  }
-  return &amp;pagetable[PX(0, va)]; // the new page table
-}
-</code></pre>
-<p><strong>Finally comes to <code>walk</code>, this function mimics the RISC-V paging hardware as it looks up the PTE for a virtual address.</strong></p>
-<ol>
-<li><strong><code>walk</code></strong> descends the 3-level page table 9 bits at the time. It uses each level's 9 bits of virtual address to find the PTE of either the next-level page table or the final page table.</li>
-<li>If the PTE isn't valid, then the required page hasn't yet been allocated; if the <code>alloc</code> argument is set, <strong><code>walk</code></strong> allocates a new page-table page and puts its physical address in the PTE.</li>
-<li>Finally, it returns the address of the PTE in the lowest layer in the tree.</li>
-</ol>
-<p>After all page tables of kernel has been created successfully, <strong><code>main</code></strong> calls <strong><code>kvminithart</code></strong>, which install this kernel page table by writing the physical address of the root page table page into the register <code>satp</code>, and then allow CPU translate addresses using the kernel page table.</p>
-<pre><code class="language-c">// Switch h/w page table register to the kernel's page table,
-// and enable paging.
-void
-kvminithart()
-{
-  w_satp(MAKE_SATP(kernel_pagetable));
-  sfence_vma();
-}
-
-</code></pre>
-<h3>v. <code>main</code> -- <code>userinit()</code></h3>
-<p><strong>After <code>main</code> initializes several devices, subsystems and memory, it create the first user process by calling <code>userinit</code>.</strong></p>
-<pre><code class="language-c">// a user program that calls exec(&quot;/init&quot;)
-// od -t xC initcode
-uchar initcode[] = {
-  0x17, 0x05, 0x00, 0x00, 0x13, 0x05, 0x45, 0x02,
-  0x97, 0x05, 0x00, 0x00, 0x93, 0x85, 0x35, 0x02,
-  0x93, 0x08, 0x70, 0x00, 0x73, 0x00, 0x00, 0x00,
-  0x93, 0x08, 0x20, 0x00, 0x73, 0x00, 0x00, 0x00,
-  0xef, 0xf0, 0x9f, 0xff, 0x2f, 0x69, 0x6e, 0x69,
-  0x74, 0x00, 0x00, 0x24, 0x00, 0x00, 0x00, 0x00,
-  0x00, 0x00, 0x00, 0x00
-};
-
-
-// Set up first user process.
-void
-userinit(void)
-{
-  struct proc *p;
-
-  // Look in the process table for an UNUSED proc.
-  p = allocproc(); // total 64 process, 
-  initproc = p;
-  
-  // allocate one user page and copy init's instructions
-  // and data into it.
-  uvminit(p-&gt;pagetable, initcode, sizeof(initcode));
-  p-&gt;sz = PGSIZE;
-
-  // prepare for the very first &quot;return&quot; from kernel to user.
-  p-&gt;trapframe-&gt;epc = 0;      // user program counter
-  p-&gt;trapframe-&gt;sp = PGSIZE;  // user stack pointer
-
-  safestrcpy(p-&gt;name, &quot;initcode&quot;, sizeof(p-&gt;name));
-  p-&gt;cwd = namei(&quot;/&quot;);
-
-  p-&gt;state = RUNNABLE;
-
-  release(&amp;p-&gt;lock);
-}
-</code></pre>
-<p><strong><code>userinit</code> basically does these things:</strong></p>
-<ol>
-<li>It look in the process table for an unused proc by calling <strong><code>allocproc</code></strong></li>
-<li>Call <strong><code>uvminit</code></strong> to set the user virtual memory, and load the <code>initcode</code> into the new process's page table in order to exec.</li>
-<li>Set the first user process's state to <code>RUNNABLE</code>, which means it will assigned to be executed by process scheduler.</li>
-</ol>
-<pre><code class="language-assembly"># initcode.s
+<div class="sourceCode" id="cb7"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">// add a mapping to the kernel page table.</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co">// only used when booting.</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co">// does not flush TLB or enable paging.</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>kvmmap<span class="op">(</span>pagetable_t kpgtbl<span class="op">,</span> uint64 va<span class="op">,</span> uint64 pa<span class="op">,</span> uint64 sz<span class="op">,</span> <span class="dt">int</span> perm<span class="op">)</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span><span class="op">(</span>mappages<span class="op">(</span>kpgtbl<span class="op">,</span> va<span class="op">,</span> sz<span class="op">,</span> pa<span class="op">,</span> perm<span class="op">)</span> <span class="op">!=</span> <span class="dv">0</span><span class="op">)</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    panic<span class="op">(</span><span class="st">&quot;kvmmap&quot;</span><span class="op">);</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="co">// Create PTEs for virtual addresses starting at va that refer to</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="co">// physical addresses starting at pa. va and size might not</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="co">// be page-aligned. Returns 0 on success, -1 if walk() couldn&#39;t</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="co">// allocate a needed page-table page.</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>mappages<span class="op">(</span>pagetable_t pagetable<span class="op">,</span> uint64 va<span class="op">,</span> uint64 size<span class="op">,</span> uint64 pa<span class="op">,</span> <span class="dt">int</span> perm<span class="op">)</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>  uint64 a<span class="op">,</span> last<span class="op">;</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>  pte_t <span class="op">*</span>pte<span class="op">;</span></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span><span class="op">(</span>size <span class="op">==</span> <span class="dv">0</span><span class="op">)</span></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>    panic<span class="op">(</span><span class="st">&quot;mappages: size&quot;</span><span class="op">);</span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>  a <span class="op">=</span> PGROUNDDOWN<span class="op">(</span>va<span class="op">);</span></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>  last <span class="op">=</span> PGROUNDDOWN<span class="op">(</span>va <span class="op">+</span> size <span class="op">-</span> <span class="dv">1</span><span class="op">);</span></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span><span class="op">(;;){</span></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span><span class="op">((</span>pte <span class="op">=</span> walk<span class="op">(</span>pagetable<span class="op">,</span> a<span class="op">,</span> <span class="dv">1</span><span class="op">))</span> <span class="op">==</span> <span class="dv">0</span><span class="op">)</span></span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>      <span class="cf">return</span> <span class="op">-</span><span class="dv">1</span><span class="op">;</span></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span><span class="op">(*</span>pte <span class="op">&amp;</span> PTE_V<span class="op">)</span></span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>      panic<span class="op">(</span><span class="st">&quot;mappages: remap&quot;</span><span class="op">);</span></span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>    <span class="op">*</span>pte <span class="op">=</span> PA2PTE<span class="op">(</span>pa<span class="op">)</span> <span class="op">|</span> perm <span class="op">|</span> PTE_V<span class="op">;</span></span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span><span class="op">(</span>a <span class="op">==</span> last<span class="op">)</span></span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>      <span class="cf">break</span><span class="op">;</span></span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>    a <span class="op">+=</span> PGSIZE<span class="op">;</span></span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>    pa <span class="op">+=</span> PGSIZE<span class="op">;</span></span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p><strong><code>kvmmap</code> calls <code>mappages</code>, which
+installs mappings into a page table for a range of virtual addresses to
+a corresponding range of physical addresses.</strong> It does this
+seperately for each virtual address in the range, at page intervals. For
+each virtual address to be mapped,
+<strong><code>mappages</code></strong> calls
+<strong><code>walk</code></strong> to find the address of the PTE for
+that address. It then initializes the PTE to hold the relevant physical
+page number, and set its desired permissions.</p>
+<p><strong>Basically, what the <code>mappages</code> does is that it
+creates many page tables by calling <code>walk</code>, in order to map
+<code>size</code> of memory from virtual address <code>va</code> to
+physical address <code>pa</code>.</strong></p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Return the address of the PTE in page table pagetable</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co">// that corresponds to virtual address va.  If alloc!=0,</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co">// create any required page-table pages.</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co">//</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co">// The risc-v Sv39 scheme has three levels of page-table</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co">// pages. A page-table page contains 512 64-bit PTEs.</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co">// A 64-bit virtual address is split into five fields:</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="co">//   39..63 -- must be zero.</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="co">//   30..38 -- 9 bits of level-2 index.</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="co">//   21..29 -- 9 bits of level-1 index.</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="co">//   12..20 -- 9 bits of level-0 index.</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="co">//    0..11 -- 12 bits of byte offset within the page.</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>pte_t <span class="op">*</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>walk<span class="op">(</span>pagetable_t pagetable<span class="op">,</span> uint64 va<span class="op">,</span> <span class="dt">int</span> alloc<span class="op">)</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span><span class="op">(</span>va <span class="op">&gt;=</span> MAXVA<span class="op">)</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>    panic<span class="op">(</span><span class="st">&quot;walk&quot;</span><span class="op">);</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span><span class="op">(</span><span class="dt">int</span> level <span class="op">=</span> <span class="dv">2</span><span class="op">;</span> level <span class="op">&gt;</span> <span class="dv">0</span><span class="op">;</span> level<span class="op">--)</span> <span class="op">{</span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>    <span class="co">// </span></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>    <span class="co">// PX extract the three 9-bit page table indices from a virtual address.</span></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>    pte_t <span class="op">*</span>pte <span class="op">=</span> <span class="op">&amp;</span>pagetable<span class="op">[</span>PX<span class="op">(</span>level<span class="op">,</span> va<span class="op">)];</span></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span><span class="op">(*</span>pte <span class="op">&amp;</span> PTE_V<span class="op">)</span> <span class="op">{</span> <span class="co">// valid or not</span></span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>      pagetable <span class="op">=</span> <span class="op">(</span>pagetable_t<span class="op">)</span>PTE2PA<span class="op">(*</span>pte<span class="op">);</span></span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span><span class="op">(!</span>alloc <span class="op">||</span> <span class="op">(</span>pagetable <span class="op">=</span> <span class="op">(</span>pde_t<span class="op">*)</span>kalloc<span class="op">())</span> <span class="op">==</span> <span class="dv">0</span><span class="op">)</span></span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>      memset<span class="op">(</span>pagetable<span class="op">,</span> <span class="dv">0</span><span class="op">,</span> PGSIZE<span class="op">);</span></span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>      <span class="op">*</span>pte <span class="op">=</span> PA2PTE<span class="op">(</span>pagetable<span class="op">)</span> <span class="op">|</span> PTE_V<span class="op">;</span></span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="op">&amp;</span>pagetable<span class="op">[</span>PX<span class="op">(</span><span class="dv">0</span><span class="op">,</span> va<span class="op">)];</span> <span class="co">// the new page table</span></span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p><strong>Finally comes to <code>walk</code>, this function mimics the
+RISC-V paging hardware as it looks up the PTE for a virtual
+address.</strong> 1. <strong><code>walk</code></strong> descends the
+3-level page table 9 bits at the time. It uses each level’s 9 bits of
+virtual address to find the PTE of either the next-level page table or
+the final page table. 2. If the PTE isn’t valid, then the required page
+hasn’t yet been allocated; if the <code>alloc</code> argument is set,
+<strong><code>walk</code></strong> allocates a new page-table page and
+puts its physical address in the PTE. 3. Finally, it returns the address
+of the PTE in the lowest layer in the tree.</p>
+<p>After all page tables of kernel has been created successfully,
+<strong><code>main</code></strong> calls
+<strong><code>kvminithart</code></strong>, which install this kernel
+page table by writing the physical address of the root page table page
+into the register <code>satp</code>, and then allow CPU translate
+addresses using the kernel page table.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Switch h/w page table register to the kernel&#39;s page table,</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co">// and enable paging.</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>kvminithart<span class="op">()</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  w_satp<span class="op">(</span>MAKE_SATP<span class="op">(</span>kernel_pagetable<span class="op">));</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  sfence_vma<span class="op">();</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h3 id="v.-main-userinit">v. <code>main</code> –
+<code>userinit()</code></h3>
+<p><strong>After <code>main</code> initializes several devices,
+subsystems and memory, it create the first user process by calling
+<code>userinit</code>.</strong></p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">// a user program that calls exec(&quot;/init&quot;)</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co">// od -t xC initcode</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>uchar initcode<span class="op">[]</span> <span class="op">=</span> <span class="op">{</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="bn">0x17</span><span class="op">,</span> <span class="bn">0x05</span><span class="op">,</span> <span class="bn">0x00</span><span class="op">,</span> <span class="bn">0x00</span><span class="op">,</span> <span class="bn">0x13</span><span class="op">,</span> <span class="bn">0x05</span><span class="op">,</span> <span class="bn">0x45</span><span class="op">,</span> <span class="bn">0x02</span><span class="op">,</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="bn">0x97</span><span class="op">,</span> <span class="bn">0x05</span><span class="op">,</span> <span class="bn">0x00</span><span class="op">,</span> <span class="bn">0x00</span><span class="op">,</span> <span class="bn">0x93</span><span class="op">,</span> <span class="bn">0x85</span><span class="op">,</span> <span class="bn">0x35</span><span class="op">,</span> <span class="bn">0x02</span><span class="op">,</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="bn">0x93</span><span class="op">,</span> <span class="bn">0x08</span><span class="op">,</span> <span class="bn">0x70</span><span class="op">,</span> <span class="bn">0x00</span><span class="op">,</span> <span class="bn">0x73</span><span class="op">,</span> <span class="bn">0x00</span><span class="op">,</span> <span class="bn">0x00</span><span class="op">,</span> <span class="bn">0x00</span><span class="op">,</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="bn">0x93</span><span class="op">,</span> <span class="bn">0x08</span><span class="op">,</span> <span class="bn">0x20</span><span class="op">,</span> <span class="bn">0x00</span><span class="op">,</span> <span class="bn">0x73</span><span class="op">,</span> <span class="bn">0x00</span><span class="op">,</span> <span class="bn">0x00</span><span class="op">,</span> <span class="bn">0x00</span><span class="op">,</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="bn">0xef</span><span class="op">,</span> <span class="bn">0xf0</span><span class="op">,</span> <span class="bn">0x9f</span><span class="op">,</span> <span class="bn">0xff</span><span class="op">,</span> <span class="bn">0x2f</span><span class="op">,</span> <span class="bn">0x69</span><span class="op">,</span> <span class="bn">0x6e</span><span class="op">,</span> <span class="bn">0x69</span><span class="op">,</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="bn">0x74</span><span class="op">,</span> <span class="bn">0x00</span><span class="op">,</span> <span class="bn">0x00</span><span class="op">,</span> <span class="bn">0x24</span><span class="op">,</span> <span class="bn">0x00</span><span class="op">,</span> <span class="bn">0x00</span><span class="op">,</span> <span class="bn">0x00</span><span class="op">,</span> <span class="bn">0x00</span><span class="op">,</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  <span class="bn">0x00</span><span class="op">,</span> <span class="bn">0x00</span><span class="op">,</span> <span class="bn">0x00</span><span class="op">,</span> <span class="bn">0x00</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="co">// Set up first user process.</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>userinit<span class="op">(</span><span class="dt">void</span><span class="op">)</span></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>  <span class="kw">struct</span> proc <span class="op">*</span>p<span class="op">;</span></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Look in the process table for an UNUSED proc.</span></span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>  p <span class="op">=</span> allocproc<span class="op">();</span> <span class="co">// total 64 process, </span></span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>  initproc <span class="op">=</span> p<span class="op">;</span></span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>  <span class="co">// allocate one user page and copy init&#39;s instructions</span></span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>  <span class="co">// and data into it.</span></span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>  uvminit<span class="op">(</span>p<span class="op">-&gt;</span>pagetable<span class="op">,</span> initcode<span class="op">,</span> <span class="kw">sizeof</span><span class="op">(</span>initcode<span class="op">));</span></span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>  p<span class="op">-&gt;</span>sz <span class="op">=</span> PGSIZE<span class="op">;</span></span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>  <span class="co">// prepare for the very first &quot;return&quot; from kernel to user.</span></span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>  p<span class="op">-&gt;</span>trapframe<span class="op">-&gt;</span>epc <span class="op">=</span> <span class="dv">0</span><span class="op">;</span>      <span class="co">// user program counter</span></span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a>  p<span class="op">-&gt;</span>trapframe<span class="op">-&gt;</span>sp <span class="op">=</span> PGSIZE<span class="op">;</span>  <span class="co">// user stack pointer</span></span>
+<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a>  safestrcpy<span class="op">(</span>p<span class="op">-&gt;</span>name<span class="op">,</span> <span class="st">&quot;initcode&quot;</span><span class="op">,</span> <span class="kw">sizeof</span><span class="op">(</span>p<span class="op">-&gt;</span>name<span class="op">));</span></span>
+<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a>  p<span class="op">-&gt;</span>cwd <span class="op">=</span> namei<span class="op">(</span><span class="st">&quot;/&quot;</span><span class="op">);</span></span>
+<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a>  p<span class="op">-&gt;</span>state <span class="op">=</span> RUNNABLE<span class="op">;</span></span>
+<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a>  release<span class="op">(&amp;</span>p<span class="op">-&gt;</span>lock<span class="op">);</span></span>
+<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p><strong><code>userinit</code> basically does these things:</strong>
+1. It look in the process table for an unused proc by calling
+<strong><code>allocproc</code></strong> 2. Call
+<strong><code>uvminit</code></strong> to set the user virtual memory,
+and load the <code>initcode</code> into the new process’s page table in
+order to exec. 3. Set the first user process’s state to
+<code>RUNNABLE</code>, which means it will assigned to be executed by
+process scheduler.</p>
+<pre class="assembly"><code># initcode.s
 # Initial process that execs /init.
 # This code runs in user space.
 
@@ -448,96 +690,135 @@ init:
 argv:
   .long init
   .long 0
-
 </code></pre>
-<p><code>initcode.s</code> (<code>user/initcode.S</code>) loads the number for the <code>exec</code> system call, <code>SYS_EXEC</code> into register <code>a7</code>, and then calls <code>ecall</code> to re-enter the kernel in order to execute <code>exec</code> system call. The details of this procedure is what we will discuss in detail later on.</p>
-<p>After the kernel has completed <code>exec</code> by replacing the page table and registers of the current process. it return to user space in the <code>/init</code> process (execute it). <strong><code>init</code></strong> creates a new <a href="https://en.wikipedia.org/wiki/System_console">console device file</a> (console is the text entry and display device for system administration messages) and then opens it as file descriptors 0, 1, and 2. Then it starts a shell on the console. The system is up.</p>
-<pre><code class="language-c">// init.c
-// init: The initial user-level program
-
-char *argv[] = { &quot;sh&quot;, 0 };
-
-int
-main(void)
-{
-  int pid, wpid;
-
-  if(open(&quot;console&quot;, O_RDWR) &lt; 0){
-    mknod(&quot;console&quot;, CONSOLE, 0);
-    open(&quot;console&quot;, O_RDWR);
-  }
-  dup(0);  // stdout
-  dup(0);  // stderr
-
-  for(;;){
-    printf(&quot;init: starting sh\n&quot;);
-    pid = fork();
-    if(pid &lt; 0){
-      printf(&quot;init: fork failed\n&quot;);
-      exit(1);
-    }
-    if(pid == 0){
-      exec(&quot;sh&quot;, argv);
-      printf(&quot;init: exec sh failed\n&quot;);
-      exit(1);
-    }
-
-    for(;;){
-      // this call to wait() returns if the shell exits,
-      // or if a parentless process exits.
-      wpid = wait((int *) 0);
-      if(wpid == pid){
-        // the shell exited; restart it.
-        break;
-      } else if(wpid &lt; 0){
-        printf(&quot;init: wait returned an error\n&quot;);
-        exit(1);
-      } else {
-        // it was a parentless process; do nothing.
-      }
-    }
-  }
-}
-
-</code></pre>
-<h2>1. ecall</h2>
-<h3>i. User-level process</h3>
-<p><strong>The kernel must allocate and free physical memory at run-time for page tables, user memory, kernel stacks and pipe buffers.</strong> xv6 uses the physical memory between the end of the kernel and <code>PHYSTOP</code> for run-time allocation, as we can see in the layout figure (va &amp; pa) located near the begin of this note, these area are not the part of <strong>direct mapping</strong>.</p>
-<p>Each process has a separate page table. the figure below shows the layout of the <strong>user memory</strong> of an executing process in xv6. Notice that the stack is a single page, and is shown with the initial contents as created by <code>exec</code>, where contains the command-line arguments, as well as an array of pointers at the very top of the stack.</p>
-<p><img src="Sources/procmem.png" alt="procmem"></p>
-<h3>ii. RISC-V trap machinery</h3>
-<p><strong>Each RISC-V CPU has a set of control registers that the kernel writes to tell the CPU how to handle traps, and that the kernel can read to find out about a trap that has occured.</strong> Here is an outline of the most important registers: <strong><code>$sscratch</code></strong>, <strong><code>$stvec</code></strong> and <strong><code>$sepc</code></strong>:</p>
-<p><img src="Sources/trapecall.png" alt="trapecall"></p>
-<h3>iii. Traps from user space</h3>
-<p><strong>After <code>init</code> starts the shell, the shell (<code>user/sh.c</code>) will call <code>getcmd</code> and trying to receive a command from user. <code>getcmd</code> will call <code>fprintf</code> defined in <code>user/printf.c</code> in order to print <code>$</code> at the console.</strong></p>
-<p><strong>If you jump into the <code>fprintf</code> code located in <code>user/printf.c</code>, since the shell runs in the user-space, it require a <code>write</code> system call in order to print anything to the console.</strong></p>
-<pre><code class="language-c">// user/printf.c
-static void
-putc(int fd, char c)
-{
-  write(fd, &amp;c, 1);
-}
-</code></pre>
-<p><strong>After calling that <code>write</code> in user space, the <code>write</code> function which sit in the shell library will cause a trap:</strong></p>
-<pre><code class="language-assembly"># user/sh.asm
+<p><code>initcode.s</code> (<code>user/initcode.S</code>) loads the
+number for the <code>exec</code> system call, <code>SYS_EXEC</code> into
+register <code>a7</code>, and then calls <code>ecall</code> to re-enter
+the kernel in order to execute <code>exec</code> system call. The
+details of this procedure is what we will discuss in detail later
+on.</p>
+<p>After the kernel has completed <code>exec</code> by replacing the
+page table and registers of the current process. it return to user space
+in the <code>/init</code> process (execute it).
+<strong><code>init</code></strong> creates a new <a
+href="https://en.wikipedia.org/wiki/System_console">console device
+file</a> (console is the text entry and display device for system
+administration messages) and then opens it as file descriptors 0, 1, and
+2. Then it starts a shell on the console. The system is up.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co">// init.c</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co">// init: The initial user-level program</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="dt">char</span> <span class="op">*</span>argv<span class="op">[]</span> <span class="op">=</span> <span class="op">{</span> <span class="st">&quot;sh&quot;</span><span class="op">,</span> <span class="dv">0</span> <span class="op">};</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>main<span class="op">(</span><span class="dt">void</span><span class="op">)</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> pid<span class="op">,</span> wpid<span class="op">;</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span><span class="op">(</span>open<span class="op">(</span><span class="st">&quot;console&quot;</span><span class="op">,</span> O_RDWR<span class="op">)</span> <span class="op">&lt;</span> <span class="dv">0</span><span class="op">){</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>    mknod<span class="op">(</span><span class="st">&quot;console&quot;</span><span class="op">,</span> CONSOLE<span class="op">,</span> <span class="dv">0</span><span class="op">);</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>    open<span class="op">(</span><span class="st">&quot;console&quot;</span><span class="op">,</span> O_RDWR<span class="op">);</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>  dup<span class="op">(</span><span class="dv">0</span><span class="op">);</span>  <span class="co">// stdout</span></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>  dup<span class="op">(</span><span class="dv">0</span><span class="op">);</span>  <span class="co">// stderr</span></span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span><span class="op">(;;){</span></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>    printf<span class="op">(</span><span class="st">&quot;init: starting sh</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">);</span></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>    pid <span class="op">=</span> fork<span class="op">();</span></span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span><span class="op">(</span>pid <span class="op">&lt;</span> <span class="dv">0</span><span class="op">){</span></span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>      printf<span class="op">(</span><span class="st">&quot;init: fork failed</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">);</span></span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>      exit<span class="op">(</span><span class="dv">1</span><span class="op">);</span></span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span><span class="op">(</span>pid <span class="op">==</span> <span class="dv">0</span><span class="op">){</span></span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a>      exec<span class="op">(</span><span class="st">&quot;sh&quot;</span><span class="op">,</span> argv<span class="op">);</span></span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a>      printf<span class="op">(</span><span class="st">&quot;init: exec sh failed</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">);</span></span>
+<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a>      exit<span class="op">(</span><span class="dv">1</span><span class="op">);</span></span>
+<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span><span class="op">(;;){</span></span>
+<span id="cb12-32"><a href="#cb12-32" aria-hidden="true" tabindex="-1"></a>      <span class="co">// this call to wait() returns if the shell exits,</span></span>
+<span id="cb12-33"><a href="#cb12-33" aria-hidden="true" tabindex="-1"></a>      <span class="co">// or if a parentless process exits.</span></span>
+<span id="cb12-34"><a href="#cb12-34" aria-hidden="true" tabindex="-1"></a>      wpid <span class="op">=</span> wait<span class="op">((</span><span class="dt">int</span> <span class="op">*)</span> <span class="dv">0</span><span class="op">);</span></span>
+<span id="cb12-35"><a href="#cb12-35" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span><span class="op">(</span>wpid <span class="op">==</span> pid<span class="op">){</span></span>
+<span id="cb12-36"><a href="#cb12-36" aria-hidden="true" tabindex="-1"></a>        <span class="co">// the shell exited; restart it.</span></span>
+<span id="cb12-37"><a href="#cb12-37" aria-hidden="true" tabindex="-1"></a>        <span class="cf">break</span><span class="op">;</span></span>
+<span id="cb12-38"><a href="#cb12-38" aria-hidden="true" tabindex="-1"></a>      <span class="op">}</span> <span class="cf">else</span> <span class="cf">if</span><span class="op">(</span>wpid <span class="op">&lt;</span> <span class="dv">0</span><span class="op">){</span></span>
+<span id="cb12-39"><a href="#cb12-39" aria-hidden="true" tabindex="-1"></a>        printf<span class="op">(</span><span class="st">&quot;init: wait returned an error</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">);</span></span>
+<span id="cb12-40"><a href="#cb12-40" aria-hidden="true" tabindex="-1"></a>        exit<span class="op">(</span><span class="dv">1</span><span class="op">);</span></span>
+<span id="cb12-41"><a href="#cb12-41" aria-hidden="true" tabindex="-1"></a>      <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb12-42"><a href="#cb12-42" aria-hidden="true" tabindex="-1"></a>        <span class="co">// it was a parentless process; do nothing.</span></span>
+<span id="cb12-43"><a href="#cb12-43" aria-hidden="true" tabindex="-1"></a>      <span class="op">}</span></span>
+<span id="cb12-44"><a href="#cb12-44" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb12-45"><a href="#cb12-45" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb12-46"><a href="#cb12-46" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h2 id="ecall">1. ecall</h2>
+<h3 id="i.-user-level-process">i. User-level process</h3>
+<p><strong>The kernel must allocate and free physical memory at run-time
+for page tables, user memory, kernel stacks and pipe buffers.</strong>
+xv6 uses the physical memory between the end of the kernel and
+<code>PHYSTOP</code> for run-time allocation, as we can see in the
+layout figure (va &amp; pa) located near the begin of this note, these
+area are not the part of <strong>direct mapping</strong>.</p>
+<p>Each process has a separate page table. the figure below shows the
+layout of the <strong>user memory</strong> of an executing process in
+xv6. Notice that the stack is a single page, and is shown with the
+initial contents as created by <code>exec</code>, where contains the
+command-line arguments, as well as an array of pointers at the very top
+of the stack.</p>
+<figure>
+<img src="Sources/procmem.png" alt="procmem" />
+<figcaption aria-hidden="true">procmem</figcaption>
+</figure>
+<h3 id="ii.-risc-v-trap-machinery">ii. RISC-V trap machinery</h3>
+<p><strong>Each RISC-V CPU has a set of control registers that the
+kernel writes to tell the CPU how to handle traps, and that the kernel
+can read to find out about a trap that has occured.</strong> Here is an
+outline of the most important registers:
+<strong><code>$sscratch</code></strong>,
+<strong><code>$stvec</code></strong> and
+<strong><code>$sepc</code></strong>:</p>
+<figure>
+<img src="Sources/trapecall.png" alt="trapecall" />
+<figcaption aria-hidden="true">trapecall</figcaption>
+</figure>
+<h3 id="iii.-traps-from-user-space">iii. Traps from user space</h3>
+<p><strong>After <code>init</code> starts the shell, the shell
+(<code>user/sh.c</code>) will call <code>getcmd</code> and trying to
+receive a command from user. <code>getcmd</code> will call
+<code>fprintf</code> defined in <code>user/printf.c</code> in order to
+print <code>$</code> at the console.</strong></p>
+<p><strong>If you jump into the <code>fprintf</code> code located in
+<code>user/printf.c</code>, since the shell runs in the user-space, it
+require a <code>write</code> system call in order to print anything to
+the console.</strong></p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co">// user/printf.c</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="dt">static</span> <span class="dt">void</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>putc<span class="op">(</span><span class="dt">int</span> fd<span class="op">,</span> <span class="dt">char</span> c<span class="op">)</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  write<span class="op">(</span>fd<span class="op">,</span> <span class="op">&amp;</span>c<span class="op">,</span> <span class="dv">1</span><span class="op">);</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p><strong>After calling that <code>write</code> in user space, the
+<code>write</code> function which sit in the shell library will cause a
+trap:</strong></p>
+<pre class="assembly"><code># user/sh.asm
 0000000000000de8 &lt;write&gt;:
 .global write
 write:
  li a7, SYS_write
-     de8:	48c1                	li	a7,16
+     de8:   48c1                    li  a7,16
  ecall
-     dea:	00000073          	ecall
+     dea:   00000073            ecall
  ret
-     dee:	8082                	ret
-</code></pre>
-<p>A trap may occur while executing in user space if the user program makes a system call (<code>ecall</code> instruction).
-<strong>And the <code>ecall</code> basically did three things:</strong></p>
-<ol>
-<li><strong>Change mode from user to supervisor.</strong></li>
-<li><strong>Save <code>$pc</code> in <code>$sepc</code>.</strong></li>
-<li><strong>Jump to <code>$stvec</code>.</strong></li>
-</ol>
-<p><strong>Now lets jump into the runtime of shell when it prints <code>$</code> which causes the <code>write</code> system call for the first time:</strong></p>
+     dee:   8082                    ret</code></pre>
+<p>A trap may occur while executing in user space if the user program
+makes a system call (<code>ecall</code> instruction). <strong>And the
+<code>ecall</code> basically did three things:</strong> 1.
+<strong>Change mode from user to supervisor.</strong> 2. <strong>Save
+<code>$pc</code> in <code>$sepc</code>.</strong> 3. <strong>Jump to
+<code>$stvec</code>.</strong></p>
+<p><strong>Now lets jump into the runtime of shell when it prints
+<code>$</code> which causes the <code>write</code> system call for the
+first time:</strong></p>
 <pre><code>(gdb) b *0xdea
 Breakpoint 1 at 0xdea
 (gdb) c
@@ -548,9 +829,9 @@ Breakpoint 1, 0x0000000000000dea in ?? ()
 (gdb) x/3i 0xde8
    0xde8:       li      a7,16
 =&gt; 0xdea:       ecall
-   0xdee:       ret
-</code></pre>
-<p><strong>And we can check the current <code>$pc</code> and page table of our shell process:</strong></p>
+   0xdee:       ret</code></pre>
+<p><strong>And we can check the current <code>$pc</code> and page table
+of our shell process:</strong></p>
 <pre><code>(gdb) print $pc
 $1 = (void (*)()) 0xdea
 
@@ -562,23 +843,27 @@ vaddr            paddr            size             attr
 0000000000002000 0000000087f5d000 0000000000001000 rwx----
 0000000000003000 0000000087f5c000 0000000000001000 rwxu-ad
 0000003fffffe000 0000000087f70000 0000000000001000 rw---ad
-0000003ffffff000 0000000080007000 0000000000001000 r-x--a-
-</code></pre>
-<p><strong>As you can see that, this is a very small page table that contains only six mappings, if you check that user-level process memory layout figure above, from top to bottom:</strong></p>
-<ul>
-<li><strong><code>0x0000000000000000</code> to <code>0x0000000000001000</code> refers to the shell's instructions (text).</strong></li>
-<li><strong><code>0x0000000000001000</code> to <code>0x0000000000002000</code> refers to the shell's data.</strong></li>
-<li><strong><code>0x0000000000002000</code> to <code>0x0000000000003000</code> refers to the stack guard page</strong>
-<ul>
-<li>which is invalid, since it doesn't have the <code>u</code> flag set.</li>
-<li>the user code can only get at pte entries for which the <code>u</code> flag is set.</li>
-</ul>
-</li>
-<li><strong><code>0x0000000000003000</code> to <code>0x0000000000004000</code> refers to the stack page, which can grow dynamically.</strong></li>
-<li><strong><code>0x0000003fffffe000</code> to <code>0x0000003ffffff000</code> refers to the trap frame page.</strong></li>
-<li><strong><code>0x0000003ffffff000</code> to <code>0x0000004000000000</code> refers to the trampoline page.</strong></li>
-</ul>
-<p><strong>Now let's step further, and execute that <code>ecall</code> instruction:</strong></p>
+0000003ffffff000 0000000080007000 0000000000001000 r-x--a-</code></pre>
+<p><strong>As you can see that, this is a very small page table that
+contains only six mappings, if you check that user-level process memory
+layout figure above, from top to bottom:</strong> *
+<strong><code>0x0000000000000000</code> to
+<code>0x0000000000001000</code> refers to the shell’s instructions
+(text).</strong> * <strong><code>0x0000000000001000</code> to
+<code>0x0000000000002000</code> refers to the shell’s data.</strong> *
+<strong><code>0x0000000000002000</code> to
+<code>0x0000000000003000</code> refers to the stack guard page</strong>
+* which is invalid, since it doesn’t have the <code>u</code> flag set. *
+the user code can only get at pte entries for which the <code>u</code>
+flag is set. * <strong><code>0x0000000000003000</code> to
+<code>0x0000000000004000</code> refers to the stack page, which can grow
+dynamically.</strong> * <strong><code>0x0000003fffffe000</code> to
+<code>0x0000003ffffff000</code> refers to the trap frame page.</strong>
+* <strong><code>0x0000003ffffff000</code> to
+<code>0x0000004000000000</code> refers to the trampoline
+page.</strong></p>
+<p><strong>Now let’s step further, and execute that <code>ecall</code>
+instruction:</strong></p>
 <pre><code>(gdb) stepi
 0x0000003ffffff000 in ?? ()
 =&gt; 0x0000003ffffff000:  73 15 05 14     csrrw   a0,sscratch,a0
@@ -590,117 +875,135 @@ $2 = (void (*)()) 0x3ffffff000
    0x3ffffff008:        sd      sp,48(a0)
    0x3ffffff00c:        sd      gp,56(a0)
    0x3ffffff010:        sd      tp,64(a0)
-   0x3ffffff014:        sd      t0,72(a0)
-</code></pre>
-<p><strong>As we can see, the value <code>$stvec</code> register is the current <code>$pc</code> register value, which is the begining of trampoline page. And that is the reason why we ended up executing at this particular place.</strong></p>
+   0x3ffffff014:        sd      t0,72(a0)</code></pre>
+<p><strong>As we can see, the value <code>$stvec</code> register is the
+current <code>$pc</code> register value, which is the begining of
+trampoline page. And that is the reason why we ended up executing at
+this particular place.</strong></p>
 <pre><code>(gdb) print/x $stvec
 $4 = 0x3ffffff000
 (gdb) print/x $sepc
 $5 = 0xdea
 (gdb) print/x $sscratch
-$6 = 0x3fffffe000
-</code></pre>
-<p><strong>Another thing is we can see is that the <code>ecall</code> hardware instruction has already helped us storing the previous <code>$pc</code> into <code>$sepc</code>.</strong></p>
-<h2>2. Trampoline</h2>
-<p><strong>We're now executing in the &quot;trampoline&quot; page, which contains the start of the kernel's trap handling code</strong>, <code>ecall</code> does as little as possible to allow maximum flexibility to the operating system programmer to design the os however they like.</p>
-<p>What need to happen now?</p>
+$6 = 0x3fffffe000</code></pre>
+<p><strong>Another thing is we can see is that the <code>ecall</code>
+hardware instruction has already helped us storing the previous
+<code>$pc</code> into <code>$sepc</code>.</strong></p>
+<h2 id="trampoline">2. Trampoline</h2>
+<p><strong>We’re now executing in the “trampoline” page, which contains
+the start of the kernel’s trap handling code</strong>,
+<code>ecall</code> does as little as possible to allow maximum
+flexibility to the operating system programmer to design the os however
+they like.</p>
+<p>What need to happen now? * <strong>Save the 32 user register
+values.</strong> (so we can later restore them and when we want to
+resume the user code) * we need to save those registers because we are
+going to run C code inside kernel, which will use all these registers. *
+<strong>Switch to the kernel page table.</strong> * Set up stack for
+kernel C code. * Jump to some sensible place in the C code in the
+kernel.</p>
+<h3 id="i.-the-trap-frame">i. The Trap frame</h3>
 <ul>
-<li><strong>Save the 32 user register values.</strong> (so we can later restore them and when we want to resume the user code)
-<ul>
-<li>we need to save those registers because we are going to run C code inside kernel, which will use all these registers.</li>
+<li><strong>We don’t even know the address of the kernel page
+table</strong></li>
+<li>We need some spare registers in order to execute change
+<code>$satp</code> instruction.</li>
 </ul>
-</li>
-<li><strong>Switch to the kernel page table.</strong></li>
-<li>Set up stack for kernel C code.</li>
-<li>Jump to some sensible place in the C code in the kernel.</li>
-</ul>
-<h3>i. The Trap frame</h3>
-<ul>
-<li><strong>We don't even know the address of the kernel page table</strong></li>
-<li>We need some spare registers in order to execute change <code>$satp</code> instruction.</li>
-</ul>
-<p><strong>The xv6 maps a page, called trapframe into every user page table, it has space to to hold the saved registers</strong>, the kernel gives each process a different trapframe page.</p>
-<p>The virtual address of that trapframe is stored in the <strong><code>$sscrach</code></strong> register, and you can find the struct trapframe in <code>kernel/proc.h</code>.</p>
-<pre><code class="language-c">// per-process data for the trap handling code in trampoline.S.
-// sits in a page by itself just under the trampoline page in the
-// user page table. not specially mapped in the kernel page table.
-// the sscratch register points here.
-// uservec in trampoline.S saves user registers in the trapframe,
-// then initializes registers from the trapframe's
-// kernel_sp, kernel_hartid, kernel_satp, and jumps to kernel_trap.
-// usertrapret() and userret in trampoline.S set up
-// the trapframe's kernel_*, restore user registers from the
-// trapframe, switch to the user page table, and enter user space.
-// the trapframe includes callee-saved user registers like s0-s11 because the
-// return-to-user path via usertrapret() doesn't return through
-// the entire kernel call stack.
-struct trapframe {
-  /*   0 */ uint64 kernel_satp;   // kernel page table
-  /*   8 */ uint64 kernel_sp;     // top of process's kernel stack
-  /*  16 */ uint64 kernel_trap;   // usertrap()
-  /*  24 */ uint64 epc;           // saved user program counter
-  /*  32 */ uint64 kernel_hartid; // saved kernel tp
-  /*  40 */ uint64 ra;
-  /*  48 */ uint64 sp;
-  /*  56 */ uint64 gp;
-  /*  64 */ uint64 tp;
-  /*  72 */ uint64 t0;
-  /*  80 */ uint64 t1;
-  /*  88 */ uint64 t2;
-  /*  96 */ uint64 s0;
-  /* 104 */ uint64 s1;
-  /* 112 */ uint64 a0;
-  /* 120 */ uint64 a1;
-  /* 128 */ uint64 a2;
-  /* 136 */ uint64 a3;
-  /* 144 */ uint64 a4;
-  /* 152 */ uint64 a5;
-  /* 160 */ uint64 a6;
-  /* 168 */ uint64 a7;
-  /* 176 */ uint64 s2;
-  /* 184 */ uint64 s3;
-  /* 192 */ uint64 s4;
-  /* 200 */ uint64 s5;
-  /* 208 */ uint64 s6;
-  /* 216 */ uint64 s7;
-  /* 224 */ uint64 s8;
-  /* 232 */ uint64 s9;
-  /* 240 */ uint64 s10;
-  /* 248 */ uint64 s11;
-  /* 256 */ uint64 t3;
-  /* 264 */ uint64 t4;
-  /* 272 */ uint64 t5;
-  /* 280 */ uint64 t6;
-};
-
-</code></pre>
-<h3>ii. The Trampoline</h3>
-<p><img src="Sources/trampoline.png" alt="trampoline"></p>
-<p><strong>After <code>ecall</code>, as we mentioned before, the hardware set <code>$pc</code> to <code>$stvec</code>, which is the begining of the trapoline page</strong>.</p>
-<p>The first instruction, <code>csrrw</code>. swap <code>$a0</code> register and <code>$sscratch</code>, as we can see, after executing this very first instruction, the <code>$a0</code> becomes <code>0x3fffffe000</code>, which is the begining of the trap page. And <code>$sscratch</code> is 2, which is the first argument of this <code>write</code> system call -- the file descriptor <code>2</code>.</p>
+<p><strong>The xv6 maps a page, called trapframe into every user page
+table, it has space to to hold the saved registers</strong>, the kernel
+gives each process a different trapframe page.</p>
+<p>The virtual address of that trapframe is stored in the
+<strong><code>$sscrach</code></strong> register, and you can find the
+struct trapframe in <code>kernel/proc.h</code>.</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co">// per-process data for the trap handling code in trampoline.S.</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="co">// sits in a page by itself just under the trampoline page in the</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="co">// user page table. not specially mapped in the kernel page table.</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="co">// the sscratch register points here.</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="co">// uservec in trampoline.S saves user registers in the trapframe,</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="co">// then initializes registers from the trapframe&#39;s</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="co">// kernel_sp, kernel_hartid, kernel_satp, and jumps to kernel_trap.</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a><span class="co">// usertrapret() and userret in trampoline.S set up</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a><span class="co">// the trapframe&#39;s kernel_*, restore user registers from the</span></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a><span class="co">// trapframe, switch to the user page table, and enter user space.</span></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a><span class="co">// the trapframe includes callee-saved user registers like s0-s11 because the</span></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a><span class="co">// return-to-user path via usertrapret() doesn&#39;t return through</span></span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a><span class="co">// the entire kernel call stack.</span></span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> trapframe <span class="op">{</span></span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>  <span class="co">/*   0 */</span> uint64 kernel_satp<span class="op">;</span>   <span class="co">// kernel page table</span></span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>  <span class="co">/*   8 */</span> uint64 kernel_sp<span class="op">;</span>     <span class="co">// top of process&#39;s kernel stack</span></span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>  <span class="co">/*  16 */</span> uint64 kernel_trap<span class="op">;</span>   <span class="co">// usertrap()</span></span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>  <span class="co">/*  24 */</span> uint64 epc<span class="op">;</span>           <span class="co">// saved user program counter</span></span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a>  <span class="co">/*  32 */</span> uint64 kernel_hartid<span class="op">;</span> <span class="co">// saved kernel tp</span></span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>  <span class="co">/*  40 */</span> uint64 ra<span class="op">;</span></span>
+<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a>  <span class="co">/*  48 */</span> uint64 sp<span class="op">;</span></span>
+<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a>  <span class="co">/*  56 */</span> uint64 gp<span class="op">;</span></span>
+<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a>  <span class="co">/*  64 */</span> uint64 tp<span class="op">;</span></span>
+<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a>  <span class="co">/*  72 */</span> uint64 t0<span class="op">;</span></span>
+<span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a>  <span class="co">/*  80 */</span> uint64 t1<span class="op">;</span></span>
+<span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a>  <span class="co">/*  88 */</span> uint64 t2<span class="op">;</span></span>
+<span id="cb19-27"><a href="#cb19-27" aria-hidden="true" tabindex="-1"></a>  <span class="co">/*  96 */</span> uint64 s0<span class="op">;</span></span>
+<span id="cb19-28"><a href="#cb19-28" aria-hidden="true" tabindex="-1"></a>  <span class="co">/* 104 */</span> uint64 s1<span class="op">;</span></span>
+<span id="cb19-29"><a href="#cb19-29" aria-hidden="true" tabindex="-1"></a>  <span class="co">/* 112 */</span> uint64 a0<span class="op">;</span></span>
+<span id="cb19-30"><a href="#cb19-30" aria-hidden="true" tabindex="-1"></a>  <span class="co">/* 120 */</span> uint64 a1<span class="op">;</span></span>
+<span id="cb19-31"><a href="#cb19-31" aria-hidden="true" tabindex="-1"></a>  <span class="co">/* 128 */</span> uint64 a2<span class="op">;</span></span>
+<span id="cb19-32"><a href="#cb19-32" aria-hidden="true" tabindex="-1"></a>  <span class="co">/* 136 */</span> uint64 a3<span class="op">;</span></span>
+<span id="cb19-33"><a href="#cb19-33" aria-hidden="true" tabindex="-1"></a>  <span class="co">/* 144 */</span> uint64 a4<span class="op">;</span></span>
+<span id="cb19-34"><a href="#cb19-34" aria-hidden="true" tabindex="-1"></a>  <span class="co">/* 152 */</span> uint64 a5<span class="op">;</span></span>
+<span id="cb19-35"><a href="#cb19-35" aria-hidden="true" tabindex="-1"></a>  <span class="co">/* 160 */</span> uint64 a6<span class="op">;</span></span>
+<span id="cb19-36"><a href="#cb19-36" aria-hidden="true" tabindex="-1"></a>  <span class="co">/* 168 */</span> uint64 a7<span class="op">;</span></span>
+<span id="cb19-37"><a href="#cb19-37" aria-hidden="true" tabindex="-1"></a>  <span class="co">/* 176 */</span> uint64 s2<span class="op">;</span></span>
+<span id="cb19-38"><a href="#cb19-38" aria-hidden="true" tabindex="-1"></a>  <span class="co">/* 184 */</span> uint64 s3<span class="op">;</span></span>
+<span id="cb19-39"><a href="#cb19-39" aria-hidden="true" tabindex="-1"></a>  <span class="co">/* 192 */</span> uint64 s4<span class="op">;</span></span>
+<span id="cb19-40"><a href="#cb19-40" aria-hidden="true" tabindex="-1"></a>  <span class="co">/* 200 */</span> uint64 s5<span class="op">;</span></span>
+<span id="cb19-41"><a href="#cb19-41" aria-hidden="true" tabindex="-1"></a>  <span class="co">/* 208 */</span> uint64 s6<span class="op">;</span></span>
+<span id="cb19-42"><a href="#cb19-42" aria-hidden="true" tabindex="-1"></a>  <span class="co">/* 216 */</span> uint64 s7<span class="op">;</span></span>
+<span id="cb19-43"><a href="#cb19-43" aria-hidden="true" tabindex="-1"></a>  <span class="co">/* 224 */</span> uint64 s8<span class="op">;</span></span>
+<span id="cb19-44"><a href="#cb19-44" aria-hidden="true" tabindex="-1"></a>  <span class="co">/* 232 */</span> uint64 s9<span class="op">;</span></span>
+<span id="cb19-45"><a href="#cb19-45" aria-hidden="true" tabindex="-1"></a>  <span class="co">/* 240 */</span> uint64 s10<span class="op">;</span></span>
+<span id="cb19-46"><a href="#cb19-46" aria-hidden="true" tabindex="-1"></a>  <span class="co">/* 248 */</span> uint64 s11<span class="op">;</span></span>
+<span id="cb19-47"><a href="#cb19-47" aria-hidden="true" tabindex="-1"></a>  <span class="co">/* 256 */</span> uint64 t3<span class="op">;</span></span>
+<span id="cb19-48"><a href="#cb19-48" aria-hidden="true" tabindex="-1"></a>  <span class="co">/* 264 */</span> uint64 t4<span class="op">;</span></span>
+<span id="cb19-49"><a href="#cb19-49" aria-hidden="true" tabindex="-1"></a>  <span class="co">/* 272 */</span> uint64 t5<span class="op">;</span></span>
+<span id="cb19-50"><a href="#cb19-50" aria-hidden="true" tabindex="-1"></a>  <span class="co">/* 280 */</span> uint64 t6<span class="op">;</span></span>
+<span id="cb19-51"><a href="#cb19-51" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span></code></pre></div>
+<h3 id="ii.-the-trampoline">ii. The Trampoline</h3>
+<figure>
+<img src="Sources/trampoline.png" alt="trampoline" />
+<figcaption aria-hidden="true">trampoline</figcaption>
+</figure>
+<p><strong>After <code>ecall</code>, as we mentioned before, the
+hardware set <code>$pc</code> to <code>$stvec</code>, which is the
+begining of the trapoline page</strong>.</p>
+<p>The first instruction, <code>csrrw</code>. swap <code>$a0</code>
+register and <code>$sscratch</code>, as we can see, after executing this
+very first instruction, the <code>$a0</code> becomes
+<code>0x3fffffe000</code>, which is the begining of the trap page. And
+<code>$sscratch</code> is 2, which is the first argument of this
+<code>write</code> system call – the file descriptor <code>2</code>.</p>
 <pre><code>(gdb) print/x $a0 
 $1 = 0x3fffffe000
 
 (gdb) print $sscratch
-$2 = 2
-</code></pre>
-<p>The very next 32 <code>sd</code> instructions in this trampoline code, store every 64-bit register to a different offset in the trap frame page.</p>
-<pre><code class="language-assembly">.globl trampoline
+$2 = 2</code></pre>
+<p>The very next 32 <code>sd</code> instructions in this trampoline
+code, store every 64-bit register to a different offset in the trap
+frame page.</p>
+<pre class="assembly"><code>.globl trampoline
 trampoline:
 .align 4
 .globl uservec
 uservec:    
-	#
+    #
         # trap.c sets stvec to point here, so
         # traps from user space start here,
         # in supervisor mode, but with a
         # user page table.
         #
-        # sscratch points to where the process's p-&gt;trapframe is
+        # sscratch points to where the process&#39;s p-&gt;trapframe is
         # mapped into user space, at TRAPFRAME.
         #
         
-	# swap a0 and sscratch
+    # swap a0 and sscratch
         # so that a0 is TRAPFRAME
         csrrw a0, sscratch, a0
 
@@ -736,7 +1039,7 @@ uservec:
         sd t5, 272(a0)
         sd t6, 280(a0)
 
-	# save the user a0 in p-&gt;trapframe-&gt;a0
+    # save the user a0 in p-&gt;trapframe-&gt;a0
         csrr t0, sscratch
         sd t0, 112(a0)
 
@@ -758,29 +1061,36 @@ uservec:
         # table does not specially map p-&gt;tf.
 
         # jump to usertrap(), which does not return
-        jr t0
-</code></pre>
-<p>After save those 32 general-purpose registers, we need to restore some important register by execute <code>ld</code> instrucions, which will be used in the kernel space later on.</p>
-<h4>Process's kernel stack pointer</h4>
+        jr t0</code></pre>
+<p>After save those 32 general-purpose registers, we need to restore
+some important register by execute <code>ld</code> instrucions, which
+will be used in the kernel space later on.</p>
+<h4 id="processs-kernel-stack-pointer">Process’s kernel stack
+pointer</h4>
 <pre><code>(gdb) print/x $sp
-$5 = 0x3fffffc000
-</code></pre>
-<p>The process's kernel stack is up in high memory, because xv6 treats kernel stack especially so that it can put a guard page under each kernel stack.</p>
-<h4>Process's current core</h4>
+$5 = 0x3fffffc000</code></pre>
+<p>The process’s kernel stack is up in high memory, because xv6 treats
+kernel stack especially so that it can put a guard page under each
+kernel stack.</p>
+<h4 id="processs-current-core">Process’s current core</h4>
 <pre><code>(gdb) print/x $tp
-$6 = 0x0
-</code></pre>
-<p>Since there is no direct way in RISC-V to figure out which of the multiple cores you're running on, xv6 actually keeps the core number called <code>kernel_hartid</code> in the <code>$tp</code> register.</p>
-<h4>User trap</h4>
+$6 = 0x0</code></pre>
+<p>Since there is no direct way in RISC-V to figure out which of the
+multiple cores you’re running on, xv6 actually keeps the core number
+called <code>kernel_hartid</code> in the <code>$tp</code> register.</p>
+<h4 id="user-trap">User trap</h4>
 <pre><code>(gdb) print/x $t0
-$7 = 0x80001c38
-</code></pre>
-<p>Then we load the user trap c function address into <code>$t0</code>, which we'll jump to that location later on.</p>
-<h4>Kernel page table</h4>
+$7 = 0x80001c38</code></pre>
+<p>Then we load the user trap c function address into <code>$t0</code>,
+which we’ll jump to that location later on.</p>
+<h4 id="kernel-page-table">Kernel page table</h4>
 <pre><code>(gdb) print/x $satp
-$8 = 0x8000000000087fff
-</code></pre>
-<p><strong>As soon as the <code>ld</code> and <code>csrw</code> instruction executes, we'll switch page table from the user page table to kernel page table, after these instructions finished, we can see now we are in the kernel page table</strong>. And now we are pretty much ready to execute c code in the kernel.</p>
+$8 = 0x8000000000087fff</code></pre>
+<p><strong>As soon as the <code>ld</code> and <code>csrw</code>
+instruction executes, we’ll switch page table from the user page table
+to kernel page table, after these instructions finished, we can see now
+we are in the kernel page table</strong>. And now we are pretty much
+ready to execute c code in the kernel.</p>
 <pre><code>(qemu) info mem
 vaddr            paddr            size             attr
 ---------------- ---------------- ---------------- -------
@@ -803,215 +1113,254 @@ vaddr            paddr            size             attr
 0000000087f78000 0000000087f78000 0000000000088000 rw-----
 0000003ffff7f000 0000000087f78000 000000000003e000 rw-----
 0000003fffffb000 0000000087fb6000 0000000000002000 rw---ad
-0000003ffffff000 0000000080007000 0000000000001000 r-x--a-
-</code></pre>
-<p><strong>Note that we just switched the page table while executing the code in trampoline page, you may wonder that why isn't there a crash at this point.</strong>
-<strong>The reason is that both kernel page table and user page table maps the trampoline page (same va) into same pa. (bottom of two page tables, both of them maps <code>0x0000003ffffff000</code> into <code>0x0000000080007000</code>)</strong></p>
-<h2>3. usertrap</h2>
-<p><strong>After the last <code>jr t0</code> instruction in trampoline, we are now in the <code>usertrap</code> c code in the kernel.</strong></p>
-<pre><code class="language-c">// kernel/trap.c
-//
-// handle an interrupt, exception, or system call from user space.
-// called from trampoline.S
-//
-void
-usertrap(void)
-{
-  int which_dev = 0;
-
-  if((r_sstatus() &amp; SSTATUS_SPP) != 0)
-    panic(&quot;usertrap: not from user mode&quot;);
-
-  // send interrupts and exceptions to kerneltrap(),
-  // since we're now in the kernel.
-  w_stvec((uint64)kernelvec);
-
-  struct proc *p = myproc();
-  
-  // save user program counter.
-  p-&gt;trapframe-&gt;epc = r_sepc();
-  
-  if(r_scause() == 8){
-    // system call
-
-    if(p-&gt;killed)
-      exit(-1);
-
-    // sepc points to the ecall instruction,
-    // but we want to return to the next instruction.
-    p-&gt;trapframe-&gt;epc += 4;
-
-    // an interrupt will change sstatus &amp;c registers,
-    // so don't enable until done with those registers.
-    intr_on();
-
-    syscall();
-  } else if((which_dev = devintr()) != 0){
-    // ok
-  } else {
-    printf(&quot;usertrap(): unexpected scause %p pid=%d\n&quot;, r_scause(), p-&gt;pid);
-    printf(&quot;            sepc=%p stval=%p\n&quot;, r_sepc(), r_stval());
-    p-&gt;killed = 1;
-  }
-
-  if(p-&gt;killed)
-    exit(-1);
-
-  // give up the CPU if this is a timer interrupt.
-  if(which_dev == 2)
-    yield();
-
-  usertrapret();
-}
-</code></pre>
-<h3>i. Switch to kernel trap handler</h3>
-<pre><code class="language-c">  // send interrupts and exceptions to kerneltrap(),
-  // since we're now in the kernel.
-  w_stvec((uint64)kernelvec);
-</code></pre>
-<p>The way xv6 handles traps is different depending on whether they come from user space or from the kernel. Since we are now in the kernel space, we change the <code>stvec</code> to point to this <code>kernelvec</code> which is the kernel trap handler rather than current user trap handler.</p>
-<h3>ii. Figure out current running process</h3>
-<pre><code class="language-c">  struct proc *p = myproc();
-</code></pre>
-<p>We need to figure out what process we're running by calling that <strong><code>myproc</code></strong> function. <strong><code>myproc</code></strong> actually use the current cpu id by read the <code>$tp</code> which we set in trampoline page, to index the current process id.</p>
-<h3>iii. Save the user program counter</h3>
-<pre><code class="language-c">  p-&gt;trapframe-&gt;epc = r_sepc();
-</code></pre>
-<p>As we can see in <strong><code>ecall</code></strong> the saved user pc is still sitting there in <code>$sepc</code>, but one of the thing that could happen while we are in the kernel is that we might switch to another process. And that process might going to that process'user space and may make a system call which causes <code>$sepc</code> to be overwritten. <strong>We have to save our <code>$sepc</code> in some memory associate with this process.</strong></p>
-<h3>iv. Figure out why we came here</h3>
-<pre><code class="language-c">  if(r_scause() == 8){
-    // system call
-
-    if(p-&gt;killed)
-      exit(-1);
-
-    // sepc points to the ecall instruction,
-    // but we want to return to the next instruction.
-    p-&gt;trapframe-&gt;epc += 4;
-
-    // an interrupt will change sstatus &amp;c registers,
-    // so don't enable until done with those registers.
-    intr_on();
-
-    syscall();
-</code></pre>
-<p><strong>When <code>ecall</code> being executed, despite the 3 most important instructions, actually the machine will set <code>$scause</code> to reflect the trap's cause.</strong>
-If <code>$scause</code> is equal to 8, which means we came here because of a system call, so we're gonna execute this if statement.</p>
-<p>After we set the <code>pc+4</code>, which make sure that after the whole system call return, we will resume our user code, and enable interrupts. We are now in the entry of the system call handler -&gt; <strong><code>syscall</code></strong>.</p>
-<h2>4. syscall</h2>
-<pre><code class="language-c">// kernel/syscall.c
-void
-syscall(void)
-{
-  int num;
-  struct proc *p = myproc();
-
-  num = p-&gt;trapframe-&gt;a7;
-  if(num &gt; 0 &amp;&amp; num &lt; NELEM(syscalls) &amp;&amp; syscalls[num]) {
-    p-&gt;trapframe-&gt;a0 = syscalls[num]();
-  } else {
-    printf(&quot;%d %s: unknown sys call %d\n&quot;,
-            p-&gt;pid, p-&gt;name, num);
-    p-&gt;trapframe-&gt;a0 = -1;
-  }
-}
-</code></pre>
-<p><strong>The <code>syscall</code> function is simple, after get current process, it just retrieves that <code>$a7</code> register which we was saved away in the trap frame by the trampoline code. And then indexes into that syscalls table, and then calls that function.</strong> And the return value of that syscall function is stored in register <code>$a0</code> of that trap frame.</p>
+0000003ffffff000 0000000080007000 0000000000001000 r-x--a-</code></pre>
+<p><strong>Note that we just switched the page table while executing the
+code in trampoline page, you may wonder that why isn’t there a crash at
+this point.</strong> <strong>The reason is that both kernel page table
+and user page table maps the trampoline page (same va) into same pa.
+(bottom of two page tables, both of them maps
+<code>0x0000003ffffff000</code> into
+<code>0x0000000080007000</code>)</strong></p>
+<h2 id="usertrap">3. usertrap</h2>
+<p><strong>After the last <code>jr t0</code> instruction in trampoline,
+we are now in the <code>usertrap</code> c code in the
+kernel.</strong></p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co">// kernel/trap.c</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="co">//</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="co">// handle an interrupt, exception, or system call from user space.</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="co">// called from trampoline.S</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="co">//</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>usertrap<span class="op">(</span><span class="dt">void</span><span class="op">)</span></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> which_dev <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span><span class="op">((</span>r_sstatus<span class="op">()</span> <span class="op">&amp;</span> SSTATUS_SPP<span class="op">)</span> <span class="op">!=</span> <span class="dv">0</span><span class="op">)</span></span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>    panic<span class="op">(</span><span class="st">&quot;usertrap: not from user mode&quot;</span><span class="op">);</span></span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>  <span class="co">// send interrupts and exceptions to kerneltrap(),</span></span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>  <span class="co">// since we&#39;re now in the kernel.</span></span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>  w_stvec<span class="op">((</span>uint64<span class="op">)</span>kernelvec<span class="op">);</span></span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a>  <span class="kw">struct</span> proc <span class="op">*</span>p <span class="op">=</span> myproc<span class="op">();</span></span>
+<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a>  <span class="co">// save user program counter.</span></span>
+<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a>  p<span class="op">-&gt;</span>trapframe<span class="op">-&gt;</span>epc <span class="op">=</span> r_sepc<span class="op">();</span></span>
+<span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb27-23"><a href="#cb27-23" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span><span class="op">(</span>r_scause<span class="op">()</span> <span class="op">==</span> <span class="dv">8</span><span class="op">){</span></span>
+<span id="cb27-24"><a href="#cb27-24" aria-hidden="true" tabindex="-1"></a>    <span class="co">// system call</span></span>
+<span id="cb27-25"><a href="#cb27-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-26"><a href="#cb27-26" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span><span class="op">(</span>p<span class="op">-&gt;</span>killed<span class="op">)</span></span>
+<span id="cb27-27"><a href="#cb27-27" aria-hidden="true" tabindex="-1"></a>      exit<span class="op">(-</span><span class="dv">1</span><span class="op">);</span></span>
+<span id="cb27-28"><a href="#cb27-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-29"><a href="#cb27-29" aria-hidden="true" tabindex="-1"></a>    <span class="co">// sepc points to the ecall instruction,</span></span>
+<span id="cb27-30"><a href="#cb27-30" aria-hidden="true" tabindex="-1"></a>    <span class="co">// but we want to return to the next instruction.</span></span>
+<span id="cb27-31"><a href="#cb27-31" aria-hidden="true" tabindex="-1"></a>    p<span class="op">-&gt;</span>trapframe<span class="op">-&gt;</span>epc <span class="op">+=</span> <span class="dv">4</span><span class="op">;</span></span>
+<span id="cb27-32"><a href="#cb27-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-33"><a href="#cb27-33" aria-hidden="true" tabindex="-1"></a>    <span class="co">// an interrupt will change sstatus &amp;c registers,</span></span>
+<span id="cb27-34"><a href="#cb27-34" aria-hidden="true" tabindex="-1"></a>    <span class="co">// so don&#39;t enable until done with those registers.</span></span>
+<span id="cb27-35"><a href="#cb27-35" aria-hidden="true" tabindex="-1"></a>    intr_on<span class="op">();</span></span>
+<span id="cb27-36"><a href="#cb27-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-37"><a href="#cb27-37" aria-hidden="true" tabindex="-1"></a>    syscall<span class="op">();</span></span>
+<span id="cb27-38"><a href="#cb27-38" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span> <span class="cf">else</span> <span class="cf">if</span><span class="op">((</span>which_dev <span class="op">=</span> devintr<span class="op">())</span> <span class="op">!=</span> <span class="dv">0</span><span class="op">){</span></span>
+<span id="cb27-39"><a href="#cb27-39" aria-hidden="true" tabindex="-1"></a>    <span class="co">// ok</span></span>
+<span id="cb27-40"><a href="#cb27-40" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb27-41"><a href="#cb27-41" aria-hidden="true" tabindex="-1"></a>    printf<span class="op">(</span><span class="st">&quot;usertrap(): unexpected scause %p pid=%d</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">,</span> r_scause<span class="op">(),</span> p<span class="op">-&gt;</span>pid<span class="op">);</span></span>
+<span id="cb27-42"><a href="#cb27-42" aria-hidden="true" tabindex="-1"></a>    printf<span class="op">(</span><span class="st">&quot;            sepc=%p stval=%p</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">,</span> r_sepc<span class="op">(),</span> r_stval<span class="op">());</span></span>
+<span id="cb27-43"><a href="#cb27-43" aria-hidden="true" tabindex="-1"></a>    p<span class="op">-&gt;</span>killed <span class="op">=</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb27-44"><a href="#cb27-44" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb27-45"><a href="#cb27-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-46"><a href="#cb27-46" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span><span class="op">(</span>p<span class="op">-&gt;</span>killed<span class="op">)</span></span>
+<span id="cb27-47"><a href="#cb27-47" aria-hidden="true" tabindex="-1"></a>    exit<span class="op">(-</span><span class="dv">1</span><span class="op">);</span></span>
+<span id="cb27-48"><a href="#cb27-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-49"><a href="#cb27-49" aria-hidden="true" tabindex="-1"></a>  <span class="co">// give up the CPU if this is a timer interrupt.</span></span>
+<span id="cb27-50"><a href="#cb27-50" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span><span class="op">(</span>which_dev <span class="op">==</span> <span class="dv">2</span><span class="op">)</span></span>
+<span id="cb27-51"><a href="#cb27-51" aria-hidden="true" tabindex="-1"></a>    yield<span class="op">();</span></span>
+<span id="cb27-52"><a href="#cb27-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-53"><a href="#cb27-53" aria-hidden="true" tabindex="-1"></a>  usertrapret<span class="op">();</span></span>
+<span id="cb27-54"><a href="#cb27-54" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h3 id="i.-switch-to-kernel-trap-handler">i. Switch to kernel trap
+handler</h3>
+<div class="sourceCode" id="cb28"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>  <span class="co">// send interrupts and exceptions to kerneltrap(),</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">// since we&#39;re now in the kernel.</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  w_stvec<span class="op">((</span>uint64<span class="op">)</span>kernelvec<span class="op">);</span></span></code></pre></div>
+<p>The way xv6 handles traps is different depending on whether they come
+from user space or from the kernel. Since we are now in the kernel
+space, we change the <code>stvec</code> to point to this
+<code>kernelvec</code> which is the kernel trap handler rather than
+current user trap handler.</p>
+<h3 id="ii.-figure-out-current-running-process">ii. Figure out current
+running process</h3>
+<div class="sourceCode" id="cb29"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>  <span class="kw">struct</span> proc <span class="op">*</span>p <span class="op">=</span> myproc<span class="op">();</span></span></code></pre></div>
+<p>We need to figure out what process we’re running by calling that
+<strong><code>myproc</code></strong> function.
+<strong><code>myproc</code></strong> actually use the current cpu id by
+read the <code>$tp</code> which we set in trampoline page, to index the
+current process id.</p>
+<h3 id="iii.-save-the-user-program-counter">iii. Save the user program
+counter</h3>
+<div class="sourceCode" id="cb30"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>  p<span class="op">-&gt;</span>trapframe<span class="op">-&gt;</span>epc <span class="op">=</span> r_sepc<span class="op">();</span></span></code></pre></div>
+<p>As we can see in <strong><code>ecall</code></strong> the saved user
+pc is still sitting there in <code>$sepc</code>, but one of the thing
+that could happen while we are in the kernel is that we might switch to
+another process. And that process might going to that process’user space
+and may make a system call which causes <code>$sepc</code> to be
+overwritten. <strong>We have to save our <code>$sepc</code> in some
+memory associate with this process.</strong></p>
+<h3 id="iv.-figure-out-why-we-came-here">iv. Figure out why we came
+here</h3>
+<div class="sourceCode" id="cb31"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span><span class="op">(</span>r_scause<span class="op">()</span> <span class="op">==</span> <span class="dv">8</span><span class="op">){</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">// system call</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span><span class="op">(</span>p<span class="op">-&gt;</span>killed<span class="op">)</span></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>      exit<span class="op">(-</span><span class="dv">1</span><span class="op">);</span></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>    <span class="co">// sepc points to the ecall instruction,</span></span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>    <span class="co">// but we want to return to the next instruction.</span></span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>    p<span class="op">-&gt;</span>trapframe<span class="op">-&gt;</span>epc <span class="op">+=</span> <span class="dv">4</span><span class="op">;</span></span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>    <span class="co">// an interrupt will change sstatus &amp;c registers,</span></span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a>    <span class="co">// so don&#39;t enable until done with those registers.</span></span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a>    intr_on<span class="op">();</span></span>
+<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a>    syscall<span class="op">();</span></span></code></pre></div>
+<p><strong>When <code>ecall</code> being executed, despite the 3 most
+important instructions, actually the machine will set
+<code>$scause</code> to reflect the trap’s cause.</strong> If
+<code>$scause</code> is equal to 8, which means we came here because of
+a system call, so we’re gonna execute this if statement.</p>
+<p>After we set the <code>pc+4</code>, which make sure that after the
+whole system call return, we will resume our user code, and enable
+interrupts. We are now in the entry of the system call handler -&gt;
+<strong><code>syscall</code></strong>.</p>
+<h2 id="syscall">4. syscall</h2>
+<div class="sourceCode" id="cb32"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co">// kernel/syscall.c</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>syscall<span class="op">(</span><span class="dt">void</span><span class="op">)</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> num<span class="op">;</span></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">struct</span> proc <span class="op">*</span>p <span class="op">=</span> myproc<span class="op">();</span></span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>  num <span class="op">=</span> p<span class="op">-&gt;</span>trapframe<span class="op">-&gt;</span>a7<span class="op">;</span></span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span><span class="op">(</span>num <span class="op">&gt;</span> <span class="dv">0</span> <span class="op">&amp;&amp;</span> num <span class="op">&lt;</span> NELEM<span class="op">(</span>syscalls<span class="op">)</span> <span class="op">&amp;&amp;</span> syscalls<span class="op">[</span>num<span class="op">])</span> <span class="op">{</span></span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>    p<span class="op">-&gt;</span>trapframe<span class="op">-&gt;</span>a0 <span class="op">=</span> syscalls<span class="op">[</span>num<span class="op">]();</span></span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a>    printf<span class="op">(</span><span class="st">&quot;%d %s: unknown sys call %d</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">,</span></span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a>            p<span class="op">-&gt;</span>pid<span class="op">,</span> p<span class="op">-&gt;</span>name<span class="op">,</span> num<span class="op">);</span></span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a>    p<span class="op">-&gt;</span>trapframe<span class="op">-&gt;</span>a0 <span class="op">=</span> <span class="op">-</span><span class="dv">1</span><span class="op">;</span></span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p><strong>The <code>syscall</code> function is simple, after get
+current process, it just retrieves that <code>$a7</code> register which
+we was saved away in the trap frame by the trampoline code. And then
+indexes into that syscalls table, and then calls that function.</strong>
+And the return value of that syscall function is stored in register
+<code>$a0</code> of that trap frame.</p>
 <pre><code>(gdb) stepi
-sys_write () at kernel/sysfile.c:83
-</code></pre>
-<p>If we use gdb to step into that function, now we are in <strong><code>sys_write</code></strong>, which is the kernel implementation of the <code>write</code> system call.</p>
-<pre><code class="language-c">// kernel/sysfile.c
-uint64
-sys_write(void)
-{
-  struct file *f;
-  int n;
-  uint64 p;
-
-  if(argfd(0, 0, &amp;f) &lt; 0 || argint(2, &amp;n) &lt; 0 || argaddr(1, &amp;p) &lt; 0)
-    return -1;
-
-  return filewrite(f, p, n);
-}
-</code></pre>
-<p>Since we are now only interested in getting into and out of the kernel, we are going to step over the actual implementation of system call.</p>
-<h2>5. usertrapret</h2>
-<pre><code class="language-c">// kernel/trap.c
-void
-usertrapret(void)
-{
-  struct proc *p = myproc();
-
-  // we're about to switch the destination of traps from
-  // kerneltrap() to usertrap(), so turn off interrupts until
-  // we're back in user space, where usertrap() is correct.
-  intr_off();
-
-  // send syscalls, interrupts, and exceptions to trampoline.S
-  w_stvec(TRAMPOLINE + (uservec - trampoline));
-
-  // set up trapframe values that uservec will need when
-  // the process next re-enters the kernel.
-  p-&gt;trapframe-&gt;kernel_satp = r_satp();         // kernel page table
-  p-&gt;trapframe-&gt;kernel_sp = p-&gt;kstack + PGSIZE; // process's kernel stack
-  p-&gt;trapframe-&gt;kernel_trap = (uint64)usertrap;
-  p-&gt;trapframe-&gt;kernel_hartid = r_tp();         // hartid for cpuid()
-
-  // set up the registers that trampoline.S's sret will use
-  // to get to user space.
-  
-  // set S Previous Privilege mode to User.
-  unsigned long x = r_sstatus();
-  x &amp;= ~SSTATUS_SPP; // clear SPP to 0 for user mode
-  x |= SSTATUS_SPIE; // enable interrupts in user mode
-  w_sstatus(x);
-
-  // set S Exception Program Counter to the saved user pc.
-  w_sepc(p-&gt;trapframe-&gt;epc);
-
-  // tell trampoline.S the user page table to switch to.
-  uint64 satp = MAKE_SATP(p-&gt;pagetable);
-
-  // jump to trampoline.S at the top of memory, which 
-  // switches to the user page table, restores user registers,
-  // and switches to user mode with sret.
-  uint64 fn = TRAMPOLINE + (userret - trampoline);
-  ((void (*)(uint64,uint64))fn)(TRAPFRAME, satp);
-}
-</code></pre>
-<h3>i. Change stvec to the user trap handler</h3>
-<pre><code class="language-c">  // send syscalls, interrupts, and exceptions to trampoline.S
-  w_stvec(TRAMPOLINE + (uservec - trampoline));
-</code></pre>
-<p>The reason we turn off interrupts because once we changed the user trap handler, we're still executing in the kernel, and if an interrupt occur then it would go to the user trap handler even though we're executing in the kernel.</p>
-<h3>ii. Prepare the trap frame for the next kernel re-entering</h3>
-<pre><code class="language-c">  // set up trapframe values that uservec will need when
-  // the process next re-enters the kernel.
-  p-&gt;trapframe-&gt;kernel_satp = r_satp();         // kernel page table
-  p-&gt;trapframe-&gt;kernel_sp = p-&gt;kstack + PGSIZE; // process's kernel stack
-  p-&gt;trapframe-&gt;kernel_trap = (uint64)usertrap;
-  p-&gt;trapframe-&gt;kernel_hartid = r_tp();         // hartid for cpuid()
-</code></pre>
-<h3>iii. Ready to execute the userret asm code in <code>trampoline.s</code></h3>
-<pre><code class="language-c">  // set S Exception Program Counter to the saved user pc.
-  w_sepc(p-&gt;trapframe-&gt;epc);
-
-  // tell trampoline.S the user page table to switch to.
-  uint64 satp = MAKE_SATP(p-&gt;pagetable);
-
-  // jump to trampoline.S at the top of memory, which 
-  // switches to the user page table, restores user registers,
-  // and switches to user mode with sret.
-  uint64 fn = TRAMPOLINE + (userret - trampoline);
-  ((void (*)(uint64,uint64))fn)(TRAPFRAME, satp);
-</code></pre>
+sys_write () at kernel/sysfile.c:83</code></pre>
+<p>If we use gdb to step into that function, now we are in
+<strong><code>sys_write</code></strong>, which is the kernel
+implementation of the <code>write</code> system call.</p>
+<div class="sourceCode" id="cb34"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co">// kernel/sysfile.c</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>uint64</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>sys_write<span class="op">(</span><span class="dt">void</span><span class="op">)</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">struct</span> file <span class="op">*</span>f<span class="op">;</span></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> n<span class="op">;</span></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>  uint64 p<span class="op">;</span></span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span><span class="op">(</span>argfd<span class="op">(</span><span class="dv">0</span><span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="op">&amp;</span>f<span class="op">)</span> <span class="op">&lt;</span> <span class="dv">0</span> <span class="op">||</span> argint<span class="op">(</span><span class="dv">2</span><span class="op">,</span> <span class="op">&amp;</span>n<span class="op">)</span> <span class="op">&lt;</span> <span class="dv">0</span> <span class="op">||</span> argaddr<span class="op">(</span><span class="dv">1</span><span class="op">,</span> <span class="op">&amp;</span>p<span class="op">)</span> <span class="op">&lt;</span> <span class="dv">0</span><span class="op">)</span></span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="op">-</span><span class="dv">1</span><span class="op">;</span></span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> filewrite<span class="op">(</span>f<span class="op">,</span> p<span class="op">,</span> n<span class="op">);</span></span>
+<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>Since we are now only interested in getting into and out of the
+kernel, we are going to step over the actual implementation of system
+call.</p>
+<h2 id="usertrapret">5. usertrapret</h2>
+<div class="sourceCode" id="cb35"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co">// kernel/trap.c</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>usertrapret<span class="op">(</span><span class="dt">void</span><span class="op">)</span></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">struct</span> proc <span class="op">*</span>p <span class="op">=</span> myproc<span class="op">();</span></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>  <span class="co">// we&#39;re about to switch the destination of traps from</span></span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>  <span class="co">// kerneltrap() to usertrap(), so turn off interrupts until</span></span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>  <span class="co">// we&#39;re back in user space, where usertrap() is correct.</span></span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>  intr_off<span class="op">();</span></span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a>  <span class="co">// send syscalls, interrupts, and exceptions to trampoline.S</span></span>
+<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a>  w_stvec<span class="op">(</span>TRAMPOLINE <span class="op">+</span> <span class="op">(</span>uservec <span class="op">-</span> trampoline<span class="op">));</span></span>
+<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a>  <span class="co">// set up trapframe values that uservec will need when</span></span>
+<span id="cb35-16"><a href="#cb35-16" aria-hidden="true" tabindex="-1"></a>  <span class="co">// the process next re-enters the kernel.</span></span>
+<span id="cb35-17"><a href="#cb35-17" aria-hidden="true" tabindex="-1"></a>  p<span class="op">-&gt;</span>trapframe<span class="op">-&gt;</span>kernel_satp <span class="op">=</span> r_satp<span class="op">();</span>         <span class="co">// kernel page table</span></span>
+<span id="cb35-18"><a href="#cb35-18" aria-hidden="true" tabindex="-1"></a>  p<span class="op">-&gt;</span>trapframe<span class="op">-&gt;</span>kernel_sp <span class="op">=</span> p<span class="op">-&gt;</span>kstack <span class="op">+</span> PGSIZE<span class="op">;</span> <span class="co">// process&#39;s kernel stack</span></span>
+<span id="cb35-19"><a href="#cb35-19" aria-hidden="true" tabindex="-1"></a>  p<span class="op">-&gt;</span>trapframe<span class="op">-&gt;</span>kernel_trap <span class="op">=</span> <span class="op">(</span>uint64<span class="op">)</span>usertrap<span class="op">;</span></span>
+<span id="cb35-20"><a href="#cb35-20" aria-hidden="true" tabindex="-1"></a>  p<span class="op">-&gt;</span>trapframe<span class="op">-&gt;</span>kernel_hartid <span class="op">=</span> r_tp<span class="op">();</span>         <span class="co">// hartid for cpuid()</span></span>
+<span id="cb35-21"><a href="#cb35-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-22"><a href="#cb35-22" aria-hidden="true" tabindex="-1"></a>  <span class="co">// set up the registers that trampoline.S&#39;s sret will use</span></span>
+<span id="cb35-23"><a href="#cb35-23" aria-hidden="true" tabindex="-1"></a>  <span class="co">// to get to user space.</span></span>
+<span id="cb35-24"><a href="#cb35-24" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb35-25"><a href="#cb35-25" aria-hidden="true" tabindex="-1"></a>  <span class="co">// set S Previous Privilege mode to User.</span></span>
+<span id="cb35-26"><a href="#cb35-26" aria-hidden="true" tabindex="-1"></a>  <span class="dt">unsigned</span> <span class="dt">long</span> x <span class="op">=</span> r_sstatus<span class="op">();</span></span>
+<span id="cb35-27"><a href="#cb35-27" aria-hidden="true" tabindex="-1"></a>  x <span class="op">&amp;=</span> <span class="op">~</span>SSTATUS_SPP<span class="op">;</span> <span class="co">// clear SPP to 0 for user mode</span></span>
+<span id="cb35-28"><a href="#cb35-28" aria-hidden="true" tabindex="-1"></a>  x <span class="op">|=</span> SSTATUS_SPIE<span class="op">;</span> <span class="co">// enable interrupts in user mode</span></span>
+<span id="cb35-29"><a href="#cb35-29" aria-hidden="true" tabindex="-1"></a>  w_sstatus<span class="op">(</span>x<span class="op">);</span></span>
+<span id="cb35-30"><a href="#cb35-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-31"><a href="#cb35-31" aria-hidden="true" tabindex="-1"></a>  <span class="co">// set S Exception Program Counter to the saved user pc.</span></span>
+<span id="cb35-32"><a href="#cb35-32" aria-hidden="true" tabindex="-1"></a>  w_sepc<span class="op">(</span>p<span class="op">-&gt;</span>trapframe<span class="op">-&gt;</span>epc<span class="op">);</span></span>
+<span id="cb35-33"><a href="#cb35-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-34"><a href="#cb35-34" aria-hidden="true" tabindex="-1"></a>  <span class="co">// tell trampoline.S the user page table to switch to.</span></span>
+<span id="cb35-35"><a href="#cb35-35" aria-hidden="true" tabindex="-1"></a>  uint64 satp <span class="op">=</span> MAKE_SATP<span class="op">(</span>p<span class="op">-&gt;</span>pagetable<span class="op">);</span></span>
+<span id="cb35-36"><a href="#cb35-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-37"><a href="#cb35-37" aria-hidden="true" tabindex="-1"></a>  <span class="co">// jump to trampoline.S at the top of memory, which </span></span>
+<span id="cb35-38"><a href="#cb35-38" aria-hidden="true" tabindex="-1"></a>  <span class="co">// switches to the user page table, restores user registers,</span></span>
+<span id="cb35-39"><a href="#cb35-39" aria-hidden="true" tabindex="-1"></a>  <span class="co">// and switches to user mode with sret.</span></span>
+<span id="cb35-40"><a href="#cb35-40" aria-hidden="true" tabindex="-1"></a>  uint64 fn <span class="op">=</span> TRAMPOLINE <span class="op">+</span> <span class="op">(</span>userret <span class="op">-</span> trampoline<span class="op">);</span></span>
+<span id="cb35-41"><a href="#cb35-41" aria-hidden="true" tabindex="-1"></a>  <span class="op">((</span><span class="dt">void</span> <span class="op">(*)(</span>uint64<span class="op">,</span>uint64<span class="op">))</span>fn<span class="op">)(</span>TRAPFRAME<span class="op">,</span> satp<span class="op">);</span></span>
+<span id="cb35-42"><a href="#cb35-42" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h3 id="i.-change-stvec-to-the-user-trap-handler">i. Change stvec to the
+user trap handler</h3>
+<div class="sourceCode" id="cb36"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>  <span class="co">// send syscalls, interrupts, and exceptions to trampoline.S</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>  w_stvec<span class="op">(</span>TRAMPOLINE <span class="op">+</span> <span class="op">(</span>uservec <span class="op">-</span> trampoline<span class="op">));</span></span></code></pre></div>
+<p>The reason we turn off interrupts because once we changed the user
+trap handler, we’re still executing in the kernel, and if an interrupt
+occur then it would go to the user trap handler even though we’re
+executing in the kernel.</p>
+<h3 id="ii.-prepare-the-trap-frame-for-the-next-kernel-re-entering">ii.
+Prepare the trap frame for the next kernel re-entering</h3>
+<div class="sourceCode" id="cb37"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>  <span class="co">// set up trapframe values that uservec will need when</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">// the process next re-enters the kernel.</span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>  p<span class="op">-&gt;</span>trapframe<span class="op">-&gt;</span>kernel_satp <span class="op">=</span> r_satp<span class="op">();</span>         <span class="co">// kernel page table</span></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>  p<span class="op">-&gt;</span>trapframe<span class="op">-&gt;</span>kernel_sp <span class="op">=</span> p<span class="op">-&gt;</span>kstack <span class="op">+</span> PGSIZE<span class="op">;</span> <span class="co">// process&#39;s kernel stack</span></span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>  p<span class="op">-&gt;</span>trapframe<span class="op">-&gt;</span>kernel_trap <span class="op">=</span> <span class="op">(</span>uint64<span class="op">)</span>usertrap<span class="op">;</span></span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>  p<span class="op">-&gt;</span>trapframe<span class="op">-&gt;</span>kernel_hartid <span class="op">=</span> r_tp<span class="op">();</span>         <span class="co">// hartid for cpuid()</span></span></code></pre></div>
+<h3 id="iii.-ready-to-execute-the-userret-asm-code-in-trampoline.s">iii.
+Ready to execute the userret asm code in <code>trampoline.s</code></h3>
+<div class="sourceCode" id="cb38"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>  <span class="co">// set S Exception Program Counter to the saved user pc.</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>  w_sepc<span class="op">(</span>p<span class="op">-&gt;</span>trapframe<span class="op">-&gt;</span>epc<span class="op">);</span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">// tell trampoline.S the user page table to switch to.</span></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>  uint64 satp <span class="op">=</span> MAKE_SATP<span class="op">(</span>p<span class="op">-&gt;</span>pagetable<span class="op">);</span></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>  <span class="co">// jump to trampoline.S at the top of memory, which </span></span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>  <span class="co">// switches to the user page table, restores user registers,</span></span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>  <span class="co">// and switches to user mode with sret.</span></span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>  uint64 fn <span class="op">=</span> TRAMPOLINE <span class="op">+</span> <span class="op">(</span>userret <span class="op">-</span> trampoline<span class="op">);</span></span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a>  <span class="op">((</span><span class="dt">void</span> <span class="op">(*)(</span>uint64<span class="op">,</span>uint64<span class="op">))</span>fn<span class="op">)(</span>TRAPFRAME<span class="op">,</span> satp<span class="op">);</span></span></code></pre></div>
 <ul>
-<li>Write the resume user-code pc which located in <code>$epc</code> to the <code>$satp</code> so that the <strong><code>sret</code></strong> instruction can assign that value into pc when switching to the user space.</li>
-<li>Cook up the <code>$satp</code>, which will be used in the trampoline code later.</li>
-<li>Get the location of <strong><code>userret</code></strong> in trampoline.s, and then call that function with the <code>TRAPFRAME</code> and <code>satp</code> arguments passing.</li>
+<li>Write the resume user-code pc which located in <code>$epc</code> to
+the <code>$satp</code> so that the <strong><code>sret</code></strong>
+instruction can assign that value into pc when switching to the user
+space.</li>
+<li>Cook up the <code>$satp</code>, which will be used in the trampoline
+code later.</li>
+<li>Get the location of <strong><code>userret</code></strong> in
+trampoline.s, and then call that function with the
+<code>TRAPFRAME</code> and <code>satp</code> arguments passing.</li>
 </ul>
-<h2>6. userret</h2>
+<h2 id="userret">6. userret</h2>
 <pre><code>.globl userret
 userret:
         # userret(TRAPFRAME, pagetable)
@@ -1061,14 +1410,15 @@ userret:
         ld t5, 272(a0)
         ld t6, 280(a0)
 
-	# restore user a0, and save TRAPFRAME in sscratch
+    # restore user a0, and save TRAPFRAME in sscratch
         csrrw a0, sscratch, a0
         
         # return to user mode and user pc.
         # usertrapret() set up sstatus and sepc.
-        sret
-</code></pre>
-<p>After the first instruction, as we can see, now we are in the much smaller user page table but luckily still with the trampoline page map so we don't crash on the next instruction.</p>
+        sret</code></pre>
+<p>After the first instruction, as we can see, now we are in the much
+smaller user page table but luckily still with the trampoline page map
+so we don’t crash on the next instruction.</p>
 <pre><code>(qemu) info mem
 vaddr            paddr            size             attr
 ---------------- ---------------- ---------------- -------
@@ -1077,19 +1427,27 @@ vaddr            paddr            size             attr
 0000000000002000 0000000087f5d000 0000000000001000 rwx----
 0000000000003000 0000000087f5c000 0000000000001000 rwxu-ad
 0000003fffffe000 0000000087f70000 0000000000001000 rw---ad
-0000003ffffff000 0000000080007000 0000000000001000 r-x--a-
-</code></pre>
-<p>Back to <strong>4.syscall</strong>, when we are executing the <strong><code>syscall</code></strong>, we store the return value into <code>p-&gt;trapframe-&gt;a0</code>.
-<strong>Since the current value of <code>$a0</code> is the <code>TRAPFRAME</code> address, we cannot overwrite it, until we restore all saved registers. So we load the <code>p-&gt;trapframe-&gt;a0</code> into <code>$t0</code>, and then swap it with <code>$sscratch</code>.</strong></p>
+0000003ffffff000 0000000080007000 0000000000001000 r-x--a-</code></pre>
+<p>Back to <strong>4.syscall</strong>, when we are executing the
+<strong><code>syscall</code></strong>, we store the return value into
+<code>p-&gt;trapframe-&gt;a0</code>. <strong>Since the current value of
+<code>$a0</code> is the <code>TRAPFRAME</code> address, we cannot
+overwrite it, until we restore all saved registers. So we load the
+<code>p-&gt;trapframe-&gt;a0</code> into <code>$t0</code>, and then swap
+it with <code>$sscratch</code>.</strong></p>
 <pre><code>(gdb) print/x $a0
 $9 = 0x3fffffe000
 (gdb) print/x $sscratch
-$10 = 0x1
-</code></pre>
-<p><strong>After that, we restore all registers but <code>$a0</code> from <code>TRAPFRAME</code>, finally, we swap <code>$sscratch</code> and <code>$a0</code> both restore the correct return value of <code>syscall</code> and load the <code>TRAPFRAME</code> into <code>$sscratch</code>, so that the trap handling code that we talked about before will be able to use that <code>$sscratch</code> to get at the trap frame.</strong></p>
+$10 = 0x1</code></pre>
+<p><strong>After that, we restore all registers but <code>$a0</code>
+from <code>TRAPFRAME</code>, finally, we swap <code>$sscratch</code> and
+<code>$a0</code> both restore the correct return value of
+<code>syscall</code> and load the <code>TRAPFRAME</code> into
+<code>$sscratch</code>, so that the trap handling code that we talked
+about before will be able to use that <code>$sscratch</code> to get at
+the trap frame.</strong></p>
 <pre><code>(gdb) print/x $sscratch
-$11 = 0x3fffffe000
-</code></pre>
+$11 = 0x3fffffe000</code></pre>
 <pre><code>ra             0xe82    0xe82
 sp             0x3e90   0x3e90
 gp             0x505050505050505        0x505050505050505
@@ -1121,26 +1479,36 @@ t3             0x505050505050505        361700864190383365
 t4             0x505050505050505        361700864190383365
 t5             0x505050505050505        361700864190383365
 t6             0x505050505050505        361700864190383365
-pc             0x3ffffff10e     0x3ffffff10e
-</code></pre>
-<p><strong>Now all these 32 general-purpose registers happen to be the same set of registers before we make that system call in user space. We are now ready to jump back to user code and resume the procedure after system call.</strong></p>
-<h2>7. sret</h2>
-<p><strong>Same as <code>ecall</code>, the <code>sret</code> instruction does many things for us.</strong></p>
-<ol>
-<li><strong>Switch to user mode.</strong></li>
-<li><strong>Copy <code>$sepc</code> to <code>$pc</code>.</strong></li>
-</ol>
+pc             0x3ffffff10e     0x3ffffff10e</code></pre>
+<p><strong>Now all these 32 general-purpose registers happen to be the
+same set of registers before we make that system call in user space. We
+are now ready to jump back to user code and resume the procedure after
+system call.</strong></p>
+<h2 id="sret">7. sret</h2>
+<p><strong>Same as <code>ecall</code>, the <code>sret</code> instruction
+does many things for us.</strong> 1. <strong>Switch to user
+mode.</strong> 2. <strong>Copy <code>$sepc</code> to
+<code>$pc</code>.</strong></p>
 <pre><code>(gdb) stepi
 0x0000000000000dee in ?? ()
 =&gt; 0x0000000000000dee:  82 80   ret
 (gdb) print/x $pc
-$12 = 0xdee
-</code></pre>
-<p>Now we are back to the shell, just at the very next instruction of <strong><code>ecall</code>.</strong> And that is the whole procedure of a <strong>Trap.</strong></p>
-<p><img src="Sources/traps.png" alt="traps"></p>
-<h2>8. Summary</h2>
-<p><strong>To wrap up, the system calls are sort of look like function calls but the user-kernel transitions are much more complex than normal function calls are.</strong></p>
-<p><strong>A lot of the complexities due to the requirement for isolation, because the kernel just can't trust anything in user space, that makes many instructions cannot be executed in user space.</strong></p>
+$12 = 0xdee</code></pre>
+<p>Now we are back to the shell, just at the very next instruction of
+<strong><code>ecall</code>.</strong> And that is the whole procedure of
+a <strong>Trap.</strong></p>
+<figure>
+<img src="Sources/traps.png" alt="traps" />
+<figcaption aria-hidden="true">traps</figcaption>
+</figure>
+<h2 id="summary">8. Summary</h2>
+<p><strong>To wrap up, the system calls are sort of look like function
+calls but the user-kernel transitions are much more complex than normal
+function calls are.</strong></p>
+<p><strong>A lot of the complexities due to the requirement for
+isolation, because the kernel just can’t trust anything in user space,
+that makes many instructions cannot be executed in user
+space.</strong></p>
 	</section>
 	</div>
     </div>
@@ -1180,6 +1548,10 @@ this.page.identifier = "os/docs/lectures/3Traps.html"
    </div>
 </footer>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
+
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
 <script src="../../../theme/js/bootstrap.min.js"></script>
 
 <!-- Enable responsive features in IE8 with Respond.js (https://github.com/scottjehl/Respond) -->

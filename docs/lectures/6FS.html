@@ -10,7 +10,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <link href="../../../images/favicon.png" rel="icon">
-
 <link rel="canonical" href=".">
         <meta name="author" content="Angold Wang" />
 
@@ -26,6 +25,128 @@
 
     <link href="../../../theme/css/pygments/monokai.css" rel="stylesheet">
     <link rel="stylesheet" href="../../../theme/css/style.css" type="text/css"/>
+
+  <style>
+
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+
+    li {
+      font-size: 18px;
+    }
+
+    p {
+      font-size: 18px;
+    }
+
+    a {
+      font-size: 18px;
+    }
+
+    k
+
+    code {
+      font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
+      font-size: 85%;
+      margin: 0;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+    {   }
+
+    @media screen {
+      pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
 
 </head>
 <body>
@@ -64,236 +185,492 @@
     <div class="row">
         <div class="col-lg-12">
 	<section id="content" class="body">
-
-
-
-<h1>6. File System (i)</h1>
-<h5>05/20/2022 By Angold Wang</h5>
-<p><strong>File Systems</strong> is one of the most special place in Operating System.
-it organize the stored data in hard disk, and maintain the <strong>persistence</strong> so that after a reboot, the data is still available.</p>
-<p>The xv6 file system implementation is organized in <strong>seven</strong> layers, shown in the following figure.</p>
-<p><img src="Sources/fslayer.png" alt="fslayer"></p>
-<h3>Layer 1&amp;2: Buffer Cache &amp; Disk Driver</h3>
-<p><strong>Accessing a disk is orders of magnitude slower than accessing memory, so the file system must maintain an in-memory cache of popular blocks</strong>, the buffer cache layer caches disk blocks and synchronizes access to them, making sure that only one kernel process at a time can modify the data stored in any particular block.</p>
-<h3>Layer 3: Logging</h3>
-<p>The Logging layer helps the file system to support <strong>Crash Recovery</strong>, that is, <strong>allow higher layers to wrap updates to several blocks in a transactions, and ensures that the blocks are updated atomically in the face of crashes</strong> (i.e., all of them are updated or none).</p>
-<p>If a crash (e.g., power failure) occurs, the file system must still work correctly after restart. The risk is that a crash might interrupt a sequence of updates and leave <strong>inconsistent</strong> on-disk data structures (e.g., a block that is both used in a file and marked free).</p>
-<h3>Layer 4&amp;5&amp;6&amp;7: Inode &amp; Path</h3>
-<p>The file system needs on-disk data structures to represent the tree of named directories and files, to record the identities of the blocks that hold each file's content, and to record which areas of the disk are free.</p>
-<p>In xv6, each file will be represented as an <strong>Inode</strong>, and the directory is a special kind of inde whose content is a sequence of directory entries. And the pathname layer provides hierachical path names like <code>/usr/angold/xv6/fs.c</code>, and resolves them with recursive look up. Finally, at the very top layer, the <strong>file descriptor</strong> abstracts many Unix resources (e.g., pipes, devices, files.) using the lower-layers interface we mentioned above, <strong>simplifying the lives of application programmers.</strong></p>
-<h3>Accumulated Complexity</h3>
-<p>There are two ways to understand the file system: <strong>Bottom-up</strong> and <strong>Top-down</strong>, we call the former &quot;OS Designer's Perspective&quot; and the latter &quot;Application's Programmer's perspective&quot;.</p>
-<p>In the <strong>Top-down</strong> View, each API at the top layer (<strong><code>write</code></strong>, <strong><code>open</code></strong>, <strong><code>close</code></strong>) will be treated as serial instructions, that is: the <strong>call stack</strong> (<code>fn1()</code> -&gt; <code>fn2()</code> -&gt;... etc,.), which is relatively easy to figure out <strong>how does the fs works</strong> (by going through each routines), but it is very hard to understand <strong>what is the design purpose of each layer</strong> due to the accumlation of complexity at the high level. (it may also costs much time to walk through each
-routines, especially in some big
-systems)</p>
-<p>In the <strong>Bottom-up</strong> View, when you start at the lowest level, the complexity is usually relatively small (code size, less routines...), and one more important thing is that <strong>the higher level usually depends on the lower level underneath, which means after you understand these low-level stuff, the upper layer code seems highly structured.</strong>  (lower layers ease the design of higher ones)</p>
-<p>In the following two articles (fs(i) &amp; fs(2)), we will study the xv6 File System in both <strong>Top-down</strong> and <strong>Bottom-up</strong> view in order to have a fully understanding of File System, and answer questions like: <strong>&quot;how does file system works&quot;</strong> and <strong>&quot;why it looks like that (the design choice)&quot;</strong>. I believe the File System is a brilliant example to learn the &quot;Accumulated Complexity&quot; in System Engineering.</p>
-<h2>1. Buffer Cache</h2>
-<h3>i. Disk Driver</h3>
-<p><strong>Disk hardware traditionally presents the data on disk as a numbered sequence of <em>512-byte</em> blocks (sectors).</strong></p>
-<blockquote>
-<p>The <strong>block</strong> size that an operating system uses for its file system maybe different than the sector size that a disk uses, but typically the block size is a multiple of the sector size.</p>
-</blockquote>
-<p>Each block on Disk has its own unique <code>blockno</code>, indicating the offset of specific data in disk. (sector 0 is the first 512 bytes, sector 1 is the next, and so on...)</p>
-<p>The file system must have a plan for where it stores specific data (i.e., indes, data) on disk, to do so, when xv6 boots, the <code>mkfs</code> (<code>kernel/mkfs.c</code>) will build the entile file system, you should see the following output from <code>mkfs</code> in the make output:</p>
-<pre><code>nmeta 70 (boot, super, log blocks 30 inode blocks 13, bitmap blocks 25) blocks 199930 total 200000
-</code></pre>
-<p>As you can see, xv6 divides the disk into several sections, as Figure 8.2 shows. The fils system does not use block 0 (it holds the boot sector). <strong>Block 1 is called super block; it contains metadata about the file system:</strong></p>
+<nav id="TOC" role="doc-toc">
 <ul>
-<li>The number of data blocks</li>
-<li>The number of inodes</li>
-<li>The number of blocks in the log</li>
-<li>...</li>
+<li><a href="#file-system-i" id="toc-file-system-i">6. File System
+(i)</a>
+<ul>
+<li><a href="#layer-12-buffer-cache-disk-driver"
+id="toc-layer-12-buffer-cache-disk-driver">Layer 1&amp;2: Buffer Cache
+&amp; Disk Driver</a></li>
+<li><a href="#layer-3-logging" id="toc-layer-3-logging">Layer 3:
+Logging</a></li>
+<li><a href="#layer-4567-inode-path"
+id="toc-layer-4567-inode-path">Layer 4&amp;5&amp;6&amp;7: Inode &amp;
+Path</a></li>
+<li><a href="#accumulated-complexity"
+id="toc-accumulated-complexity">Accumulated Complexity</a></li>
+<li><a href="#buffer-cache" id="toc-buffer-cache">1. Buffer Cache</a>
+<ul>
+<li><a href="#i.-disk-driver" id="toc-i.-disk-driver">i. Disk
+Driver</a></li>
+<li><a href="#ii.-buffer-cache" id="toc-ii.-buffer-cache">ii. Buffer
+Cache</a></li>
+</ul></li>
+<li><a href="#crash-recovery" id="toc-crash-recovery">2. Crash
+Recovery</a>
+<ul>
+<li><a href="#i.-problem-inconsistent-state-on-disk"
+id="toc-i.-problem-inconsistent-state-on-disk">i. Problem: Inconsistent
+State on Disk</a></li>
+<li><a href="#ii.-solution-logging" id="toc-ii.-solution-logging">ii.
+Solution: Logging</a></li>
+<li><a href="#iii.-log-design" id="toc-iii.-log-design">iii. Log
+Design</a></li>
+<li><a href="#iv.-log-implementation"
+id="toc-iv.-log-implementation">iv. Log Implementation</a></li>
+<li><a href="#v.-crash-recovery" id="toc-v.-crash-recovery">v. Crash
+Recovery</a></li>
+</ul></li>
+</ul></li>
 </ul>
-<p><img src="Sources/disk.png" alt="disk"></p>
-<p>The code of disk driver of xv6 is in <code>kernel/virtio_disk.c</code>, typically, anytime the xv6 wants to read/write the data from disk, it will call <code>virtio_disk_rw(struct buf *b, int write)</code>, the data structure <code>buf</code> contains a specific buffer inside the buffer cache, where contains the target <code>blockno</code>.</p>
-<h3>ii. Buffer Cache</h3>
-<p>The Buffer Cache has two jobs:</p>
-<ol>
-<li><strong>Cache popular blocks so that they don't need to be re-read from the slow disk.</strong></li>
-<li><strong>Synchronize access to disk block to ensure that only one copy of a block is in memory and that only one kernel thread at a time uses that copy.</strong></li>
-</ol>
-<p><strong>The buffer cache has a fixed number of buffers to hold disk blocks</strong>, which means that if the file system asks for a block that is not already in the cache, the buffer cache must recycle a buffer currently holding some other block. <strong>The buffer cache recycles the least recently used (LRU) buffer for the new block.</strong></p>
-<p><img src="Sources/buffer.png" alt="buffer"></p>
-<h4>Buffer</h4>
-<pre><code class="language-c">// kernel/buf.h
-struct buf {
-  int valid;   // has data been read from disk?
-  int disk;    // does disk &quot;own&quot; buf?
-  uint dev;
-  uint blockno; // disk hardware can use blockno to find data
-  struct sleeplock lock;
-  uint refcnt;
-  struct buf *prev;  // LRU cache list
-  struct buf *next;
-  uchar data[BSIZE]; // the stored 512 byte data
-};
-</code></pre>
+</nav>
+<h1 id="file-system-i">6. File System (i)</h1>
+<h5 id="by-angold-wang">05/20/2022 By Angold Wang</h5>
+<p><strong>File Systems</strong> is one of the most special place in
+Operating System. it organize the stored data in hard disk, and maintain
+the <strong>persistence</strong> so that after a reboot, the data is
+still available.</p>
+<p>The xv6 file system implementation is organized in
+<strong>seven</strong> layers, shown in the following figure.</p>
+<figure>
+<img src="Sources/fslayer.png" alt="fslayer" />
+<figcaption aria-hidden="true">fslayer</figcaption>
+</figure>
+<h3 id="layer-12-buffer-cache-disk-driver">Layer 1&amp;2: Buffer Cache
+&amp; Disk Driver</h3>
+<p><strong>Accessing a disk is orders of magnitude slower than accessing
+memory, so the file system must maintain an in-memory cache of popular
+blocks</strong>, the buffer cache layer caches disk blocks and
+synchronizes access to them, making sure that only one kernel process at
+a time can modify the data stored in any particular block.</p>
+<h3 id="layer-3-logging">Layer 3: Logging</h3>
+<p>The Logging layer helps the file system to support <strong>Crash
+Recovery</strong>, that is, <strong>allow higher layers to wrap updates
+to several blocks in a transactions, and ensures that the blocks are
+updated atomically in the face of crashes</strong> (i.e., all of them
+are updated or none).</p>
+<p>If a crash (e.g., power failure) occurs, the file system must still
+work correctly after restart. The risk is that a crash might interrupt a
+sequence of updates and leave <strong>inconsistent</strong> on-disk data
+structures (e.g., a block that is both used in a file and marked
+free).</p>
+<h3 id="layer-4567-inode-path">Layer 4&amp;5&amp;6&amp;7: Inode &amp;
+Path</h3>
+<p>The file system needs on-disk data structures to represent the tree
+of named directories and files, to record the identities of the blocks
+that hold each file’s content, and to record which areas of the disk are
+free.</p>
+<p>In xv6, each file will be represented as an <strong>Inode</strong>,
+and the directory is a special kind of inde whose content is a sequence
+of directory entries. And the pathname layer provides hierachical path
+names like <code>/usr/angold/xv6/fs.c</code>, and resolves them with
+recursive look up. Finally, at the very top layer, the <strong>file
+descriptor</strong> abstracts many Unix resources (e.g., pipes, devices,
+files.) using the lower-layers interface we mentioned above,
+<strong>simplifying the lives of application programmers.</strong></p>
+<h3 id="accumulated-complexity">Accumulated Complexity</h3>
+<p>There are two ways to understand the file system:
+<strong>Bottom-up</strong> and <strong>Top-down</strong>, we call the
+former “OS Designer’s Perspective” and the latter “Application’s
+Programmer’s perspective”.</p>
+<p>In the <strong>Top-down</strong> View, each API at the top layer
+(<strong><code>write</code></strong>,
+<strong><code>open</code></strong>, <strong><code>close</code></strong>)
+will be treated as serial instructions, that is: the <strong>call
+stack</strong> (<code>fn1()</code> -&gt; <code>fn2()</code> -&gt;…
+etc,.), which is relatively easy to figure out <strong>how does the fs
+works</strong> (by going through each routines), but it is very hard to
+understand <strong>what is the design purpose of each layer</strong> due
+to the accumlation of complexity at the high level. (it may also costs
+much time to walk through each routines, especially in some big
+systems)</p>
+<p>In the <strong>Bottom-up</strong> View, when you start at the lowest
+level, the complexity is usually relatively small (code size, less
+routines…), and one more important thing is that <strong>the higher
+level usually depends on the lower level underneath, which means after
+you understand these low-level stuff, the upper layer code seems highly
+structured.</strong> (lower layers ease the design of higher ones)</p>
+<p>In the following two articles (fs(i) &amp; fs(2)), we will study the
+xv6 File System in both <strong>Top-down</strong> and
+<strong>Bottom-up</strong> view in order to have a fully understanding
+of File System, and answer questions like: <strong>“how does file system
+works”</strong> and <strong>“why it looks like that (the design
+choice)”</strong>. I believe the File System is a brilliant example to
+learn the “Accumulated Complexity” in System Engineering.</p>
+<h2 id="buffer-cache">1. Buffer Cache</h2>
+<h3 id="i.-disk-driver">i. Disk Driver</h3>
+<p><strong>Disk hardware traditionally presents the data on disk as a
+numbered sequence of <em>512-byte</em> blocks (sectors).</strong> &gt;
+The <strong>block</strong> size that an operating system uses for its
+file system maybe different than the sector size that a disk uses, but
+typically the block size is a multiple of the sector size.</p>
+<p>Each block on Disk has its own unique <code>blockno</code>,
+indicating the offset of specific data in disk. (sector 0 is the first
+512 bytes, sector 1 is the next, and so on…)</p>
+<p>The file system must have a plan for where it stores specific data
+(i.e., indes, data) on disk, to do so, when xv6 boots, the
+<code>mkfs</code> (<code>kernel/mkfs.c</code>) will build the entile
+file system, you should see the following output from <code>mkfs</code>
+in the make output:</p>
+<pre><code>nmeta 70 (boot, super, log blocks 30 inode blocks 13, bitmap blocks 25) blocks 199930 total 200000</code></pre>
+<p>As you can see, xv6 divides the disk into several sections, as Figure
+8.2 shows. The fils system does not use block 0 (it holds the boot
+sector). <strong>Block 1 is called super block; it contains metadata
+about the file system:</strong> * The number of data blocks * The number
+of inodes * The number of blocks in the log * …</p>
+<figure>
+<img src="Sources/disk.png" alt="disk" />
+<figcaption aria-hidden="true">disk</figcaption>
+</figure>
+<p>The code of disk driver of xv6 is in
+<code>kernel/virtio_disk.c</code>, typically, anytime the xv6 wants to
+read/write the data from disk, it will call
+<code>virtio_disk_rw(struct buf *b, int write)</code>, the data
+structure <code>buf</code> contains a specific buffer inside the buffer
+cache, where contains the target <code>blockno</code>.</p>
+<h3 id="ii.-buffer-cache">ii. Buffer Cache</h3>
+<p>The Buffer Cache has two jobs: 1. <strong>Cache popular blocks so
+that they don’t need to be re-read from the slow disk.</strong> 2.
+<strong>Synchronize access to disk block to ensure that only one copy of
+a block is in memory and that only one kernel thread at a time uses that
+copy.</strong></p>
+<p><strong>The buffer cache has a fixed number of buffers to hold disk
+blocks</strong>, which means that if the file system asks for a block
+that is not already in the cache, the buffer cache must recycle a buffer
+currently holding some other block. <strong>The buffer cache recycles
+the least recently used (LRU) buffer for the new block.</strong></p>
+<figure>
+<img src="Sources/buffer.png" alt="buffer" />
+<figcaption aria-hidden="true">buffer</figcaption>
+</figure>
+<h4 id="buffer">Buffer</h4>
+<div class="sourceCode" id="cb2"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">// kernel/buf.h</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> buf <span class="op">{</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> valid<span class="op">;</span>   <span class="co">// has data been read from disk?</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> disk<span class="op">;</span>    <span class="co">// does disk &quot;own&quot; buf?</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  uint dev<span class="op">;</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  uint blockno<span class="op">;</span> <span class="co">// disk hardware can use blockno to find data</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="kw">struct</span> sleeplock lock<span class="op">;</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  uint refcnt<span class="op">;</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">struct</span> buf <span class="op">*</span>prev<span class="op">;</span>  <span class="co">// LRU cache list</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="kw">struct</span> buf <span class="op">*</span>next<span class="op">;</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  uchar data<span class="op">[</span>BSIZE<span class="op">];</span> <span class="co">// the stored 512 byte data</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span></code></pre></div>
 <p>A buffer has two state fields associated with it:</p>
 <ul>
-<li>
-<p><strong><code>buf.refcnt</code> indicates that how many process currently own that buffer.</strong> ( means doing some read/write on it )</p>
-</li>
-<li>
-<p><strong><code>buf.valid</code> indicates that the buffer contains a copy of the block.</strong>, the <strong><code>valid</code></strong> is set to 1 when someone read specific disk data into block by calling <strong><code>bread()</code></strong>, and will be set to 0 if its <strong><code>refcnt</code></strong> equal to 0 and being recycled.</p>
-</li>
+<li><p><strong><code>buf.refcnt</code> indicates that how many process
+currently own that buffer.</strong> ( means doing some read/write on it
+)</p></li>
+<li><p><strong><code>buf.valid</code> indicates that the buffer contains
+a copy of the block.</strong>, the <strong><code>valid</code></strong>
+is set to 1 when someone read specific disk data into block by calling
+<strong><code>bread()</code></strong>, and will be set to 0 if its
+<strong><code>refcnt</code></strong> equal to 0 and being
+recycled.</p></li>
 </ul>
-<h4>Lock (Prevent Multiple Access)</h4>
-<p>As we said before, one of the main purpose of buffer cache is to prevent multiple kernel thread use that copy of disk block, and this mechanism is supported by the <strong>Lock</strong>.</p>
-<p><strong><code>bget</code></strong> (<code>kernel/bio.c</code>) <strong>returns a free buffer in the buffer cache</strong>, it scans the buffer list for a buffer with the given divice and sector numbers. If there is such buffer, <strong><code>bget</code></strong> acquires the <strong><code>sleep-lock</code></strong> for the buffer <strong>to prevent multiple access (different kernel thread)</strong> and then returns the locked buffer.
-If there is no cached buffer for the given sector, bget must make one by reusing a buffer that held a different sector. (<strong>LRU</strong>).</p>
-<p><strong><code>bread</code></strong> (<code>kernel/bio.c</code>) calls <strong><code>bget</code></strong> to get a locked buffer from buffer cache for the given sector, and then call <code>virtio_disk_rw</code> to read the data from disk.</p>
-<p>Once <strong><code>bread</code></strong> has read the disk and returned the locked buffer to its caller, the caller has exclusive use of the buffer and can read or write the data bytes. <strong>If the caller does modify the buffer, it must call <code>bwrite</code> to write the changed data to disk before releasing the buffer.</strong></p>
-<p><strong>Notice that there is at most one cached buffer per disk sector</strong>, to ensure that readers see writes, and because the file system uses locks on buffers for synchronization. <strong><code>bget</code>  ensures this invariant by holding the <code>bcache.lock</code> continuously during the whole procedure of <code>bget</code></strong>.</p>
-<h4>LRU Buffer Cache</h4>
-<p><strong>The Buffer Cache is a doubly-linked list of buffers (more precisely, a circular linked list)</strong>.</p>
-<pre><code class="language-c">// kernel/bio.c
-struct {
-  struct spinlock lock;
-  struct buf buf[NBUF]; // 13
-
-  // Double Linked list of all buffers, through prev/next.
-  // Sorted by how recently the buffer was used.
-  // head.next is most recent, head.prev is least.
-  struct buf head;
-} bcache;
-</code></pre>
-<p><img src="Sources/brelse.png" alt="brelse"></p>
-<p>When the caller is done with a buffer, it must call <strong><code>brelse</code></strong>(<code>kernel/bio.c</code>) to release it, which will release the <code>sleep-lock</code> first in order to allow other kernel thread using that buffer, The <strong><code>brelse</code></strong> decreasing the <code>refcnt</code> of that buffer, if it reaches zero, <strong><code>brelse</code></strong> will <strong>move the buffer to the front of the linked list.</strong></p>
-<p><strong>Moving the buffer causes the list to be ordered by how recently the buffers were used</strong>:</p>
-<p>The first buffer in the list is the most recently used and the last is the least recently used.</p>
-<p>The two loops in <strong><code>bget</code></strong> take advantage of this:</p>
+<h4 id="lock-prevent-multiple-access">Lock (Prevent Multiple
+Access)</h4>
+<p>As we said before, one of the main purpose of buffer cache is to
+prevent multiple kernel thread use that copy of disk block, and this
+mechanism is supported by the <strong>Lock</strong>.</p>
+<p><strong><code>bget</code></strong> (<code>kernel/bio.c</code>)
+<strong>returns a free buffer in the buffer cache</strong>, it scans the
+buffer list for a buffer with the given divice and sector numbers. If
+there is such buffer, <strong><code>bget</code></strong> acquires the
+<strong><code>sleep-lock</code></strong> for the buffer <strong>to
+prevent multiple access (different kernel thread)</strong> and then
+returns the locked buffer. If there is no cached buffer for the given
+sector, bget must make one by reusing a buffer that held a different
+sector. (<strong>LRU</strong>).</p>
+<p><strong><code>bread</code></strong> (<code>kernel/bio.c</code>) calls
+<strong><code>bget</code></strong> to get a locked buffer from buffer
+cache for the given sector, and then call <code>virtio_disk_rw</code> to
+read the data from disk.</p>
+<p>Once <strong><code>bread</code></strong> has read the disk and
+returned the locked buffer to its caller, the caller has exclusive use
+of the buffer and can read or write the data bytes. <strong>If the
+caller does modify the buffer, it must call <code>bwrite</code> to write
+the changed data to disk before releasing the buffer.</strong></p>
+<p><strong>Notice that there is at most one cached buffer per disk
+sector</strong>, to ensure that readers see writes, and because the file
+system uses locks on buffers for synchronization.
+<strong><code>bget</code> ensures this invariant by holding the
+<code>bcache.lock</code> continuously during the whole procedure of
+<code>bget</code></strong>.</p>
+<h4 id="lru-buffer-cache">LRU Buffer Cache</h4>
+<p><strong>The Buffer Cache is a doubly-linked list of buffers (more
+precisely, a circular linked list)</strong>.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">// kernel/bio.c</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> <span class="op">{</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">struct</span> spinlock lock<span class="op">;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">struct</span> buf buf<span class="op">[</span>NBUF<span class="op">];</span> <span class="co">// 13</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Double Linked list of all buffers, through prev/next.</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Sorted by how recently the buffer was used.</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="co">// head.next is most recent, head.prev is least.</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">struct</span> buf head<span class="op">;</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span> bcache<span class="op">;</span></span></code></pre></div>
+<figure>
+<img src="Sources/brelse.png" alt="brelse" />
+<figcaption aria-hidden="true">brelse</figcaption>
+</figure>
+<p>When the caller is done with a buffer, it must call
+<strong><code>brelse</code></strong>(<code>kernel/bio.c</code>) to
+release it, which will release the <code>sleep-lock</code> first in
+order to allow other kernel thread using that buffer, The
+<strong><code>brelse</code></strong> decreasing the <code>refcnt</code>
+of that buffer, if it reaches zero, <strong><code>brelse</code></strong>
+will <strong>move the buffer to the front of the linked
+list.</strong></p>
+<p><strong>Moving the buffer causes the list to be ordered by how
+recently the buffers were used</strong>:</p>
+<p>The first buffer in the list is the most recently used and the last
+is the least recently used.</p>
+<p>The two loops in <strong><code>bget</code></strong> take advantage of
+this: * <strong>In the first loop, we want to check whether there is a
+valid cached block. If we check the most recently used buffers
+first</strong> (starting at <code>bcache.head</code> and following
+<code>next</code> pointers) <strong>will reduce the scan time, where
+there is a good locality of reference.</strong></p>
 <ul>
-<li>
-<p><strong>In the first loop, we want to check whether there is a valid cached block. If we check the most recently used buffers first</strong> (starting at <code>bcache.head</code> and following <code>next</code> pointers) <strong>will reduce the scan time, where there is a good locality of reference.</strong></p>
-</li>
-<li>
-<p>If the first failed, <strong>In the second loop, we want to pick a reusable block (<code>refcnt==0</code>). If we check the least recently used buffers first</strong> (starting at <code>bcache.head</code> and following <code>prev</code> pointers) <strong>will also reduce the scan time.</strong></p>
-</li>
+<li>If the first failed, <strong>In the second loop, we want to pick a
+reusable block (<code>refcnt==0</code>). If we check the least recently
+used buffers first</strong> (starting at <code>bcache.head</code> and
+following <code>prev</code> pointers) <strong>will also reduce the scan
+time.</strong></li>
 </ul>
-<pre><code class="language-c">  // See whether it is cached.
-  for(b = bcache.head.next; b != &amp;bcache.head; b = b-&gt;next){
-    if(b-&gt;dev == dev &amp;&amp; b-&gt;blockno == blockno){
-      b-&gt;refcnt++;
-      release(&amp;bcache.lock);
-      acquiresleep(&amp;b-&gt;lock);
-      return b;
-    }
-  }
-
-  // Not cached.
-  for(b = bcache.head.prev; b != &amp;bcache.head; b = b-&gt;prev){
-    if(b-&gt;refcnt == 0) { 
-      b-&gt;dev = dev;
-      b-&gt;blockno = blockno;
-      b-&gt;valid = 0;
-      b-&gt;refcnt = 1;
-      release(&amp;bcache.lock);
-      acquiresleep(&amp;b-&gt;lock);
-      return b;
-    }
-  }
-
-</code></pre>
-<h2>2. Crash Recovery</h2>
-<h3>i. Problem: Inconsistent State on Disk</h3>
-<p>Imagine you are running <code>$make</code> interacting with the file system, and somewhere doing that thing, a power failure happends(run out of battery). After that, you plugin and reboot your machine, when you run <code>$ls</code>, you hope your file system is in the good state. <strong>A tricky case is that many file system operations have multi-step operations, if we crash just in the wrong place in these multi-step operations, the file system actually may end up being on this inconsistent for that short
-period of time, and if the power failure just happend there, something bad could happends.</strong></p>
-<h3>ii. Solution: Logging</h3>
-<p>Xv6 solves the problem of crashes during file-system operations with a simple form of <strong>logging</strong>, which is originally coming out of the database world, and a lot of file systems using logging these days, one of the reason it is popular because it ia a very principled solution.</p>
-<p><strong>An xv6 system call does not directly write the on-disk file system data structures. Instead, it places a description of all the disk writes it wishes to make in a log on disk, once the system call has logged all of its writes, it writes a special commit record to the disk indicating that the log contains a complete operation.</strong> At that point the system the system call copies the writes to the on-disk file system data structures and finally erase the log on disk.</p>
-<h3>iii. Log Design</h3>
-<pre><code class="language-c">// kernel/log.c
-struct logheader {
-  int n;
-  int block[LOGSIZE];
-};
-
-struct log {
-  struct spinlock lock;
-  int start;
-  int size;
-  int outstanding; // how many FS sys calls are executing.
-  int committing;  // in commit(), please wait.
-  int dev;
-  struct logheader lh;
-};
-</code></pre>
-<p>The two main data structures of log is <strong><code>logheader</code></strong> and <strong><code>log</code></strong>, all of them are in <code>kernel/log.c</code>.</p>
-<ul>
-<li><strong><code>log.start</code> indicate the start <code>blockno</code> inside disk,</strong> which will be used when writing log to the disk.</li>
-<li><strong><code>log.outstanding</code> counts the number of system calls that have reserved log space.</strong>
-<ul>
-<li>Incrementing <code>log.outstanding</code> both reserves space and prevents a commit from occuring during this system call.</li>
-<li>Decrementing <code>log.outstanding</code> when a file system call finish its write/read operations and ready to be commit.</li>
-</ul>
-</li>
-<li><strong><code>log.lh.n</code> indicate the current log size of file system.</strong> If it is greater than zero, we know that there are some blocks in the log that need to be installed to the disk.</li>
-<li><strong><code>log.lh.block[i]</code> stores the <code>blockno</code> of the <code>start+i</code> log on disk,</strong> which will be discussed later.</li>
-</ul>
-<p>The log resides at a known fixed location, specified in the superblock. <strong>It consists of a header block followed by a sequence of updated block copies</strong> (&quot;logged blocks&quot;). The header block contains an array of sector numbers (<code>log.lh.block</code>), one for each of the logged blocks, and the count of log blocks (<code>log.lh.n</code>). The count in the header block on disk is either zero, indicating that there is no transaction in the log, or non-zero, indicating that the log contains a complete committed transaction with the indicated number of logged blocks.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>  <span class="co">// See whether it is cached.</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span><span class="op">(</span>b <span class="op">=</span> bcache<span class="op">.</span>head<span class="op">.</span>next<span class="op">;</span> b <span class="op">!=</span> <span class="op">&amp;</span>bcache<span class="op">.</span>head<span class="op">;</span> b <span class="op">=</span> b<span class="op">-&gt;</span>next<span class="op">){</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span><span class="op">(</span>b<span class="op">-&gt;</span>dev <span class="op">==</span> dev <span class="op">&amp;&amp;</span> b<span class="op">-&gt;</span>blockno <span class="op">==</span> blockno<span class="op">){</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>      b<span class="op">-&gt;</span>refcnt<span class="op">++;</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>      release<span class="op">(&amp;</span>bcache<span class="op">.</span>lock<span class="op">);</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>      acquiresleep<span class="op">(&amp;</span>b<span class="op">-&gt;</span>lock<span class="op">);</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>      <span class="cf">return</span> b<span class="op">;</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Not cached.</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span><span class="op">(</span>b <span class="op">=</span> bcache<span class="op">.</span>head<span class="op">.</span>prev<span class="op">;</span> b <span class="op">!=</span> <span class="op">&amp;</span>bcache<span class="op">.</span>head<span class="op">;</span> b <span class="op">=</span> b<span class="op">-&gt;</span>prev<span class="op">){</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span><span class="op">(</span>b<span class="op">-&gt;</span>refcnt <span class="op">==</span> <span class="dv">0</span><span class="op">)</span> <span class="op">{</span> </span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>      b<span class="op">-&gt;</span>dev <span class="op">=</span> dev<span class="op">;</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>      b<span class="op">-&gt;</span>blockno <span class="op">=</span> blockno<span class="op">;</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>      b<span class="op">-&gt;</span>valid <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>      b<span class="op">-&gt;</span>refcnt <span class="op">=</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>      release<span class="op">(&amp;</span>bcache<span class="op">.</span>lock<span class="op">);</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>      acquiresleep<span class="op">(&amp;</span>b<span class="op">-&gt;</span>lock<span class="op">);</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>      <span class="cf">return</span> b<span class="op">;</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span></code></pre></div>
+<h2 id="crash-recovery">2. Crash Recovery</h2>
+<h3 id="i.-problem-inconsistent-state-on-disk">i. Problem: Inconsistent
+State on Disk</h3>
+<p>Imagine you are running <code>$make</code> interacting with the file
+system, and somewhere doing that thing, a power failure happends(run out
+of battery). After that, you plugin and reboot your machine, when you
+run <code>$ls</code>, you hope your file system is in the good state.
+<strong>A tricky case is that many file system operations have
+multi-step operations, if we crash just in the wrong place in these
+multi-step operations, the file system actually may end up being on this
+inconsistent for that short period of time, and if the power failure
+just happend there, something bad could happends.</strong></p>
+<h3 id="ii.-solution-logging">ii. Solution: Logging</h3>
+<p>Xv6 solves the problem of crashes during file-system operations with
+a simple form of <strong>logging</strong>, which is originally coming
+out of the database world, and a lot of file systems using logging these
+days, one of the reason it is popular because it ia a very principled
+solution.</p>
+<p><strong>An xv6 system call does not directly write the on-disk file
+system data structures. Instead, it places a description of all the disk
+writes it wishes to make in a log on disk, once the system call has
+logged all of its writes, it writes a special commit record to the disk
+indicating that the log contains a complete operation.</strong> At that
+point the system the system call copies the writes to the on-disk file
+system data structures and finally erase the log on disk.</p>
+<h3 id="iii.-log-design">iii. Log Design</h3>
+<div class="sourceCode" id="cb5"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">// kernel/log.c</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> logheader <span class="op">{</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> n<span class="op">;</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> block<span class="op">[</span>LOGSIZE<span class="op">];</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> log <span class="op">{</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="kw">struct</span> spinlock lock<span class="op">;</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> start<span class="op">;</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> size<span class="op">;</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> outstanding<span class="op">;</span> <span class="co">// how many FS sys calls are executing.</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> committing<span class="op">;</span>  <span class="co">// in commit(), please wait.</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> dev<span class="op">;</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  <span class="kw">struct</span> logheader lh<span class="op">;</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span></code></pre></div>
+<p>The two main data structures of log is
+<strong><code>logheader</code></strong> and
+<strong><code>log</code></strong>, all of them are in
+<code>kernel/log.c</code>. * <strong><code>log.start</code> indicate the
+start <code>blockno</code> inside disk,</strong> which will be used when
+writing log to the disk. * <strong><code>log.outstanding</code> counts
+the number of system calls that have reserved log space.</strong> *
+Incrementing <code>log.outstanding</code> both reserves space and
+prevents a commit from occuring during this system call. * Decrementing
+<code>log.outstanding</code> when a file system call finish its
+write/read operations and ready to be commit. *
+<strong><code>log.lh.n</code> indicate the current log size of file
+system.</strong> If it is greater than zero, we know that there are some
+blocks in the log that need to be installed to the disk. *
+<strong><code>log.lh.block[i]</code> stores the <code>blockno</code> of
+the <code>start+i</code> log on disk,</strong> which will be discussed
+later.</p>
+<p>The log resides at a known fixed location, specified in the
+superblock. <strong>It consists of a header block followed by a sequence
+of updated block copies</strong> (“logged blocks”). The header block
+contains an array of sector numbers (<code>log.lh.block</code>), one for
+each of the logged blocks, and the count of log blocks
+(<code>log.lh.n</code>). The count in the header block on disk is either
+zero, indicating that there is no transaction in the log, or non-zero,
+indicating that the log contains a complete committed transaction with
+the indicated number of logged blocks.</p>
 <p>Here is a High-level picture of logging in xv6.</p>
-<p><img src="Sources/dflog.png" alt="dflog"></p>
-<h3>iv. Log Implementation</h3>
-<p>There are four phases in logging. Almost all related code are in <code>kernel/log.c</code>:</p>
-<p><strong>Each system call's code indicates the start and end of the sequence of writes that must be atomic with respect to crashes</strong>. The <strong><code>begin_op()</code></strong> and <strong><code>end_op()</code></strong> will guarentee that all writes to the disk blocks between this two functions calls will be atomic.</p>
+<figure>
+<img src="Sources/dflog.png" alt="dflog" />
+<figcaption aria-hidden="true">dflog</figcaption>
+</figure>
+<h3 id="iv.-log-implementation">iv. Log Implementation</h3>
+<p>There are four phases in logging. Almost all related code are in
+<code>kernel/log.c</code>:</p>
+<p><strong>Each system call’s code indicates the start and end of the
+sequence of writes that must be atomic with respect to crashes</strong>.
+The <strong><code>begin_op()</code></strong> and
+<strong><code>end_op()</code></strong> will guarentee that all writes to
+the disk blocks between this two functions calls will be atomic.</p>
 <p>A typical use of the log in a system call looks like this:</p>
-<pre><code class="language-c">begin_op();
-...
-bp = bread(...);
-bp-&gt;data[...] = ...;
-log_write(bp);
-...
-end_op();
-</code></pre>
-<p>The <strong><code>begin_op()</code></strong> waits until the logging system is not currently commiting (<code>log.commiting</code>) or there is enough space in the log (<code>LOGSIZE</code>). <strong>It record the current logging by increasing the <code>log.outstanding</code> value.</strong></p>
-<h4>1. Log writes</h4>
+<div class="sourceCode" id="cb6"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>begin_op<span class="op">();</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="op">...</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>bp <span class="op">=</span> bread<span class="op">(...);</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>bp<span class="op">-&gt;</span>data<span class="op">[...]</span> <span class="op">=</span> <span class="op">...;</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>log_write<span class="op">(</span>bp<span class="op">);</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="op">...</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>end_op<span class="op">();</span></span></code></pre></div>
+<p>The <strong><code>begin_op()</code></strong> waits until the logging
+system is not currently commiting (<code>log.commiting</code>) or there
+is enough space in the log (<code>LOGSIZE</code>). <strong>It record the
+current logging by increasing the <code>log.outstanding</code>
+value.</strong></p>
+<h4 id="log-writes">1. Log writes</h4>
 <p>There are three phases in <strong>log writes</strong>:</p>
-<h5>1). <code>log_write()</code></h5>
-<p>Every time the syscall calls <strong><code>bwrite</code></strong> to write some data into buffer cache, after that, it will call <strong><code>log_write</code></strong> in order to record that change. The <strong><code>log_write</code></strong> will not write anything to disk. <strong>It just record the <code>blockno</code> that has been written to disk in <code>log.block[i]</code>, which will reserve a slot in the log in disk.</strong>, and pins the buffer in the buffer cache to prevent the bcache from evicting it.</p>
+<h5 id="log_write">1). <code>log_write()</code></h5>
+<p>Every time the syscall calls <strong><code>bwrite</code></strong> to
+write some data into buffer cache, after that, it will call
+<strong><code>log_write</code></strong> in order to record that change.
+The <strong><code>log_write</code></strong> will not write anything to
+disk. <strong>It just record the <code>blockno</code> that has been
+written to disk in <code>log.block[i]</code>, which will reserve a slot
+in the log in disk.</strong>, and pins the buffer in the buffer cache to
+prevent the bcache from evicting it.</p>
 <blockquote>
-<p><strong>Log Absorption:</strong> The <code>log_write</code> notices when a block is written multiple times during a single transaction, and allocates that block the same slot in the log. By absorbing several disk writes into one, <strong>the file system can save log space and achieve better performance because only one copy of disk must be written to disk.</strong></p>
+<p><strong>Log Absorption:</strong> The <code>log_write</code> notices
+when a block is written multiple times during a single transaction, and
+allocates that block the same slot in the log. By absorbing several disk
+writes into one, <strong>the file system can save log space and achieve
+better performance because only one copy of disk must be written to
+disk.</strong></p>
 </blockquote>
-<h5>2). <code>end_op()</code></h5>
-<p>Like I mentioned before, after a system call finishes all writes to buffer cache by calling <strong><code>bwrite</code></strong>, finally, it will call <strong><code>end_op</code></strong> to write (commit) it to disk.</p>
-<p><strong><code>end_op()</code></strong> first decrements the count of outstanding system calls (<code>log.outstanding</code>). If the count is now zero, which means all current system calls finish their writes to disk, <strong>it commits the current transaction by calling <code>commit()</code></strong>.</p>
+<h5 id="end_op">2). <code>end_op()</code></h5>
+<p>Like I mentioned before, after a system call finishes all writes to
+buffer cache by calling <strong><code>bwrite</code></strong>, finally,
+it will call <strong><code>end_op</code></strong> to write (commit) it
+to disk.</p>
+<p><strong><code>end_op()</code></strong> first decrements the count of
+outstanding system calls (<code>log.outstanding</code>). If the count is
+now zero, which means all current system calls finish their writes to
+disk, <strong>it commits the current transaction by calling
+<code>commit()</code></strong>.</p>
 <blockquote>
-<p><strong>Group Commit:</strong>, To allow concurrent execution of file-system operations by different processes, the logging system can accumulate the writes of multiple system calls into one transaction. <strong>Thus a single commit may involve the writes of multiple complete system calls.</strong> Group commit reduces the number of disk operations because it amortizes the fixed cost of a commit over multiple operations.</p>
+<p><strong>Group Commit:</strong>, To allow concurrent execution of
+file-system operations by different processes, the logging system can
+accumulate the writes of multiple system calls into one transaction.
+<strong>Thus a single commit may involve the writes of multiple complete
+system calls.</strong> Group commit reduces the number of disk
+operations because it amortizes the fixed cost of a commit over multiple
+operations.</p>
 </blockquote>
-<h5>3). <code>write_log()</code></h5>
-<p>If the current log number is greater than zero (<code>log.lh.n &gt; 0</code>), The first thing <strong><code>commit()</code></strong> will do is <strong>copy the transaction buffers into their own log block on disk</strong> by calling <strong><code>write_log()</code></strong>.</p>
-<p><strong>The <code>write_log()</code> copies each block modified in the transaction from the buffer cache to its slot in the log on disk.</strong></p>
-<h4>2. Commit Operation</h4>
-<p>The file system finish its commit by calling <strong><code>write_head()</code></strong> in order to <strong>writes the header block (<code>log.lh</code>) from the buffer cache to its slot in the log on disk.</strong> At the point the file system do commit, all the writes are in the log.</p>
-<p>This step is pretty simple, but also quite important. <strong>Since imagine that if we crash at the middle of the write-to-disk commit operation. The header on disk won't record the correct information of the file system.</strong></p>
-<p>The file system solving this problem by writing this special log header <strong><code>log.hl</code></strong> into disk, <strong>which is a copy of a single sector on disk</strong>, And one standard assumption that file system make is that <strong>a single block write is an atomic operation</strong>, meaning that if you write that, the whole sector will be written or none of the sector will be written. (the sector will never be written partially).</p>
-<h4>3. Install Transaction</h4>
-<p>After the commit, all logs are stored on disk (the log header, log sectors). We can now do the actual <strong>installation</strong>, which means write the actual transaction data into its sectors on disk.</p>
-<p><strong><code>install_trans()</code> reads each block from the log in disk and writes it to the proper place in the file system.</strong></p>
-<h4>4. Clean Log</h4>
-<p>After all transactions have been written to the disk, we clear the log number stored on disk. (<strong><code>log.lh.n = 0</code></strong>).</p>
-<p><img src="Sources/logging.png" alt="logging"></p>
-<h3>v. Crash Recovery</h3>
-<p><strong>This scheme is good because it actually ensures that no matter where a crash happends, we either install all the blocks of the writes or we install none of them. We'll never end up in a situation where we installed some of the writes but not all of them.</strong></p>
-<p>The function <strong><code>recover_from_log</code></strong> is responsible to recover the file system in case there are any crash happends.</p>
-<pre><code class="language-c">static void
-recover_from_log(void)
-{
-  read_head();
-  install_trans(1); // if committed, copy from log to disk
-  log.lh.n = 0;
-  write_head(); // clear the log
-}
-</code></pre>
+<h5 id="write_log">3). <code>write_log()</code></h5>
+<p>If the current log number is greater than zero
+(<code>log.lh.n &gt; 0</code>), The first thing
+<strong><code>commit()</code></strong> will do is <strong>copy the
+transaction buffers into their own log block on disk</strong> by calling
+<strong><code>write_log()</code></strong>.</p>
+<p><strong>The <code>write_log()</code> copies each block modified in
+the transaction from the buffer cache to its slot in the log on
+disk.</strong></p>
+<h4 id="commit-operation">2. Commit Operation</h4>
+<p>The file system finish its commit by calling
+<strong><code>write_head()</code></strong> in order to <strong>writes
+the header block (<code>log.lh</code>) from the buffer cache to its slot
+in the log on disk.</strong> At the point the file system do commit, all
+the writes are in the log.</p>
+<p>This step is pretty simple, but also quite important. <strong>Since
+imagine that if we crash at the middle of the write-to-disk commit
+operation. The header on disk won’t record the correct information of
+the file system.</strong></p>
+<p>The file system solving this problem by writing this special log
+header <strong><code>log.hl</code></strong> into disk, <strong>which is
+a copy of a single sector on disk</strong>, And one standard assumption
+that file system make is that <strong>a single block write is an atomic
+operation</strong>, meaning that if you write that, the whole sector
+will be written or none of the sector will be written. (the sector will
+never be written partially).</p>
+<h4 id="install-transaction">3. Install Transaction</h4>
+<p>After the commit, all logs are stored on disk (the log header, log
+sectors). We can now do the actual <strong>installation</strong>, which
+means write the actual transaction data into its sectors on disk.</p>
+<p><strong><code>install_trans()</code> reads each block from the log in
+disk and writes it to the proper place in the file system.</strong></p>
+<h4 id="clean-log">4. Clean Log</h4>
+<p>After all transactions have been written to the disk, we clear the
+log number stored on disk.
+(<strong><code>log.lh.n = 0</code></strong>).</p>
+<figure>
+<img src="Sources/logging.png" alt="logging" />
+<figcaption aria-hidden="true">logging</figcaption>
+</figure>
+<h3 id="v.-crash-recovery">v. Crash Recovery</h3>
+<p><strong>This scheme is good because it actually ensures that no
+matter where a crash happends, we either install all the blocks of the
+writes or we install none of them. We’ll never end up in a situation
+where we installed some of the writes but not all of them.</strong></p>
+<p>The function <strong><code>recover_from_log</code></strong> is
+responsible to recover the file system in case there are any crash
+happends.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="dt">static</span> <span class="dt">void</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>recover_from_log<span class="op">(</span><span class="dt">void</span><span class="op">)</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  read_head<span class="op">();</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  install_trans<span class="op">(</span><span class="dv">1</span><span class="op">);</span> <span class="co">// if committed, copy from log to disk</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  log<span class="op">.</span>lh<span class="op">.</span>n <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  write_head<span class="op">();</span> <span class="co">// clear the log</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <ul>
 <li>If a crash happends during step 1:
 <ul>
-<li>If in <strong><code>log_write</code></strong>, since we are not writing anything on disk at that time, all in memory. after the power off, all data in mem are gone, the file system will see nothing and that transaction will be treat as never happends before.</li>
-<li>If in <strong><code>write_log</code></strong>, since we haven't write the <strong>log header</strong> into disk by calling <strong><code>write_head</code></strong> (we do not commit at that specific time).</li>
-</ul>
-</li>
-<li>If a crash happends between step 1 and 2, <strong>The <code>recover_from_log</code> will see nothing in log header on disk (<code>lh.n = 0</code>) and will never write any data into disk.</strong></li>
-<li>If a crash happends between step 2 and 3. <strong>The <code>recover_from_log</code> will see the header block that indicates there are some data in log blocks (written by <code>write_log()</code>) and haven't be written into its proper location on disk. After that, the <code>install_trans</code> will continue install the stopped transactions into disk.</strong></li>
+<li>If in <strong><code>log_write</code></strong>, since we are not
+writing anything on disk at that time, all in memory. after the power
+off, all data in mem are gone, the file system will see nothing and that
+transaction will be treat as never happends before.</li>
+<li>If in <strong><code>write_log</code></strong>, since we haven’t
+write the <strong>log header</strong> into disk by calling
+<strong><code>write_head</code></strong> (we do not commit at that
+specific time).</li>
+</ul></li>
+<li>If a crash happends between step 1 and 2, <strong>The
+<code>recover_from_log</code> will see nothing in log header on disk
+(<code>lh.n = 0</code>) and will never write any data into
+disk.</strong></li>
+<li>If a crash happends between step 2 and 3. <strong>The
+<code>recover_from_log</code> will see the header block that indicates
+there are some data in log blocks (written by <code>write_log()</code>)
+and haven’t be written into its proper location on disk. After that, the
+<code>install_trans</code> will continue install the stopped
+transactions into disk.</strong></li>
 </ul>
 	</section>
 	</div>
@@ -334,6 +711,10 @@ this.page.identifier = "os/docs/lectures/6FS.html"
    </div>
 </footer>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
+
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
 <script src="../../../theme/js/bootstrap.min.js"></script>
 
 <!-- Enable responsive features in IE8 with Respond.js (https://github.com/scottjehl/Respond) -->

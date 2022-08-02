@@ -10,7 +10,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <link href="../../../images/favicon.png" rel="icon">
-
 <link rel="canonical" href=".">
         <meta name="author" content="Angold Wang" />
 
@@ -26,6 +25,128 @@
 
     <link href="../../../theme/css/pygments/monokai.css" rel="stylesheet">
     <link rel="stylesheet" href="../../../theme/css/style.css" type="text/css"/>
+
+  <style>
+
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+
+    li {
+      font-size: 18px;
+    }
+
+    p {
+      font-size: 18px;
+    }
+
+    a {
+      font-size: 18px;
+    }
+
+    k
+
+    code {
+      font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
+      font-size: 85%;
+      margin: 0;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+    {   }
+
+    @media screen {
+      pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
 
 </head>
 <body>
@@ -64,45 +185,91 @@
     <div class="row">
         <div class="col-lg-12">
 	<section id="content" class="body">
-
-
-
-<h1>7. File System (ii)</h1>
-<h5>05/25/2022 By Angold Wang</h5>
-<p><img src="Sources/fslayer.png" alt="fslayer"></p>
-<h2>3. Inode and Path</h2>
-<p><strong>Up until log, these lower layers are all interacting with disk blocks (sectors) with a specific <code>blockno</code>.</strong> But in the file systems that we are using in our daily life, seems that we are manipulating data on specific <strong>files</strong>, and finding them using <strong>path names</strong>.</p>
-<p>The upper layers (layer 4, 5, 6, 7) is trying to ease the user by providing <strong>path, file, directory, etc,</strong> which we are familar with.</p>
-<h3>i. Block Allocator</h3>
-<p>File and directory is stored in <strong>disk blocks</strong>, which must be allocated from a free pool. Xv6's block allocator maintains a <strong>bitmap</strong> on disk, <strong>with one bit per block.</strong> A zero bit indicates that the corresponding block is free; a one bit indicates that it is in use.</p>
-<p>The main API function that the block allocator provided is <strong><code>balloc()</code></strong> which allocates a new disk block and return its <strong><code>blockno</code></strong>. The loop inside <code>balloc</code> is split into two pieces:</p>
+<nav id="TOC" role="doc-toc">
 <ul>
-<li>The outer loop reads each block of bitmap bits (on disk).</li>
-<li><strong>The inner loop checks all Bits-Per-Block(BPB) bits in a single bitmap block.</strong></li>
+<li><a href="#file-system-ii" id="toc-file-system-ii">7. File System
+(ii)</a>
+<ul>
+<li><a href="#inode-and-path" id="toc-inode-and-path">3. Inode and
+Path</a>
+<ul>
+<li><a href="#i.-block-allocator" id="toc-i.-block-allocator">i. Block
+Allocator</a></li>
+<li><a href="#ii.-inode" id="toc-ii.-inode">ii. Inode</a></li>
+<li><a href="#iii.-directory" id="toc-iii.-directory">iii.
+Directory</a></li>
+<li><a href="#iv.-path-name" id="toc-iv.-path-name">iv. Path
+Name</a></li>
+<li><a href="#v.-file-descriptor" id="toc-v.-file-descriptor">v. File
+Descriptor</a></li>
+</ul></li>
+<li><a href="#system-calls" id="toc-system-calls">4. System
+Calls</a></li>
+</ul></li>
 </ul>
-<p>The loop looks for a block whose bitmap bit is zero, indicating that it is free. If <strong><code>balloc</code></strong> finds such a block, it updates the block and writes it to the disk (<code>log_write</code>) then return the <code>blockno</code> of that block.</p>
-<pre><code class="language-c">// kernel/fs.c:
-  for(b = 0; b &lt; sb.size; b += BPB){
-    // for each bitmap block
-    bp = bread(dev, BBLOCK(b, sb));
-    for(bi = 0; bi &lt; BPB &amp;&amp; b + bi &lt; sb.size; bi++){
-      m = 1 &lt;&lt; (bi % 8);
-      if((bp-&gt;data[bi/8] &amp; m) == 0){  // Is block free?
-        bp-&gt;data[bi/8] |= m;  // Mark block in use.
-        log_write(bp); // write to the log buffer (bitmap -&gt; disk)
-        brelse(bp);
-        bzero(dev, b + bi);
-        return b + bi;
-      }
-    }
-  }
-</code></pre>
-<h3>ii. Inode</h3>
-<p>You should view File System as <strong>many on-disk data structures.</strong> (tree, dirs, inodes, blocks) with two allocation pools: (<strong>blocks</strong> and <strong>inodes</strong>)</p>
-<p>Up to now, <strong>we walk through one of the two allocations pools in Xv6 - the blocks</strong> and understand how the file system manipulate this on-disk data structures. The next part would be another allocation pool: <strong>inodes.</strong></p>
-<p>First let's do not talk about the code or even design, let's look at xv6 in action with some real system calls and <strong>illustrade on-disk data structure via how updated.</strong></p>
-<p>Here is the sequence of disk writes involved in each operation of these two write system calls in echo (<code>user/echo.c</code>).
-We can track these syscalls by adding a <code>printf</code> statement in <code>log_write</code>, which will be called when a atomic series of disk writes happends. (e.g,. a write system call).</p>
+</nav>
+<h1 id="file-system-ii">7. File System (ii)</h1>
+<h5 id="by-angold-wang">05/25/2022 By Angold Wang</h5>
+<figure>
+<img src="Sources/fslayer.png" alt="fslayer" />
+<figcaption aria-hidden="true">fslayer</figcaption>
+</figure>
+<h2 id="inode-and-path">3. Inode and Path</h2>
+<p><strong>Up until log, these lower layers are all interacting with
+disk blocks (sectors) with a specific <code>blockno</code>.</strong> But
+in the file systems that we are using in our daily life, seems that we
+are manipulating data on specific <strong>files</strong>, and finding
+them using <strong>path names</strong>.</p>
+<p>The upper layers (layer 4, 5, 6, 7) is trying to ease the user by
+providing <strong>path, file, directory, etc,</strong> which we are
+familar with.</p>
+<h3 id="i.-block-allocator">i. Block Allocator</h3>
+<p>File and directory is stored in <strong>disk blocks</strong>, which
+must be allocated from a free pool. Xv6’s block allocator maintains a
+<strong>bitmap</strong> on disk, <strong>with one bit per
+block.</strong> A zero bit indicates that the corresponding block is
+free; a one bit indicates that it is in use.</p>
+<p>The main API function that the block allocator provided is
+<strong><code>balloc()</code></strong> which allocates a new disk block
+and return its <strong><code>blockno</code></strong>. The loop inside
+<code>balloc</code> is split into two pieces: * The outer loop reads
+each block of bitmap bits (on disk). * <strong>The inner loop checks all
+Bits-Per-Block(BPB) bits in a single bitmap block.</strong></p>
+<p>The loop looks for a block whose bitmap bit is zero, indicating that
+it is free. If <strong><code>balloc</code></strong> finds such a block,
+it updates the block and writes it to the disk (<code>log_write</code>)
+then return the <code>blockno</code> of that block.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">// kernel/fs.c:</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span><span class="op">(</span>b <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> b <span class="op">&lt;</span> sb<span class="op">.</span>size<span class="op">;</span> b <span class="op">+=</span> BPB<span class="op">){</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">// for each bitmap block</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    bp <span class="op">=</span> bread<span class="op">(</span>dev<span class="op">,</span> BBLOCK<span class="op">(</span>b<span class="op">,</span> sb<span class="op">));</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span><span class="op">(</span>bi <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> bi <span class="op">&lt;</span> BPB <span class="op">&amp;&amp;</span> b <span class="op">+</span> bi <span class="op">&lt;</span> sb<span class="op">.</span>size<span class="op">;</span> bi<span class="op">++){</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>      m <span class="op">=</span> <span class="dv">1</span> <span class="op">&lt;&lt;</span> <span class="op">(</span>bi <span class="op">%</span> <span class="dv">8</span><span class="op">);</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span><span class="op">((</span>bp<span class="op">-&gt;</span>data<span class="op">[</span>bi<span class="op">/</span><span class="dv">8</span><span class="op">]</span> <span class="op">&amp;</span> m<span class="op">)</span> <span class="op">==</span> <span class="dv">0</span><span class="op">){</span>  <span class="co">// Is block free?</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>        bp<span class="op">-&gt;</span>data<span class="op">[</span>bi<span class="op">/</span><span class="dv">8</span><span class="op">]</span> <span class="op">|=</span> m<span class="op">;</span>  <span class="co">// Mark block in use.</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>        log_write<span class="op">(</span>bp<span class="op">);</span> <span class="co">// write to the log buffer (bitmap -&gt; disk)</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>        brelse<span class="op">(</span>bp<span class="op">);</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>        bzero<span class="op">(</span>dev<span class="op">,</span> b <span class="op">+</span> bi<span class="op">);</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> b <span class="op">+</span> bi<span class="op">;</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>      <span class="op">}</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span></code></pre></div>
+<h3 id="ii.-inode">ii. Inode</h3>
+<p>You should view File System as <strong>many on-disk data
+structures.</strong> (tree, dirs, inodes, blocks) with two allocation
+pools: (<strong>blocks</strong> and <strong>inodes</strong>)</p>
+<p>Up to now, <strong>we walk through one of the two allocations pools
+in Xv6 - the blocks</strong> and understand how the file system
+manipulate this on-disk data structures. The next part would be another
+allocation pool: <strong>inodes.</strong></p>
+<p>First let’s do not talk about the code or even design, let’s look at
+xv6 in action with some real system calls and <strong>illustrade on-disk
+data structure via how updated.</strong></p>
+<p>Here is the sequence of disk writes involved in each operation of
+these two write system calls in echo (<code>user/echo.c</code>). We can
+track these syscalls by adding a <code>printf</code> statement in
+<code>log_write</code>, which will be called when a atomic series of
+disk writes happends. (e.g,. a write system call).</p>
 <pre><code>$ echo &quot;hi&quot; &gt; x
 
 --- create the file
@@ -121,183 +288,356 @@ log write block: 33  // by iupdate: update inode
 --- write &quot;\n&quot; to file x
 log write block: 628 // by writei: write to it (\n)
 log write block: 33  // by iupdate: update inode
-
 </code></pre>
-<p><img src="Sources/cdisk.png" alt="cdisk"></p>
-<h4>1. Inode Design</h4>
-<p>The term <em>inode</em> stands for two things in xv6:</p>
-<ul>
-<li><strong>On-disk datastructure</strong> containing a file's size and list of data block numbers</li>
-<li><strong>In-memory copy of this disk inode in the inode table</strong> contains extra informantion needed within the kernel.</li>
-</ul>
+<figure>
+<img src="Sources/cdisk.png" alt="cdisk" />
+<figcaption aria-hidden="true">cdisk</figcaption>
+</figure>
+<h4 id="inode-design">1. Inode Design</h4>
+<p>The term <em>inode</em> stands for two things in xv6: *
+<strong>On-disk datastructure</strong> containing a file’s size and list
+of data block numbers * <strong>In-memory copy of this disk inode in the
+inode table</strong> contains extra informantion needed within the
+kernel.</p>
 <p><strong>Disk Inode <code>dinode</code></strong></p>
-<pre><code class="language-c">// kernel/fs.h
-// On-disk inode structure
-struct dinode {
-  short type;           // File type
-  short major;          // Major device number (T_DEVICE only)
-  short minor;          // Minor device number (T_DEVICE only)
-  short nlink;          // Number of links to inode in file system
-  uint size;            // Size of file (bytes)
-  uint addrs[NDIRECT+1];   // Data block addresses (blockno)
-};
-
-</code></pre>
-<p>The on-disk inodes are packed into a contiguous area of disk called the <strong>inode blocks</strong>. Just like block, every inode is in the same size, so it is easy, given a number n, to find the nth node on the disk. And this number n, called the inode number of i-number (<code>inum</code>).</p>
-<p>This on-disk inode structure, <strong><code>dinode</code></strong>, contains a size and an array of block numbers. (the green part of the following figure). The inode data is found in block listed in the <strong><code>dinode</code></strong>'s' <strong><code>addr</code></strong> array, and every elements of this array is a <strong><code>blockno</code></strong> referring to a block in the disk.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">// kernel/fs.h</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co">// On-disk inode structure</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> dinode <span class="op">{</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">short</span> type<span class="op">;</span>           <span class="co">// File type</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">short</span> major<span class="op">;</span>          <span class="co">// Major device number (T_DEVICE only)</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">short</span> minor<span class="op">;</span>          <span class="co">// Minor device number (T_DEVICE only)</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">short</span> nlink<span class="op">;</span>          <span class="co">// Number of links to inode in file system</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  uint size<span class="op">;</span>            <span class="co">// Size of file (bytes)</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  uint addrs<span class="op">[</span>NDIRECT<span class="op">+</span><span class="dv">1</span><span class="op">];</span>   <span class="co">// Data block addresses (blockno)</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span></code></pre></div>
+<p>The on-disk inodes are packed into a contiguous area of disk called
+the <strong>inode blocks</strong>. Just like block, every inode is in
+the same size, so it is easy, given a number n, to find the nth node on
+the disk. And this number n, called the inode number of i-number
+(<code>inum</code>).</p>
+<p>This on-disk inode structure, <strong><code>dinode</code></strong>,
+contains a size and an array of block numbers. (the green part of the
+following figure). The inode data is found in block listed in the
+<strong><code>dinode</code></strong>’s’
+<strong><code>addr</code></strong> array, and every elements of this
+array is a <strong><code>blockno</code></strong> referring to a block in
+the disk.</p>
 <ul>
-<li>The first <code>NDIRECT</code> blocks of data are listed in the first <code>NDIRECT</code> entries in the array, called <strong>direct blocks</strong>.
+<li>The first <code>NDIRECT</code> blocks of data are listed in the
+first <code>NDIRECT</code> entries in the array, called <strong>direct
+blocks</strong>.
 <ul>
-<li>size of the direct blocks: <strong><code>12</code></strong> <code>(NDIRECT)</code> <code>*</code> <strong><code>1024</code></strong> <code>(BSIZE) = </code> <strong><code>12KB</code></strong>.</li>
-</ul>
+<li>size of the direct blocks: <strong><code>12</code></strong>
+<code>(NDIRECT)</code> <code>*</code> <strong><code>1024</code></strong>
+<code>(BSIZE) =</code> <strong><code>12KB</code></strong>.<br />
 </li>
-<li>The next <code>NINDIRECT</code> blocks of data are listed in the last entry in the <strong><code>addrs</code></strong> array are address of the <strong>indirect blocks.</strong>
+</ul></li>
+<li>The next <code>NINDIRECT</code> blocks of data are listed in the
+last entry in the <strong><code>addrs</code></strong> array are address
+of the <strong>indirect blocks.</strong>
 <ul>
-<li>size of the indirect blocks: <strong><code>1024 / 4</code></strong> <code>(BSIZE / sizeof(uint) *</code> <strong><code>1024</code></strong> <code>(BSIZE) = </code> <strong><code>256KB</code></strong>.</li>
+<li>size of the indirect blocks: <strong><code>1024 / 4</code></strong>
+<code>(BSIZE / sizeof(uint) *</code> <strong><code>1024</code></strong>
+<code>(BSIZE) =</code> <strong><code>256KB</code></strong>.</li>
+</ul></li>
+<li><strong>So the Maximum size of a file in xv6 is
+<code>12KB + 256KB = 268KB</code></strong>.</li>
 </ul>
-</li>
-<li><strong>So the Maximum size of a file in xv6 is <code>12KB + 256KB = 268KB</code></strong>.</li>
-</ul>
-<p><img src="Sources/inode.png" alt="inode"></p>
+<figure>
+<img src="Sources/inode.png" alt="inode" />
+<figcaption aria-hidden="true">inode</figcaption>
+</figure>
 <p><strong>In-memory Inode <code>inode</code></strong></p>
-<pre><code class="language-c">// kernel/file.h
-// in-memory copy of an inode
-struct inode {
-  uint dev;           // Device number
-  uint inum;          // Inode number
-  int ref;            // Reference count
-  struct sleeplock lock; // protects everything below here
-  int valid;          // inode has been read from disk?
-
-  // copy of disk inode
-  short type;
-  short major;
-  short minor;
-  short nlink;
-  uint size;
-  uint addrs[NDIRECT+1];
-};
-</code></pre>
-<p>The <strong><code>inode</code></strong> is the in-memory copy of the <strong><code>dinode</code></strong> on disk with some extra attributes for <strong>File Systems</strong> to manipulate them:</p>
-<ul>
-<li><strong>The <code>inum</code> record the inode number of that inode in order to read/write them to/from disk.</strong></li>
-<li><strong><code>ref</code> field counts the number of C pointers referring this in-memory inode.</strong></li>
-</ul>
+<div class="sourceCode" id="cb4"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">// kernel/file.h</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co">// in-memory copy of an inode</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> inode <span class="op">{</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  uint dev<span class="op">;</span>           <span class="co">// Device number</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  uint inum<span class="op">;</span>          <span class="co">// Inode number</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> ref<span class="op">;</span>            <span class="co">// Reference count</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="kw">struct</span> sleeplock lock<span class="op">;</span> <span class="co">// protects everything below here</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> valid<span class="op">;</span>          <span class="co">// inode has been read from disk?</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="co">// copy of disk inode</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="dt">short</span> type<span class="op">;</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="dt">short</span> major<span class="op">;</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  <span class="dt">short</span> minor<span class="op">;</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  <span class="dt">short</span> nlink<span class="op">;</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  uint size<span class="op">;</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  uint addrs<span class="op">[</span>NDIRECT<span class="op">+</span><span class="dv">1</span><span class="op">];</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span></code></pre></div>
+<p>The <strong><code>inode</code></strong> is the in-memory copy of the
+<strong><code>dinode</code></strong> on disk with some extra attributes
+for <strong>File Systems</strong> to manipulate them: * <strong>The
+<code>inum</code> record the inode number of that inode in order to
+read/write them to/from disk.</strong> * <strong><code>ref</code> field
+counts the number of C pointers referring this in-memory
+inode.</strong></p>
 <p><strong>Inode Table <code>itable</code></strong></p>
-<pre><code class="language-c">// kernel/fs.c
-struct {
-  struct spinlock lock;
-  struct inode inode[NINODE];
-} itable;
-</code></pre>
-<p><strong>An inode describes a single file or directory, the kernel keeps a table in-use inodes in memory called <code>itable</code> to provide a place for synchronization access.</strong> (also cache frequently-used inodes) The kernel stores an inode in memory only if <strong>there are C pointers referring to that inode. (<code>open</code>)</strong>.</p>
-<h4>2. Inode Implementation</h4>
-<p>There are several api functions in the Inode layer, although xv6 uses very straightforward but non-efficient algorithms in the most part of its implementation, it is still quite hard to understand all of them with a simple description of each of them.</p>
-<p>The following figure shows the all procedures related to inode when a user process make a <strong>write</strong> system call.</p>
-<p><img src="Sources/syswrite.png" alt="syswrite"></p>
-<p>There are many functions related to the inode, all of them are in <strong><code>kernel/fs.c</code></strong>. If you are trying to understand the actual implementation, I highly recommend you to read the source code, just like I said before, it is pretty straightforward. There are three functions worth mentioning:<strong><code>bmap</code></strong>,  <strong><code>ilock</code></strong> and <strong><code>iput</code></strong>.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">// kernel/fs.c</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> <span class="op">{</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">struct</span> spinlock lock<span class="op">;</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">struct</span> inode inode<span class="op">[</span>NINODE<span class="op">];</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span> itable<span class="op">;</span></span></code></pre></div>
+<p><strong>An inode describes a single file or directory, the kernel
+keeps a table in-use inodes in memory called <code>itable</code> to
+provide a place for synchronization access.</strong> (also cache
+frequently-used inodes) The kernel stores an inode in memory only if
+<strong>there are C pointers referring to that inode.
+(<code>open</code>)</strong>.</p>
+<h4 id="inode-implementation">2. Inode Implementation</h4>
+<p>There are several api functions in the Inode layer, although xv6 uses
+very straightforward but non-efficient algorithms in the most part of
+its implementation, it is still quite hard to understand all of them
+with a simple description of each of them.</p>
+<p>The following figure shows the all procedures related to inode when a
+user process make a <strong>write</strong> system call.</p>
+<figure>
+<img src="Sources/syswrite.png" alt="syswrite" />
+<figcaption aria-hidden="true">syswrite</figcaption>
+</figure>
+<p>There are many functions related to the inode, all of them are in
+<strong><code>kernel/fs.c</code></strong>. If you are trying to
+understand the actual implementation, I highly recommend you to read the
+source code, just like I said before, it is pretty straightforward.
+There are three functions worth
+mentioning:<strong><code>bmap</code></strong>,
+<strong><code>ilock</code></strong> and
+<strong><code>iput</code></strong>.</p>
 <ul>
-<li><strong><code>bmap(ip, f-&gt;off/BSIZE)</code>: returns the blockno of specific offset of inode <code>ip</code>.</strong></li>
+<li><strong><code>bmap(ip, f-&gt;off/BSIZE)</code>: returns the blockno
+of specific offset of inode <code>ip</code>.</strong></li>
 </ul>
-<p>The function <strong><code>bmap</code></strong> manage the complexity of blocks representation in <strong><code>inode.addr[]</code></strong> so that higher-level routines, such as <strong><code>readi</code></strong> and <strong><code>writei</code></strong>, do not need to deal with this complexity. <strong><code>bmap(ip, bn)</code></strong> returns the disk block number of the <strong><code>bn</code></strong>'th data block for the inode <strong><code>ip</code></strong>. If <strong><code>ip</code></strong> does not have such a block yet, <strong><code>bmap</code></strong> allocates one.</p>
+<p>The function <strong><code>bmap</code></strong> manage the complexity
+of blocks representation in <strong><code>inode.addr[]</code></strong>
+so that higher-level routines, such as
+<strong><code>readi</code></strong> and
+<strong><code>writei</code></strong>, do not need to deal with this
+complexity. <strong><code>bmap(ip, bn)</code></strong> returns the disk
+block number of the <strong><code>bn</code></strong>’th data block for
+the inode <strong><code>ip</code></strong>. If
+<strong><code>ip</code></strong> does not have such a block yet,
+<strong><code>bmap</code></strong> allocates one.</p>
 <blockquote>
-<p><strong>Bigfile</strong>: Note that in the current xv6 implementation, the files are limited to <em>268KB</em>, this limit comes from the fact that an xv6 inode contains 12 &quot;direct&quot; block number and one &quot;singly-indirect&quot; block number, which refers to a block that holds up to 256 more block numbers. If we want to increase the maximum size of an xv6 file, like adding a &quot;double-indirect&quot; block in each inode, containing 256 addresses of singly-indirect blocks, each of which can contain up to 256 addresses of
-data blocks. The result will be consist of up to (<code>256*256 + 11 + 256</code>) <strong>65803</strong> blocks, We can do this by changing this <strong><code>bmap</code></strong> function to make it support <strong>double indirection</strong>, you can see a implementation here: <strong><a href="https://github.com/Angold-4/6s081labs/pull/6/commits/921a16e0e8276473e5b9f02c85cc541df2ccca0d">bigfile</a></strong>.</p>
+<p><strong>Bigfile</strong>: Note that in the current xv6
+implementation, the files are limited to <em>268KB</em>, this limit
+comes from the fact that an xv6 inode contains 12 “direct” block number
+and one “singly-indirect” block number, which refers to a block that
+holds up to 256 more block numbers. If we want to increase the maximum
+size of an xv6 file, like adding a “double-indirect” block in each
+inode, containing 256 addresses of singly-indirect blocks, each of which
+can contain up to 256 addresses of data blocks. The result will be
+consist of up to (<code>256*256 + 11 + 256</code>)
+<strong>65803</strong> blocks, We can do this by changing this
+<strong><code>bmap</code></strong> function to make it support
+<strong>double indirection</strong>, you can see a implementation here:
+<strong><a
+href="https://github.com/Angold-4/6s081labs/pull/6/commits/921a16e0e8276473e5b9f02c85cc541df2ccca0d">bigfile</a></strong>.</p>
 </blockquote>
 <ul>
-<li><strong><code>ilock(ip)</code>: lock the given inode and reads the inode from disk.</strong></li>
+<li><strong><code>ilock(ip)</code>: lock the given inode and reads the
+inode from disk.</strong></li>
 </ul>
-<p>Typically, the <strong>lock</strong> is used to prevent some harzards come from synchronization access of shared data, which make sure that at any time, only one process that holding the lock can change that the protected data.</p>
-<p>But too much locking especially locking for too long may also cause many problems such as <strong>deadlock.</strong> In the <strong>1. buffer cache</strong> part, I said the way to prevent multiple kernel thread use that copy of disk block is everytime when <strong><code>bwrite</code></strong> wants to write something to the disk, it should always call <strong><code>bread</code></strong>, and <strong><code>bread</code></strong> will call <strong><code>bget</code></strong> to return a locked buffer in the buffer cache, after writes finished, it will call <strong><code>brelse</code></strong> to release that buffer lock.</p>
-<p>And the situation is a little bit different here: If you want to write something to a file (i.e., calling <strong><code>file_write</code></strong>), you always need to first open that file (<code>sys_open</code>) and you cannot hold the lock when open it because you don't know when you gonna write something to it. So when you call <strong><code>iget</code></strong> in order to get a entry in the global inode table (<strong><code>itable</code></strong>), you cannot hold the lock of that inode because you don't know when to release it. If you keep holding it, it may causes <strong>deadlock</strong> and <strong>races</strong> when you do some operations like directory lookup, etc.</p>
-<p>The xv6 prevent this from happening by seperating the <strong><code>ilock</code></strong> and <strong><code>iget</code></strong> so that the system call can get <strong>a long-term reference to an inode (as for an open file), and only lock it for a short period when needed (e.g., in <code>read()</code>)</strong>. And <strong><code>iget</code></strong> only increments the <code>ip-&gt;ref</code> so that the inode stays in the table and pointers to it remain valid.</p>
-<p><img src="Sources/ilock.png" alt="ilock"></p>
-<p>Worth mentioning that another thing <strong><code>ilock</code></strong> will do is read the inode data from the disk <strong><code>dinode</code></strong>, that is because we do not keep holding that <strong><code>ip.lock</code></strong> before and this inode may have changed by another process and we have to get those changes from disk.</p>
+<p>Typically, the <strong>lock</strong> is used to prevent some harzards
+come from synchronization access of shared data, which make sure that at
+any time, only one process that holding the lock can change that the
+protected data.</p>
+<p>But too much locking especially locking for too long may also cause
+many problems such as <strong>deadlock.</strong> In the <strong>1.
+buffer cache</strong> part, I said the way to prevent multiple kernel
+thread use that copy of disk block is everytime when
+<strong><code>bwrite</code></strong> wants to write something to the
+disk, it should always call <strong><code>bread</code></strong>, and
+<strong><code>bread</code></strong> will call
+<strong><code>bget</code></strong> to return a locked buffer in the
+buffer cache, after writes finished, it will call
+<strong><code>brelse</code></strong> to release that buffer lock.</p>
+<p>And the situation is a little bit different here: If you want to
+write something to a file (i.e., calling
+<strong><code>file_write</code></strong>), you always need to first open
+that file (<code>sys_open</code>) and you cannot hold the lock when open
+it because you don’t know when you gonna write something to it. So when
+you call <strong><code>iget</code></strong> in order to get a entry in
+the global inode table (<strong><code>itable</code></strong>), you
+cannot hold the lock of that inode because you don’t know when to
+release it. If you keep holding it, it may causes
+<strong>deadlock</strong> and <strong>races</strong> when you do some
+operations like directory lookup, etc.</p>
+<p>The xv6 prevent this from happening by seperating the
+<strong><code>ilock</code></strong> and
+<strong><code>iget</code></strong> so that the system call can get
+<strong>a long-term reference to an inode (as for an open file), and
+only lock it for a short period when needed (e.g., in
+<code>read()</code>)</strong>. And <strong><code>iget</code></strong>
+only increments the <code>ip-&gt;ref</code> so that the inode stays in
+the table and pointers to it remain valid.</p>
+<figure>
+<img src="Sources/ilock.png" alt="ilock" />
+<figcaption aria-hidden="true">ilock</figcaption>
+</figure>
+<p>Worth mentioning that another thing
+<strong><code>ilock</code></strong> will do is read the inode data from
+the disk <strong><code>dinode</code></strong>, that is because we do not
+keep holding that <strong><code>ip.lock</code></strong> before and this
+inode may have changed by another process and we have to get those
+changes from disk.</p>
 <ul>
-<li><strong><code>iput(ip)</code>: drop a reference to an in-memory inode and free it (also its content) in disk if ref goes 0.</strong></li>
+<li><strong><code>iput(ip)</code>: drop a reference to an in-memory
+inode and free it (also its content) in disk if ref goes
+0.</strong></li>
 </ul>
-<p><strong><code>iput</code></strong> releases a C pointer to an inode and that the inode has no links to it <strong>(i.e., no directory has link to it)</strong>, if this is the last reference, then the inode and its data blocks must be freed. <strong><code>iput</code></strong> calls <strong><code>itrunc</code></strong> to truncatre the file to zero bytes, freeing the data blocks; sets the inode type to 0 (unallocated); and writes the inode to disk.</p>
-<h3>iii. Directory</h3>
-<p>A directory is implemented internally much like a file. Its inode has type <code>T_DIR</code> and its data in the data block is a sequence of directory entries. <strong>Each entry is a struct <code>dirent</code>, which contains a name (<code>name</code>) its inode number (<code>inum</code>).</strong> The name is at most <code>DIRSIZ(14)</code> characters; if shorter, it is terminated by a <code>NUL(0)</code> byte. Directory entries with inode number zero are free.</p>
-<pre><code class="language-c">// kernel/fs.h
-struct dirent {
-  ushort inum;
-  char name[DIRSIZ]; // 14
-};
-</code></pre>
-<p>There are two main API functions in this layer: <strong><code>dirlookup</code></strong> and <strong><code>dirlink</code></strong>.</p>
+<p><strong><code>iput</code></strong> releases a C pointer to an inode
+and that the inode has no links to it <strong>(i.e., no directory has
+link to it)</strong>, if this is the last reference, then the inode and
+its data blocks must be freed. <strong><code>iput</code></strong> calls
+<strong><code>itrunc</code></strong> to truncatre the file to zero
+bytes, freeing the data blocks; sets the inode type to 0 (unallocated);
+and writes the inode to disk.</p>
+<h3 id="iii.-directory">iii. Directory</h3>
+<p>A directory is implemented internally much like a file. Its inode has
+type <code>T_DIR</code> and its data in the data block is a sequence of
+directory entries. <strong>Each entry is a struct <code>dirent</code>,
+which contains a name (<code>name</code>) its inode number
+(<code>inum</code>).</strong> The name is at most
+<code>DIRSIZ(14)</code> characters; if shorter, it is terminated by a
+<code>NUL(0)</code> byte. Directory entries with inode number zero are
+free.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">// kernel/fs.h</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> dirent <span class="op">{</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  ushort inum<span class="op">;</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">char</span> name<span class="op">[</span>DIRSIZ<span class="op">];</span> <span class="co">// 14</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span></code></pre></div>
+<p>There are two main API functions in this layer:
+<strong><code>dirlookup</code></strong> and
+<strong><code>dirlink</code></strong>.</p>
 <ul>
-<li><strong><code>dirlookup</code>: look for a directory entry/file inode in a directory.</strong></li>
+<li><strong><code>dirlookup</code>: look for a directory entry/file
+inode in a directory.</strong></li>
 </ul>
-<pre><code class="language-c">// kernel/fs.c
-  for(off = 0; off &lt; dp-&gt;size; off += sizeof(de)){
-    // the data inside directory inode (addr) is the address of dirent
-    if(readi(dp, 0, (uint64)&amp;de, off, sizeof(de)) != sizeof(de))
-      // read data from disk inode to de
-      panic(&quot;dirlookup read&quot;);
-    if(de.inum == 0)
-      continue;
-    if(namecmp(name, de.name) == 0){
-      // entry matches path element
-      if(poff)
-        *poff = off;
-      inum = de.inum; // directory entry
-      return iget(dp-&gt;dev, inum);
-      // allocate a inode in the inode table
-      // and then return the address of that inode in the table
-    }
-  }
-</code></pre>
-<p>The main loop is also very straightforward: it searches a directory for an entry with the given name. It it finds one, it updates <code>*poff</code> to the byte offset of the entry within the directory(in case the caller wishes to edit it) and returns an unlocked inode in the <strong><code>itable</code></strong> obtained via <strong><code>iget</code></strong>.</p>
-<p>Here <strong><code>dirlookup</code></strong> is one reason that <strong><code>iget</code></strong> returns unlocked inodes that I mentioned before: <strong>Since everytime when a system call wants to call <code>dirlookup(ip, name)</code>, it should always hold the lock (<code>ip-&gt;lock</code>) before entering it to avoid other process changing its data while <code>dirlookup</code> is reading in it. Imagine the look up is for <code>.</code> (<code>$ls .</code>), an alias for the current directory, attemping to lock the inode before returning would try to re-lock <code>ip</code> (by <code>iget</code>) and deadlock.</strong></p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">// kernel/fs.c</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span><span class="op">(</span>off <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> off <span class="op">&lt;</span> dp<span class="op">-&gt;</span>size<span class="op">;</span> off <span class="op">+=</span> <span class="kw">sizeof</span><span class="op">(</span>de<span class="op">)){</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">// the data inside directory inode (addr) is the address of dirent</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span><span class="op">(</span>readi<span class="op">(</span>dp<span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="op">(</span>uint64<span class="op">)&amp;</span>de<span class="op">,</span> off<span class="op">,</span> <span class="kw">sizeof</span><span class="op">(</span>de<span class="op">))</span> <span class="op">!=</span> <span class="kw">sizeof</span><span class="op">(</span>de<span class="op">))</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>      <span class="co">// read data from disk inode to de</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>      panic<span class="op">(</span><span class="st">&quot;dirlookup read&quot;</span><span class="op">);</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span><span class="op">(</span>de<span class="op">.</span>inum <span class="op">==</span> <span class="dv">0</span><span class="op">)</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>      <span class="cf">continue</span><span class="op">;</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span><span class="op">(</span>namecmp<span class="op">(</span>name<span class="op">,</span> de<span class="op">.</span>name<span class="op">)</span> <span class="op">==</span> <span class="dv">0</span><span class="op">){</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>      <span class="co">// entry matches path element</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span><span class="op">(</span>poff<span class="op">)</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>        <span class="op">*</span>poff <span class="op">=</span> off<span class="op">;</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>      inum <span class="op">=</span> de<span class="op">.</span>inum<span class="op">;</span> <span class="co">// directory entry</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>      <span class="cf">return</span> iget<span class="op">(</span>dp<span class="op">-&gt;</span>dev<span class="op">,</span> inum<span class="op">);</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>      <span class="co">// allocate a inode in the inode table</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>      <span class="co">// and then return the address of that inode in the table</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span></code></pre></div>
+<p>The main loop is also very straightforward: it searches a directory
+for an entry with the given name. It it finds one, it updates
+<code>*poff</code> to the byte offset of the entry within the
+directory(in case the caller wishes to edit it) and returns an unlocked
+inode in the <strong><code>itable</code></strong> obtained via
+<strong><code>iget</code></strong>.</p>
+<p>Here <strong><code>dirlookup</code></strong> is one reason that
+<strong><code>iget</code></strong> returns unlocked inodes that I
+mentioned before: <strong>Since everytime when a system call wants to
+call <code>dirlookup(ip, name)</code>, it should always hold the lock
+(<code>ip-&gt;lock</code>) before entering it to avoid other process
+changing its data while <code>dirlookup</code> is reading in it. Imagine
+the look up is for <code>.</code> (<code>$ls .</code>), an alias for the
+current directory, attemping to lock the inode before returning would
+try to re-lock <code>ip</code> (by <code>iget</code>) and
+deadlock.</strong></p>
 <ul>
-<li><strong><code>dirlink</code>: write a directory entry (name, inum) into the directory dp.</strong></li>
+<li><strong><code>dirlink</code>: write a directory entry (name, inum)
+into the directory dp.</strong></li>
 </ul>
-<p>The main loop reads directory entries looking for a unallocated entry (<code>de.inum == 0</code>). The usually call stack will be:</p>
-<p><strong><code>dp = namex(path, name)</code> -&gt; <code>ip = ialloc(dp-&gt;dev)</code> -&gt; <code>dirlink(dp, name, ip-&gt;inum)</code></strong></p>
-<h3>iv. Path Name</h3>
-<p>Path name lookup (<strong><code>namex</code></strong>) involves a sucession of calls to <strong><code>dirlookup</code></strong> (iteration), <strong><code>namei</code></strong> evaluetes <code>path</code> and returns the corresponding <strong><code>inode</code></strong>.</p>
-<p>Here again we see why the separation between <strong><code>iget</code></strong> and <strong><code>ilock</code></strong> is important:</p>
-<p>The procedure <strong><code>namex</code></strong> may take a long time to complete: it should involve several disk operations to read inodes and directory blocks for the directories traversed in the pathname (if they are not in the buffer cache). So we must allow parallel pathname lookup, which means lookups in different directoryies can proceed in parallel.</p>
-<p>Let's look at <strong><code>namex()</code> (<code>kernel/fs.c</code>)</strong>:</p>
-<pre><code class="language-c">// kernel/fs.c
-
-  if(*path == '/')
-    ip = iget(ROOTDEV, ROOTINO);
-  else
-    ip = idup(myproc()-&gt;cwd);
-
-  while((path = skipelem(path, name)) != 0){
-    ilock(ip); // read the inode from disk
-    ...
-    if((next = dirlookup(ip, name, 0)) == 0){
-      iunlockput(ip);
-      return 0;
-    }
-    iunlockput(ip);
-    ip = next; // next -&gt; iteration
-    ...
-  }
-  return ip;
-
-</code></pre>
-<ol>
-<li><strong><code>iget(ip)</code></strong>: get the directory inode at in creasing its <code>ref</code> in the inode table.</li>
-<li><strong><code>ilock(ip)</code></strong>: locks current directory.</li>
-<li><strong><code>dirlookup(ip, name)</code></strong>: find next directory inode.</li>
-<li><strong><code>iunlockput(ip)</code></strong>: unlock current directory.</li>
+<p>The main loop reads directory entries looking for a unallocated entry
+(<code>de.inum == 0</code>). The usually call stack will be:</p>
+<p><strong><code>dp = namex(path, name)</code> -&gt;
+<code>ip = ialloc(dp-&gt;dev)</code> -&gt;
+<code>dirlink(dp, name, ip-&gt;inum)</code></strong></p>
+<h3 id="iv.-path-name">iv. Path Name</h3>
+<p>Path name lookup (<strong><code>namex</code></strong>) involves a
+sucession of calls to <strong><code>dirlookup</code></strong>
+(iteration), <strong><code>namei</code></strong> evaluetes
+<code>path</code> and returns the corresponding
+<strong><code>inode</code></strong>.</p>
+<p>Here again we see why the separation between
+<strong><code>iget</code></strong> and
+<strong><code>ilock</code></strong> is important:</p>
+<p>The procedure <strong><code>namex</code></strong> may take a long
+time to complete: it should involve several disk operations to read
+inodes and directory blocks for the directories traversed in the
+pathname (if they are not in the buffer cache). So we must allow
+parallel pathname lookup, which means lookups in different directoryies
+can proceed in parallel.</p>
+<p>Let’s look at <strong><code>namex()</code>
+(<code>kernel/fs.c</code>)</strong>:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">// kernel/fs.c</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span><span class="op">(*</span>path <span class="op">==</span> <span class="ch">&#39;/&#39;</span><span class="op">)</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    ip <span class="op">=</span> iget<span class="op">(</span>ROOTDEV<span class="op">,</span> ROOTINO<span class="op">);</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    ip <span class="op">=</span> idup<span class="op">(</span>myproc<span class="op">()-&gt;</span>cwd<span class="op">);</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">while</span><span class="op">((</span>path <span class="op">=</span> skipelem<span class="op">(</span>path<span class="op">,</span> name<span class="op">))</span> <span class="op">!=</span> <span class="dv">0</span><span class="op">){</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    ilock<span class="op">(</span>ip<span class="op">);</span> <span class="co">// read the inode from disk</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    <span class="op">...</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span><span class="op">((</span>next <span class="op">=</span> dirlookup<span class="op">(</span>ip<span class="op">,</span> name<span class="op">,</span> <span class="dv">0</span><span class="op">))</span> <span class="op">==</span> <span class="dv">0</span><span class="op">){</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>      iunlockput<span class="op">(</span>ip<span class="op">);</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>      <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    iunlockput<span class="op">(</span>ip<span class="op">);</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>    ip <span class="op">=</span> next<span class="op">;</span> <span class="co">// next -&gt; iteration</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>    <span class="op">...</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> ip<span class="op">;</span></span></code></pre></div>
+<ol type="1">
+<li><strong><code>iget(ip)</code></strong>: get the directory inode at
+in creasing its <code>ref</code> in the inode table.</li>
+<li><strong><code>ilock(ip)</code></strong>: locks current
+directory.</li>
+<li><strong><code>dirlookup(ip, name)</code></strong>: find next
+directory inode.</li>
+<li><strong><code>iunlockput(ip)</code></strong>: unlock current
+directory.</li>
 </ol>
-<p>Another process may unlink the next inode, but inode won't be deleted, because inode's <code>ref</code> &gt; 0 (by <strong><code>iget()</code></strong>). and finally the <code>iunlockput()</code> will both call <code>iunlock()</code> and <code>iput()</code> to unlock it and decreasing its <code>ref</code>.</p>
-<p>Also same as the <strong>deadlock.</strong> For example, <code>next</code> points to te same inode as <strong><code>ip</code></strong> when looking up &quot;<code>.</code>&quot;. Locking <code>next</code> before releasing the lock on <code>ip</code> would result in a deadlock. To avoid this deadlock, <strong><code>namex</code></strong> unlocks the directory before obtaining a lock on <code>next</code>, just as we've seen before.</p>
+<p>Another process may unlink the next inode, but inode won’t be
+deleted, because inode’s <code>ref</code> &gt; 0 (by
+<strong><code>iget()</code></strong>). and finally the
+<code>iunlockput()</code> will both call <code>iunlock()</code> and
+<code>iput()</code> to unlock it and decreasing its
+<code>ref</code>.</p>
+<p>Also same as the <strong>deadlock.</strong> For example,
+<code>next</code> points to te same inode as
+<strong><code>ip</code></strong> when looking up “<code>.</code>”.
+Locking <code>next</code> before releasing the lock on <code>ip</code>
+would result in a deadlock. To avoid this deadlock,
+<strong><code>namex</code></strong> unlocks the directory before
+obtaining a lock on <code>next</code>, just as we’ve seen before.</p>
 <blockquote>
-<p>Key Idea: <strong>getting a reference separately from locking</strong></p>
+<p>Key Idea: <strong>getting a reference separately from
+locking</strong></p>
 </blockquote>
-<p>The <strong><code>skipelem(path, name)</code></strong> is used for managing the complexity of pathname.</p>
-<p>For example: to resolve <strong><code>path = skipelem(path, name)</code></strong>, where <code>path</code> = <code>os/docs/lectures/6FS.md</code>.
-this <strong><code>skipelem</code></strong> will return the <code>path</code> equal to <code>docs/lectures/6FS.md</code> and setting <code>name</code> equal to <code>os</code>.</p>
-<h3>v. File Descriptor</h3>
-<p>A cool aspect of Unix interface is that <strong>most resources in Unix are represented as files</strong>. Including devices such as the console, pipes, and of course, real files. The <strong>File Descriptor</strong> layer is the layer that achieves this uniformity.</p>
-<p>In xv6, each process has its own table of open files (<code>*ofile[NOFILE]; (16)</code>), so-called <strong>file descriptors</strong>, <strong>which is just a wrapper around either an inode or a pipe, plus an I/O offset, and previlegies like <code>readable</code> and <code>writeable</code></strong>.</p>
+<p>The <strong><code>skipelem(path, name)</code></strong> is used for
+managing the complexity of pathname.</p>
+<p>For example: to resolve
+<strong><code>path = skipelem(path, name)</code></strong>, where
+<code>path</code> = <code>os/docs/lectures/6FS.md</code>. this
+<strong><code>skipelem</code></strong> will return the <code>path</code>
+equal to <code>docs/lectures/6FS.md</code> and setting <code>name</code>
+equal to <code>os</code>.</p>
+<h3 id="v.-file-descriptor">v. File Descriptor</h3>
+<p>A cool aspect of Unix interface is that <strong>most resources in
+Unix are represented as files</strong>. Including devices such as the
+console, pipes, and of course, real files. The <strong>File
+Descriptor</strong> layer is the layer that achieves this
+uniformity.</p>
+<p>In xv6, each process has its own table of open files
+(<code>*ofile[NOFILE]; (16)</code>), so-called <strong>file
+descriptors</strong>, <strong>which is just a wrapper around either an
+inode or a pipe, plus an I/O offset, and previlegies like
+<code>readable</code> and <code>writeable</code></strong>.</p>
 <pre><code>// kernel/proc.h
 // Per-process state
 struct proc {
@@ -305,41 +645,62 @@ struct proc {
   struct file *ofile[NOFILE];  // Open files
   ...
 }
-
 </code></pre>
-<pre><code class="language-c">// kernel/file.h
-struct file {
-  // which is wrapper around either an inode or a pipe,
-  // plus an I/O offset
-  enum { FD_NONE, FD_PIPE, FD_INODE, FD_DEVICE } type;
-  int ref; // reference count
-  char readable;
-  char writable;
-  struct pipe *pipe; // FD_PIPE
-  struct inode *ip;  // FD_INODE and FD_DEVICE
-  uint off;          // FD_INODE
-  short major;       // FD_DEVICE
-};
-
-</code></pre>
-<p>This brings two &quot;independency&quot;:</p>
-<ul>
-<li><strong>If multiple processes open the same file independently, the different instance will have differnt I/O offsets.</strong></li>
-<li><strong>A single open file can appear multiple times in one process's file table, and <code>dup</code> can use this to create alias.</strong></li>
-</ul>
-<p>Just as xv6 implemented in <strong>lower layers.</strong> (<strong><code>bcache</code>, <code>logheader</code> and <code>itable</code></strong>), there also a place to store all opened files, and this global file table called <strong><code>ftable</code>,</strong> make sure that only one copy of the disk file (inode) resides in the file system (for synchronization access).</p>
-<pre><code class="language-c">struct {
-  struct spinlock lock;
-  struct file file[NFILE];
-} ftable;
-
-</code></pre>
-<p>The file descriptor layer provides the <strong>top-level</strong> API functions to allocate a file (<strong><code>filealloc</code></strong>), create a duplicate reference (<strong><code>filedup</code></strong>), release a reference (<strong><code>fileclose</code></strong>), and read and write data (<strong><code>fileread</code></strong> and <strong><code>filewrite</code></strong>). All of them will call the APIs that lower-level provides to do the actual work.</p>
-<h2>4. System Calls</h2>
-<p>All files related to File System's syscall is in <strong><code>kernel/sysfile.c</code></strong>. And they just the very-top level layer which uses the lower-layer services.</p>
-<p>With the functions that the lower layers provide the implementation of most system calls is trivial. Like what I mentioned in the intro part of <strong><a href="https://angold4.org/os/docs/lectures/6FS.html">6. File Systems (i)</a>, this bottom-up view will help you to understand the design purpose of each layers.</strong></p>
-<p>Now lets take a <strong>top-down</strong> view of the whole file system by walking through the actual implementation of System calls, just to make this all concrete. I am using the same example here - the <strong><code>echo &quot;hi&quot;</code></strong> example we've seen in the <strong>inode</strong> part of this article. But this time, we track the <code>bwrite()</code> instead of the <code>log_write()</code>,  which shows all the writes to disk in the buffer cache. And we can see the trace of what actual disk writes are.</p>
-<p>This trace is way longer than the trace that we've looked at last time:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">// kernel/file.h</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> file <span class="op">{</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="co">// which is wrapper around either an inode or a pipe,</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">// plus an I/O offset</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">enum</span> <span class="op">{</span> FD_NONE<span class="op">,</span> FD_PIPE<span class="op">,</span> FD_INODE<span class="op">,</span> FD_DEVICE <span class="op">}</span> type<span class="op">;</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> ref<span class="op">;</span> <span class="co">// reference count</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">char</span> readable<span class="op">;</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">char</span> writable<span class="op">;</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">struct</span> pipe <span class="op">*</span>pipe<span class="op">;</span> <span class="co">// FD_PIPE</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  <span class="kw">struct</span> inode <span class="op">*</span>ip<span class="op">;</span>  <span class="co">// FD_INODE and FD_DEVICE</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  uint off<span class="op">;</span>          <span class="co">// FD_INODE</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>  <span class="dt">short</span> major<span class="op">;</span>       <span class="co">// FD_DEVICE</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span></code></pre></div>
+<p>This brings two “independency”: * <strong>If multiple processes open
+the same file independently, the different instance will have differnt
+I/O offsets.</strong> * <strong>A single open file can appear multiple
+times in one process’s file table, and <code>dup</code> can use this to
+create alias.</strong></p>
+<p>Just as xv6 implemented in <strong>lower layers.</strong>
+(<strong><code>bcache</code>, <code>logheader</code> and
+<code>itable</code></strong>), there also a place to store all opened
+files, and this global file table called
+<strong><code>ftable</code>,</strong> make sure that only one copy of
+the disk file (inode) resides in the file system (for synchronization
+access).</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> <span class="op">{</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">struct</span> spinlock lock<span class="op">;</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">struct</span> file file<span class="op">[</span>NFILE<span class="op">];</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span> ftable<span class="op">;</span></span></code></pre></div>
+<p>The file descriptor layer provides the <strong>top-level</strong> API
+functions to allocate a file (<strong><code>filealloc</code></strong>),
+create a duplicate reference (<strong><code>filedup</code></strong>),
+release a reference (<strong><code>fileclose</code></strong>), and read
+and write data (<strong><code>fileread</code></strong> and
+<strong><code>filewrite</code></strong>). All of them will call the APIs
+that lower-level provides to do the actual work.</p>
+<h2 id="system-calls">4. System Calls</h2>
+<p>All files related to File System’s syscall is in
+<strong><code>kernel/sysfile.c</code></strong>. And they just the
+very-top level layer which uses the lower-layer services.</p>
+<p>With the functions that the lower layers provide the implementation
+of most system calls is trivial. Like what I mentioned in the intro part
+of <strong><a href="https://angold4.org/os/docs/lectures/6FS.html">6.
+File Systems (i)</a>, this bottom-up view will help you to understand
+the design purpose of each layers.</strong></p>
+<p>Now lets take a <strong>top-down</strong> view of the whole file
+system by walking through the actual implementation of System calls,
+just to make this all concrete. I am using the same example here - the
+<strong><code>echo "hi"</code></strong> example we’ve seen in the
+<strong>inode</strong> part of this article. But this time, we track the
+<code>bwrite()</code> instead of the <code>log_write()</code>, which
+shows all the writes to disk in the buffer cache. And we can see the
+trace of what actual disk writes are.</p>
+<p>This trace is way longer than the trace that we’ve looked at last
+time:</p>
 <pre><code>$ echo &quot;hi&quot; &gt; x
 
 // create the file
@@ -363,18 +724,33 @@ bwrite: 2    // write_head: clear the log (make log &quot;empty&quot;)
 
 // write &quot;\n&quot; to file x
 bwrite: 3    // write_log: zero that block and then write hi to it -&gt; log 3 in disk (by bzero + writei)
-bwrite: 4    // write_log: update the file's inode 33 -&gt; log 4 in disk (by iupdate)
+bwrite: 4    // write_log: update the file&#39;s inode 33 -&gt; log 4 in disk (by iupdate)
 bwrite: 2    // write_head: actual commit to the header
 bwrite: 628  // bwrite (writei): write &quot;\n&quot;
 bwrite: 33   // bwrite (iupdate): update the inode of file x
-bwrite: 2    // write_head: clear the log (make log &quot;empty&quot;)
-</code></pre>
-<p><img src="Sources/cdisk.png" alt="cdisk"></p>
-<p>If you walkthough all block writes above, and you can both tell &quot;<strong>After write that block, what we can get?</strong>&quot; and more important, &quot;<strong>Why we should write that block?</strong>&quot;, I believe that can makes you to have a comprehensive understanding of xv6 File System with both view to it, and hope it will benefit your journey in <strong>database world, modern operating system world, or even any system design world...</strong></p>
-<p><strong>Although most part of xv6 uses very straightforward and inefficient implementation for simplicity, it still shares the same purpose and some design choice at each layer with the mordern operating systems, which is significantly more complex than xv6's.</strong></p>
-<p>Thanks for your reading! If you have any questions or promlems in this article, just feel free to mail me at <a href="mailto:wangold4w@gmail.com">wangold4w@gmail.com</a> or comment below. I'm happy to see that :).</p>
+bwrite: 2    // write_head: clear the log (make log &quot;empty&quot;)</code></pre>
+<figure>
+<img src="Sources/cdisk.png" alt="cdisk" />
+<figcaption aria-hidden="true">cdisk</figcaption>
+</figure>
+<p>If you walkthough all block writes above, and you can both tell
+“<strong>After write that block, what we can get?</strong>” and more
+important, “<strong>Why we should write that block?</strong>”, I believe
+that can makes you to have a comprehensive understanding of xv6 File
+System with both view to it, and hope it will benefit your journey in
+<strong>database world, modern operating system world, or even any
+system design world…</strong></p>
+<p><strong>Although most part of xv6 uses very straightforward and
+inefficient implementation for simplicity, it still shares the same
+purpose and some design choice at each layer with the mordern operating
+systems, which is significantly more complex than xv6’s.</strong></p>
+<p>Thanks for your reading! If you have any questions or promlems in
+this article, just feel free to mail me at <a
+href="mailto:wangold4w@gmail.com">wangold4w@gmail.com</a> or comment
+below. I’m happy to see that :).</p>
 <p>See you next time.</p>
-<p><strong>this page was last edited on 29 May 2022, at 11:45 (UTC), by <a href="https://github.com/Angold-4">Angold Wang</a>.</strong></p>
+<p><strong>this page was last edited on 29 May 2022, at 11:45 (UTC), by
+<a href="https://github.com/Angold-4">Angold Wang</a>.</strong></p>
 	</section>
 	</div>
     </div>
@@ -414,6 +790,10 @@ this.page.identifier = "os/docs/lectures/7FSii.html"
    </div>
 </footer>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
+
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
 <script src="../../../theme/js/bootstrap.min.js"></script>
 
 <!-- Enable responsive features in IE8 with Respond.js (https://github.com/scottjehl/Respond) -->

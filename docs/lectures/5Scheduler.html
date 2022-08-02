@@ -10,7 +10,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <link href="../../../images/favicon.png" rel="icon">
-
 <link rel="canonical" href=".">
         <meta name="author" content="Angold Wang" />
 
@@ -26,6 +25,128 @@
 
     <link href="../../../theme/css/pygments/monokai.css" rel="stylesheet">
     <link rel="stylesheet" href="../../../theme/css/style.css" type="text/css"/>
+
+  <style>
+
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+
+    li {
+      font-size: 18px;
+    }
+
+    p {
+      font-size: 18px;
+    }
+
+    a {
+      font-size: 18px;
+    }
+
+    k
+
+    code {
+      font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
+      font-size: 85%;
+      margin: 0;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+    {   }
+
+    @media screen {
+      pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
 
 </head>
 <body>
@@ -64,97 +185,222 @@
     <div class="row">
         <div class="col-lg-12">
 	<section id="content" class="body">
-
-
-
-<h1>5. Scheduler</h1>
-<h5>04/04/2022 By Angold Wang</h5>
-<p>The OS brings an illusion to user that there are many processes (larger than CPU cores) running at the same time by switching between them very quickly. There are two kinds of processes: -- <strong>I/O bound</strong> and <strong>CPU bound</strong>. Each of them has different mechanisms to manage by the scheduler.</p>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#scheduler" id="toc-scheduler">5. Scheduler</a>
+<ul>
+<li><a href="#multiplexing---threads" id="toc-multiplexing---threads">1.
+Multiplexing - Threads</a>
+<ul>
+<li><a href="#i.-interleaving" id="toc-i.-interleaving">i.
+Interleaving</a></li>
+<li><a href="#ii.-example-switching-in-a-single-core-machine"
+id="toc-ii.-example-switching-in-a-single-core-machine">ii. Example:
+Switching in a Single-Core Machine</a></li>
+</ul></li>
+<li><a href="#context-switching" id="toc-context-switching">2. Context
+Switching</a>
+<ul>
+<li><a href="#i.-switching" id="toc-i.-switching">i. Switching</a></li>
+<li><a href="#ii.-two-handy-points" id="toc-ii.-two-handy-points">ii.
+Two Handy Points</a></li>
+</ul></li>
+<li><a href="#scheduling" id="toc-scheduling">3. Scheduling</a>
+<ul>
+<li><a href="#i.-preempt" id="toc-i.-preempt">i. Preempt</a></li>
+<li><a href="#ii.-sleep-and-wake-up" id="toc-ii.-sleep-and-wake-up">ii.
+Sleep and Wake up</a></li>
+</ul></li>
+<li><a href="#kernel-pgtbl-per-user-process"
+id="toc-kernel-pgtbl-per-user-process">4. Kernel Pgtbl Per User
+Process</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 id="scheduler">5. Scheduler</h1>
+<h5 id="by-angold-wang">04/04/2022 By Angold Wang</h5>
+<p>The OS brings an illusion to user that there are many processes
+(larger than CPU cores) running at the same time by switching between
+them very quickly. There are two kinds of processes: – <strong>I/O
+bound</strong> and <strong>CPU bound</strong>. Each of them has
+different mechanisms to manage by the scheduler.</p>
 <ul>
 <li><strong>For the I/O bound processes:</strong>
 <ul>
 <li>While executing, the CPU spend most of time waiting for I/O.</li>
-<li>For this kind of processes, <strong>the scheduler needs to sleep it when it is waiting for the device interrupt to avoid wasting CPU time and wake it up when there comes a target device interrupt.</strong></li>
-</ul>
-</li>
+<li>For this kind of processes, <strong>the scheduler needs to sleep it
+when it is waiting for the device interrupt to avoid wasting CPU time
+and wake it up when there comes a target device interrupt.</strong></li>
+</ul></li>
 <li><strong>For the CPU bound processes:</strong>
 <ul>
-<li>This kind of processes spend most of time executing instructions in the CPU.</li>
-<li>In this case, since there are usually multiple processes running in the CPU, the scheduler implements scheduling algorithms to manage them.</li>
+<li>This kind of processes spend most of time executing instructions in
+the CPU.</li>
+<li>In this case, since there are usually multiple processes running in
+the CPU, the scheduler implements scheduling algorithms to manage
+them.</li>
+</ul></li>
 </ul>
-</li>
-</ul>
-<h2>1. Multiplexing - Threads</h2>
-<h5>Thread: one serial execution</h5>
+<h2 id="multiplexing---threads">1. Multiplexing - Threads</h2>
+<h5 id="thread-one-serial-execution">Thread: one serial execution</h5>
 <ul>
 <li>PC: Where is it in its execution.</li>
 <li>Registers: The compiler uses registers to hold variables.</li>
-<li>Stack: Each thread has its own stack dedicated to executing. Where records the record of function calls.</li>
+<li>Stack: Each thread has its own stack dedicated to executing. Where
+records the record of function calls.</li>
 </ul>
-<h3>i. Interleaving</h3>
-<p>The Threading System: <strong>Manage the interleaving of multiple threads.</strong>
-We'd like to fire up hundred or thousand threads and have the threading system figure out how to juggle all those threads and cause them all to make progress.</p>
-<p>Typically, there are two levels of interleaving:</p>
-<ol>
-<li>Multi-Core: Each threads runs on its CPU, and automatically get its one PC, Registers and Stack.</li>
-<li><strong>Switching: How each CPU is going to switch among different threads.</strong></li>
-</ol>
+<h3 id="i.-interleaving">i. Interleaving</h3>
+<p>The Threading System: <strong>Manage the interleaving of multiple
+threads.</strong> We’d like to fire up hundred or thousand threads and
+have the threading system figure out how to juggle all those threads and
+cause them all to make progress.</p>
+<p>Typically, there are two levels of interleaving: 1. Multi-Core: Each
+threads runs on its CPU, and automatically get its one PC, Registers and
+Stack. 2. <strong>Switching: How each CPU is going to switch among
+different threads.</strong></p>
 <p>Here is a high-level picture of thread switching in xv6:</p>
-<p><img src="Sources/threadhlp.png" alt="threadhlp"></p>
-<h3>ii. Example: Switching in a Single-Core Machine</h3>
-<p>This piece of code, which can be found in <a href="https://github.com/Angold-4/6s081labs/blob/pgtbl/user/spin.c"><code>user/spin.c</code></a>.
-And what it does is basically <strong><code>fork</code></strong> the parent process and then both parent and child process echo '/' or '\'. Let's call them <strong><code>spin1</code></strong> and <strong><code>spin2</code></strong>, as you can see from the program, both of them were simulate two essentially <strong>CPU-bound</strong> process and may need to let CPU switch between them (since it will compute forever), rather than wait them to finish.</p>
-<pre><code class="language-c">int 
-main(int argc, char* argv[]) {
-    int pid;
-    char c;
-    pid = fork();
-    if (pid == 0) {
-        // child
-        c = '/';
-    } else {
-        printf(&quot;parent pid is %d, child is %d\n&quot;, getpid(), pid);
-        c = '\\';
-    }
-    for (int i = 0; ;i++) {
-        if ((i % 1000000) == 0)
-            write(2, &amp;c, 1);
-    }
-    exit(0);
-}
-</code></pre>
-<p>If we run this user-level program in xv6, and make qemu to simulate a single core machine:</p>
-<p><img src="Sources/single.png" alt="single"></p>
+<figure>
+<img src="Sources/threadhlp.png" alt="threadhlp" />
+<figcaption aria-hidden="true">threadhlp</figcaption>
+</figure>
+<h3 id="ii.-example-switching-in-a-single-core-machine">ii. Example:
+Switching in a Single-Core Machine</h3>
+<p>This piece of code, which can be found in <a
+href="https://github.com/Angold-4/6s081labs/blob/pgtbl/user/spin.c"><code>user/spin.c</code></a>.
+And what it does is basically <strong><code>fork</code></strong> the
+parent process and then both parent and child process echo ‘/’ or ‘\’.
+Let’s call them <strong><code>spin1</code></strong> and
+<strong><code>spin2</code></strong>, as you can see from the program,
+both of them were simulate two essentially <strong>CPU-bound</strong>
+process and may need to let CPU switch between them (since it will
+compute forever), rather than wait them to finish.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> </span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>main<span class="op">(</span><span class="dt">int</span> argc<span class="op">,</span> <span class="dt">char</span><span class="op">*</span> argv<span class="op">[])</span> <span class="op">{</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> pid<span class="op">;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">char</span> c<span class="op">;</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    pid <span class="op">=</span> fork<span class="op">();</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>pid <span class="op">==</span> <span class="dv">0</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>        <span class="co">// child</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>        c <span class="op">=</span> <span class="ch">&#39;/&#39;</span><span class="op">;</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>        printf<span class="op">(</span><span class="st">&quot;parent pid is %d, child is %d</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">,</span> getpid<span class="op">(),</span> pid<span class="op">);</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>        c <span class="op">=</span> <span class="ch">&#39;\\&#39;</span><span class="op">;</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> <span class="op">;</span>i<span class="op">++)</span> <span class="op">{</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">((</span>i <span class="op">%</span> <span class="dv">1000000</span><span class="op">)</span> <span class="op">==</span> <span class="dv">0</span><span class="op">)</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>            write<span class="op">(</span><span class="dv">2</span><span class="op">,</span> <span class="op">&amp;</span>c<span class="op">,</span> <span class="dv">1</span><span class="op">);</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    exit<span class="op">(</span><span class="dv">0</span><span class="op">);</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>If we run this user-level program in xv6, and make qemu to simulate a
+single core machine:</p>
+<figure>
+<img src="Sources/single.png" alt="single" />
+<figcaption aria-hidden="true">single</figcaption>
+</figure>
 <p>As we can see, every once a while, the xv6 is switching between them.
-<strong>(forward slash -&gt; timer interrupt -&gt; backward slash)</strong>.</p>
-<h2>2. Context Switching</h2>
-<h3>i. Switching</h3>
-<p><img src="Sources/thrswitch.png" alt="thrswitch"></p>
-<p>The above figure outlines the steps involved in switching from one user process to another:</p>
-<ol>
-<li><strong>A user-kernel transition (system call or interrupt) to the old process's kernel thread.</strong></li>
-<li><strong>A context switch to the current CPU's scheduler thread.</strong></li>
-<li><strong>A context switch to a new process's kernel thread.</strong></li>
-<li><strong>A trap return to the user-level process.</strong></li>
-</ol>
-<h3>ii. Two Handy Points</h3>
-<h4>1. Every core can just execute one thing at a time. It either running some processes' user thread, some processes' kernel thread or that core's scheduler thread.</h4>
-<h4>2. In xv6, a process is either executing instructions in user level, or it is executing instructions in the kernel, or it is not executing at all and its state has been saved away into this combination of <code>context</code> and <code>trapframe</code>.</h4>
-<h2>3. Scheduling</h2>
-<p>After introducing the abstract mechanisims in thread switching. In this section, we are going to look at the low-level details(code) of switching.</p>
-<p>The xv6 scheduler implements a simple scheduling policy, <strong>which runs each process in turn.</strong> This policy is called <em>round robin</em>. Real operating systems implement more sophisticated policies.</p>
-<h3>i. Preempt</h3>
-<p>When a timer interrupt come, like we just saw in the last article <strong><a href="https://a4org.github.io/os/docs/lectures/4Interrupts.html">os4. Interrupts</a></strong>, When a timer interrupts come, if the interrupts hasn't be unabled, the current running process will cause a trap, using the mechanisims we introduced in <strong><a href="https://a4org.github.io/os/docs/lectures/3Traps.html">os3. Traps</a></strong> and after saving all its context in <code>trapframe</code>, it eventually come to <strong><code>devintr()</code></strong> and then return <code>2</code> to the <code>which_dev</code> variable after checking that it is an timer interrupt.</p>
-<p>After that, both <strong><code>usertrap()</code></strong> (trap in user space) and <strong><code>kerneltrap()</code></strong> will see that <code>which_dev</code> is <code>2</code> and immediatly call <strong><code>yield()</code> to let this process gives up the CPU and switch to the scheduler.</strong></p>
-<p>One interesting mechanisim there is that the <strong><code>yield</code></strong> will make xv6 hold current process's <strong>lock</strong> (<code>p-&gt;lock</code>). And release that <strong>lock</strong> in the scheduler's context. Also next time when the scheduler decide to resume this interrupted user process, it will hold that (<code>p-&gt;lock</code>), and the resumed code in <strong><code>yield</code></strong> will release that lock. We need this because <code>p-&gt;lock</code> <strong>protects invariants on the process's <code>state</code> and <code>context</code> fields. Imagine if the lock is not held: a different CPU might decide to run the process after yield had set its state to <code>RUNNABLE</code>, which will cause two CPUs running on the same stack and cause chaos.</strong></p>
-<h3>ii. Sleep and Wake up</h3>
-<p>Scheduling and locks help multiple CPUs switching among different <strong><code>RUNNABLE</code></strong> processess. But we also need some abstractions that help threads intentionally interact.
-For example, the <code>printf($)</code> case we mentioned in the last article, after the <code>UART</code> hardware finish sending the <code>$</code> to the monitor, it will generate an interrupt in order to make <strong><code>consoleintr</code></strong> call <strong><code>wakeup</code></strong> to wake up all process that called <strong><code>sleep</code></strong> and waiting for this char.</p>
-<p>The implementation is pretty much the same as the thread switching we mentioned above: If a process make a <strong><code>wait</code></strong> system call, eventually it will come to <strong><code>sleep</code></strong> function inside kernel, after set its state to <code>SLEEPING</code>, it will call <strong><code>sched()</code></strong> and then switch to the <strong>scheduler</strong>.</p>
-<h2>4. Kernel Pgtbl Per User Process</h2>
-<p>Xv6 has a single kernel page table that's used whenever it executes in the kernel. The kernel page table is a direct mapping to physical addresses, so that kernel virtual address <code>x</code> maps to physical address <code>x</code>. Xv6 also has a <strong>separate page table for each process's user address space</strong>, containing only mappings for that process's user memory, starting at virtual address zero. Because the kernel page table doesn't contain these mappings, user addresses are not valid in the kernel. Thus, when the kernel needs to use a user pointer passed in a system call (e.g., the buffer pointer passed to <strong><code>write()</code></strong>), the kernel must first translate the pointer to a physical address. The goal of this section and the next is to allow the kernel to directly dereference user pointers <strong>by adding a kernel page table per process.</strong></p>
-<p><strong><a href="https://pdos.csail.mit.edu/6.828/2020/labs/pgtbl.html">6.S081 Lab3 Page Table</a></strong></p>
-<p><strong><a href="https://a4org.github.io/os/docs/labs/pgtbl.html">Personal Implementation and Notes</a></strong></p>
+<strong>(forward slash -&gt; timer interrupt -&gt; backward
+slash)</strong>.</p>
+<h2 id="context-switching">2. Context Switching</h2>
+<h3 id="i.-switching">i. Switching</h3>
+<figure>
+<img src="Sources/thrswitch.png" alt="thrswitch" />
+<figcaption aria-hidden="true">thrswitch</figcaption>
+</figure>
+<p>The above figure outlines the steps involved in switching from one
+user process to another: 1. <strong>A user-kernel transition (system
+call or interrupt) to the old process’s kernel thread.</strong> 2.
+<strong>A context switch to the current CPU’s scheduler thread.</strong>
+3. <strong>A context switch to a new process’s kernel thread.</strong>
+4. <strong>A trap return to the user-level process.</strong></p>
+<h3 id="ii.-two-handy-points">ii. Two Handy Points</h3>
+<h4
+id="every-core-can-just-execute-one-thing-at-a-time.-it-either-running-some-processes-user-thread-some-processes-kernel-thread-or-that-cores-scheduler-thread.">1.
+Every core can just execute one thing at a time. It either running some
+processes’ user thread, some processes’ kernel thread or that core’s
+scheduler thread.</h4>
+<h4
+id="in-xv6-a-process-is-either-executing-instructions-in-user-level-or-it-is-executing-instructions-in-the-kernel-or-it-is-not-executing-at-all-and-its-state-has-been-saved-away-into-this-combination-of-context-and-trapframe.">2.
+In xv6, a process is either executing instructions in user level, or it
+is executing instructions in the kernel, or it is not executing at all
+and its state has been saved away into this combination of
+<code>context</code> and <code>trapframe</code>.</h4>
+<h2 id="scheduling">3. Scheduling</h2>
+<p>After introducing the abstract mechanisims in thread switching. In
+this section, we are going to look at the low-level details(code) of
+switching.</p>
+<p>The xv6 scheduler implements a simple scheduling policy,
+<strong>which runs each process in turn.</strong> This policy is called
+<em>round robin</em>. Real operating systems implement more
+sophisticated policies.</p>
+<h3 id="i.-preempt">i. Preempt</h3>
+<p>When a timer interrupt come, like we just saw in the last article
+<strong><a
+href="https://a4org.github.io/os/docs/lectures/4Interrupts.html">os4.
+Interrupts</a></strong>, When a timer interrupts come, if the interrupts
+hasn’t be unabled, the current running process will cause a trap, using
+the mechanisims we introduced in <strong><a
+href="https://a4org.github.io/os/docs/lectures/3Traps.html">os3.
+Traps</a></strong> and after saving all its context in
+<code>trapframe</code>, it eventually come to
+<strong><code>devintr()</code></strong> and then return <code>2</code>
+to the <code>which_dev</code> variable after checking that it is an
+timer interrupt.</p>
+<p>After that, both <strong><code>usertrap()</code></strong> (trap in
+user space) and <strong><code>kerneltrap()</code></strong> will see that
+<code>which_dev</code> is <code>2</code> and immediatly call
+<strong><code>yield()</code> to let this process gives up the CPU and
+switch to the scheduler.</strong></p>
+<p>One interesting mechanisim there is that the
+<strong><code>yield</code></strong> will make xv6 hold current process’s
+<strong>lock</strong> (<code>p-&gt;lock</code>). And release that
+<strong>lock</strong> in the scheduler’s context. Also next time when
+the scheduler decide to resume this interrupted user process, it will
+hold that (<code>p-&gt;lock</code>), and the resumed code in
+<strong><code>yield</code></strong> will release that lock. We need this
+because <code>p-&gt;lock</code> <strong>protects invariants on the
+process’s <code>state</code> and <code>context</code> fields. Imagine if
+the lock is not held: a different CPU might decide to run the process
+after yield had set its state to <code>RUNNABLE</code>, which will cause
+two CPUs running on the same stack and cause chaos.</strong></p>
+<h3 id="ii.-sleep-and-wake-up">ii. Sleep and Wake up</h3>
+<p>Scheduling and locks help multiple CPUs switching among different
+<strong><code>RUNNABLE</code></strong> processess. But we also need some
+abstractions that help threads intentionally interact. For example, the
+<code>printf($)</code> case we mentioned in the last article, after the
+<code>UART</code> hardware finish sending the <code>$</code> to the
+monitor, it will generate an interrupt in order to make
+<strong><code>consoleintr</code></strong> call
+<strong><code>wakeup</code></strong> to wake up all process that called
+<strong><code>sleep</code></strong> and waiting for this char.</p>
+<p>The implementation is pretty much the same as the thread switching we
+mentioned above: If a process make a <strong><code>wait</code></strong>
+system call, eventually it will come to
+<strong><code>sleep</code></strong> function inside kernel, after set
+its state to <code>SLEEPING</code>, it will call
+<strong><code>sched()</code></strong> and then switch to the
+<strong>scheduler</strong>.</p>
+<h2 id="kernel-pgtbl-per-user-process">4. Kernel Pgtbl Per User
+Process</h2>
+<p>Xv6 has a single kernel page table that’s used whenever it executes
+in the kernel. The kernel page table is a direct mapping to physical
+addresses, so that kernel virtual address <code>x</code> maps to
+physical address <code>x</code>. Xv6 also has a <strong>separate page
+table for each process’s user address space</strong>, containing only
+mappings for that process’s user memory, starting at virtual address
+zero. Because the kernel page table doesn’t contain these mappings, user
+addresses are not valid in the kernel. Thus, when the kernel needs to
+use a user pointer passed in a system call (e.g., the buffer pointer
+passed to <strong><code>write()</code></strong>), the kernel must first
+translate the pointer to a physical address. The goal of this section
+and the next is to allow the kernel to directly dereference user
+pointers <strong>by adding a kernel page table per process.</strong></p>
+<p><strong><a
+href="https://pdos.csail.mit.edu/6.828/2020/labs/pgtbl.html">6.S081 Lab3
+Page Table</a></strong></p>
+<p><strong><a
+href="https://a4org.github.io/os/docs/labs/pgtbl.html">Personal
+Implementation and Notes</a></strong></p>
 	</section>
 	</div>
     </div>
@@ -194,6 +440,10 @@ this.page.identifier = "os/docs/lectures/5Scheduler.html"
    </div>
 </footer>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
+
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
 <script src="../../../theme/js/bootstrap.min.js"></script>
 
 <!-- Enable responsive features in IE8 with Respond.js (https://github.com/scottjehl/Respond) -->

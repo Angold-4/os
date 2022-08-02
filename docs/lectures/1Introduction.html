@@ -10,7 +10,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <link href="../../../images/favicon.png" rel="icon">
-
 <link rel="canonical" href=".">
         <meta name="author" content="Angold Wang" />
 
@@ -26,6 +25,128 @@
 
     <link href="../../../theme/css/pygments/monokai.css" rel="stylesheet">
     <link rel="stylesheet" href="../../../theme/css/style.css" type="text/css"/>
+
+  <style>
+
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+
+    li {
+      font-size: 18px;
+    }
+
+    p {
+      font-size: 18px;
+    }
+
+    a {
+      font-size: 18px;
+    }
+
+    k
+
+    code {
+      font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
+      font-size: 85%;
+      margin: 0;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+    {   }
+
+    @media screen {
+      pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
 
 </head>
 <body>
@@ -64,180 +185,280 @@
     <div class="row">
         <div class="col-lg-12">
 	<section id="content" class="body">
-
-
-
-<h1>1. Introduction</h1>
-<h5>02/16/2022 By Angold Wang</h5>
-<h2>1. Overview</h2>
-<h3>i. OS Purposes</h3>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#introduction" id="toc-introduction">1. Introduction</a>
+<ul>
+<li><a href="#overview" id="toc-overview">1. Overview</a>
+<ul>
+<li><a href="#i.-os-purposes" id="toc-i.-os-purposes">i. OS
+Purposes</a></li>
+<li><a href="#ii.-why-do-we-need-an-operating-system"
+id="toc-ii.-why-do-we-need-an-operating-system">ii. Why do we need an
+Operating System ?</a></li>
+<li><a href="#iii.-revisit-purposes-bring-abstraction"
+id="toc-iii.-revisit-purposes-bring-abstraction">iii. Revisit Purposes:
+Bring Abstraction</a></li>
+</ul></li>
+<li><a href="#kernel-and-system-call" id="toc-kernel-and-system-call">2.
+Kernel and System Call</a>
+<ul>
+<li><a href="#i.-os-should-be-defensive"
+id="toc-i.-os-should-be-defensive">i. OS Should Be Defensive</a></li>
+<li><a href="#ii.-achieve-this-strong-isolation-hardware-support"
+id="toc-ii.-achieve-this-strong-isolation-hardware-support">ii. Achieve
+this Strong Isolation: Hardware Support</a></li>
+<li><a href="#iii.-kernel---the-trusted-computing-base"
+id="toc-iii.-kernel---the-trusted-computing-base">iii. Kernel - the
+trusted computing base</a></li>
+</ul></li>
+<li><a href="#kernel-organization" id="toc-kernel-organization">3.
+Kernel Organization</a>
+<ul>
+<li><a href="#i.-monolithic-kernel" id="toc-i.-monolithic-kernel">i.
+Monolithic Kernel</a></li>
+<li><a href="#ii.-microkernel" id="toc-ii.-microkernel">ii.
+Microkernel</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+<h1 id="introduction">1. Introduction</h1>
+<h5 id="by-angold-wang">02/16/2022 By Angold Wang</h5>
+<h2 id="overview">1. Overview</h2>
+<h3 id="i.-os-purposes">i. OS Purposes</h3>
 <ul>
 <li><strong>Abstract H/W</strong>
 <ul>
-<li>Computer(CPU, Memory, Disk...) Low level set of resources.</li>
-<li>OS provide high-level interfaces and abstractions that app can use.</li>
-</ul>
-</li>
+<li>Computer(CPU, Memory, Disk…) Low level set of resources.</li>
+<li>OS provide high-level interfaces and abstractions that app can
+use.</li>
+</ul></li>
 <li><strong>Multiplexing / Isolation</strong>
 <ul>
-<li>Run many applications at same time, without having them interfere.</li>
-</ul>
-</li>
+<li>Run many applications at same time, without having them
+interfere.</li>
+</ul></li>
 <li><strong>Sharing</strong></li>
 <li><strong>Security</strong></li>
 <li><strong>Performance</strong>
 <ul>
-<li>Whatever services it provides, don't get in the way of applicatins getting high performance.</li>
+<li>Whatever services it provides, don’t get in the way of applications
+getting high performance.</li>
 <li>Maybe even help applications achieve good performance.</li>
-</ul>
-</li>
+</ul></li>
 <li><strong>Range of Uses</strong></li>
 </ul>
-<p><img src="Sources/osstruct.png" alt="osstruct"></p>
-<h3>ii. Why do we need an Operating System ?</h3>
-<p><img src="Sources/exosdesign.png" alt="exosdesign"></p>
-<h4>Strawman Design: No OS:</h4>
+<figure>
+<img src="Sources/osstruct.png" alt="osstruct" />
+<figcaption aria-hidden="true">osstruct</figcaption>
+</figure>
+<h3 id="ii.-why-do-we-need-an-operating-system">ii. Why do we need an
+Operating System ?</h3>
+<figure>
+<img src="Sources/exosdesign.png" alt="exosdesign" />
+<figcaption aria-hidden="true">exosdesign</figcaption>
+</figure>
+<h4 id="strawman-design-no-os">Strawman Design: No OS:</h4>
 <ul>
 <li><strong>Application directly interactes with hardware</strong>
 <ul>
 <li>CPU cores &amp; registers</li>
 <li>DRAM chips</li>
 <li>Disk blocks</li>
-<li>...</li>
+<li>…</li>
+</ul></li>
+<li><strong>OS acts as a library (perhaps abstracts some of
+hardware)</strong></li>
 </ul>
-</li>
-<li><strong>OS acts as a library (perhaps abstracts some of hardware)</strong></li>
-</ul>
-<h4>Problems:</h4>
+<h4 id="problems">Problems:</h4>
 <ul>
-<li>
-<p><strong>Not conductive to multiplexing</strong> (No enforced multiplexing)</p>
+<li><strong>Not conductive to multiplexing</strong> (No enforced
+multiplexing)
 <ul>
-<li>Each processes periodically must <strong>give up</strong> the hardware.</li>
-<li>One process forgets to give up or in an infinite loop, no other processes run.</li>
-</ul>
-</li>
-<li>
-<p><strong>Not memory isolation</strong> (All apps share physical memory)</p>
+<li>Each processes periodically must <strong>give up</strong> the
+hardware.</li>
+<li>One process forgets to give up or in an infinite loop, no other
+processes run.</li>
+</ul></li>
+<li><strong>Not memory isolation</strong> (All apps share physical
+memory)
 <ul>
-<li>One app can overwrite another app's memory.</li>
+<li>One app can overwrite another app’s memory.</li>
 <li>One app can overwrite the OS library.</li>
+</ul></li>
+<li>……</li>
 </ul>
-</li>
-<li>
-<p>......</p>
-</li>
-</ul>
-<h3>iii. Revisit Purposes: Bring Abstraction</h3>
-<h4>The OS Interface abstracts the hardware resources, and make it easier/possible to provide the strong isolation, etc.</h4>
-<h4>Processes</h4>
+<h3 id="iii.-revisit-purposes-bring-abstraction">iii. Revisit Purposes:
+Bring Abstraction</h3>
+<h4
+id="the-os-interface-abstracts-the-hardware-resources-and-make-it-easierpossible-to-provide-the-strong-isolation-etc.">The
+OS Interface abstracts the hardware resources, and make it
+easier/possible to provide the strong isolation, etc.</h4>
+<h4 id="processes">Processes</h4>
 <ul>
 <li>The Abstraction of CPU</li>
 </ul>
-<p>Instead of having direct CPUs to manipulate or given to the application, OS provides processes, which <strong>abstract the CPU itself</strong> so that the operating system can multiplex in one or multiple CPU(s) among multiple applications.</p>
-<p><strong>We add this layer between CPU and applications so that behind the scenes the kernel can switch between processes in order to switch different applications.</strong></p>
+<p>Instead of having direct CPUs to manipulate or given to the
+application, OS provides processes, which <strong>abstract the CPU
+itself</strong> so that the operating system can multiplex in one or
+multiple CPU(s) among multiple applications.</p>
+<p><strong>We add this layer between CPU and applications so that behind
+the scenes the kernel can switch between processes in order to switch
+different applications.</strong></p>
 <blockquote>
-<p>Example: The RISC-V CPU we are using in the lab that actually four cores. Which means you can run four processes in parallel. What the OS does is that in case you have eight applications. It will take several cores <strong>Time Multiplexes</strong> between different processes. <strong>(Enforces that no process can run longer than 100 milliseconds)</strong></p>
+<p>Example: The RISC-V CPU we are using in the lab that actually four
+cores. Which means you can run four processes in parallel. What the OS
+does is that in case you have eight applications. It will take several
+cores <strong>Time Multiplexes</strong> between different processes.
+<strong>(Enforces that no process can run longer than 100
+milliseconds)</strong></p>
 </blockquote>
-<h4>Exec</h4>
+<h4 id="exec">Exec</h4>
 <ul>
 <li>The Abstraction of Memory</li>
-<li><strong>Each process can have its &quot;own&quot; memory</strong></li>
+<li><strong>Each process can have its “own” memory</strong></li>
 </ul>
-<p>When you call the <strong><code>exec</code></strong> system call with specifc filename (<code>PE</code> for Windows, <code>ELF</code> for Unix). And what in that file is basically is the memory image of a program, such as segmentation data etc., and that forms the memory of the application.</p>
-<p><strong>The application will never have a direct access to physical memory (i.e. By specifying the phsical address), they can only grow its memory by system call, for example <code>sbrk</code> can help applications grow their memory.</strong></p>
-<h4>Files</h4>
+<p>When you call the <strong><code>exec</code></strong> system call with
+specifc filename (<code>PE</code> for Windows, <code>ELF</code> for
+Unix). And what in that file is basically is the memory image of a
+program, such as segmentation data etc., and that forms the memory of
+the application.</p>
+<p><strong>The application will never have a direct access to physical
+memory (i.e. By specifying the phsical address), they can only grow its
+memory by system call, for example <code>sbrk</code> can help
+applications grow their memory.</strong></p>
+<h4 id="files">Files</h4>
 <ul>
 <li>The Abstraction of Disk Block</li>
-<li><strong>In Unix, the only way to interact with the storage system is through files.</strong></li>
+<li><strong>In Unix, the only way to interact with the storage system is
+through files.</strong></li>
 </ul>
-<p>OS provides convenient names of each file, and allows files to be shared by different apps and users.</p>
-<h2>2. Kernel and System Call</h2>
-<h3>i. OS Should Be Defensive</h3>
+<p>OS provides convenient names of each file, and allows files to be
+shared by different apps and users.</p>
+<h2 id="kernel-and-system-call">2. Kernel and System Call</h2>
+<h3 id="i.-os-should-be-defensive">i. OS Should Be Defensive</h3>
 <ul>
 <li><strong>An App crash will not crash the OS.</strong></li>
-<li><strong>An App shouldn't be able to break out of isolation domain and then take control of the kernel.</strong></li>
+<li><strong>An App shouldn’t be able to break out of isolation domain
+and then take control of the kernel.</strong></li>
 </ul>
-<h3>ii. Achieve this Strong Isolation: Hardware Support</h3>
-<p><strong>Strong isolation requires a hard boundary between applications and the operating system. So it is not enough to just implement all these stuff in the OS level.</strong> All series processors that are intended to run an operating system in multiple applications have to support these <strong>Hardware Support</strong>.</p>
-<h4>User / Kernel Mode</h4>
+<h3 id="ii.-achieve-this-strong-isolation-hardware-support">ii. Achieve
+this Strong Isolation: Hardware Support</h3>
+<p><strong>Strong isolation requires a hard boundary between
+applications and the operating system. So it is not enough to just
+implement all these stuff in the OS level.</strong> All series
+processors that are intended to run an operating system in multiple
+applications have to support these <strong>Hardware
+Support</strong>.</p>
+<h4 id="user-kernel-mode">User / Kernel Mode</h4>
 <ul>
-<li>
-<p><strong>User Mode</strong></p>
+<li><strong>User Mode</strong>
 <ul>
 <li>CPU Mode Flag = <code>1</code></li>
-<li>CPU can only execute <strong>Unprivileged</strong> instructions.</li>
-</ul>
-</li>
-<li>
-<p><strong>Kernel Mode</strong></p>
+<li>CPU can only execute <strong>Unprivileged</strong>
+instructions.</li>
+</ul></li>
+<li><strong>Kernel Mode</strong>
 <ul>
 <li>CPU Mode Flag = <code>2</code></li>
 <li>CPU can only execute <strong>Privileged</strong> instructions.</li>
-<li>The software running in kernel mode (space) is called the <strong>kernel</strong></li>
+<li>The software running in kernel mode (space) is called the
+<strong>kernel</strong></li>
+</ul></li>
 </ul>
-</li>
-</ul>
-<p><img src="Sources/ukmode.png" alt="ukmode"></p>
+<figure>
+<img src="Sources/ukmode.png" alt="ukmode" />
+<figcaption aria-hidden="true">ukmode</figcaption>
+</figure>
 <ul>
-<li><strong>The Unprivileged instructions, like <code>add</code>, <code>sub</code>, <code>call</code>, <code>jmp</code> or <code>branch</code> .etc.</strong></li>
-<li><strong>The Privileged instructions, like &quot;set up the page table register&quot;, &quot;disable clock&quot; or &quot;disable interrupt&quot;. etc. They are all kinds of states on the processor that the operating system is tend to use, manipulating that state is donne for privilieged instructions.</strong></li>
+<li><strong>The Unprivileged instructions, like <code>add</code>,
+<code>sub</code>, <code>call</code>, <code>jmp</code> or
+<code>branch</code> .etc.</strong></li>
+<li><strong>The Privileged instructions, like “set up the page table
+register”, “disable clock” or “disable interrupt”. etc. They are all
+kinds of states on the processor that the operating system is tend to
+use, manipulating that state is donne for privilieged
+instructions.</strong></li>
 </ul>
-<p><strong>For example, If CPU find a user application tries to actually execute a privileged instruction, then the processor won't execute it</strong>, and that will result in the transfer control from user mode to kernel mode so that the operating system can actually take control, and maybe kill the application because it is misbehaving.</p>
-<h4>Virtual Memory</h4>
+<p><strong>For example, If CPU find a user application tries to actually
+execute a privileged instruction, then the processor won’t execute
+it</strong>, and that will result in the transfer control from user mode
+to kernel mode so that the operating system can actually take control,
+and maybe kill the application because it is misbehaving.</p>
+<h4 id="virtual-memory">Virtual Memory</h4>
 <ul>
 <li><strong>Strong memory isolation.</strong></li>
-<li><strong>Page Table: map virtual address into physical address.</strong></li>
-<li><strong>Each process has its own page table.</strong> Which means each process can actually only allowed to access that piece of physical memory that actually shows up in the page table.</li>
-<li><strong>Kernel also has its own page table, called Kernel Space.</strong></li>
+<li><strong>Page Table: map virtual address into physical
+address.</strong></li>
+<li><strong>Each process has its own page table.</strong> Which means
+each process can actually only allowed to access that piece of physical
+memory that actually shows up in the page table.</li>
+<li><strong>Kernel also has its own page table, called Kernel
+Space.</strong></li>
 </ul>
-<h3>iii. Kernel - the trusted computing base</h3>
+<h3 id="iii.-kernel---the-trusted-computing-base">iii. Kernel - the
+trusted computing base</h3>
 <ul>
-<li><strong>Kernel must be &quot;correct&quot;</strong>
+<li><strong>Kernel must be “correct”</strong>
 <ul>
-<li>if there is a bug in the kernel, maybe an attacker is able to tickle that bug and turn the bug into an exploit.</li>
-<li>That exploit maybe allow that particular attacker to break out of isolation or take some control over the kernel.</li>
-</ul>
-</li>
+<li>if there is a bug in the kernel, maybe an attacker is able to tickle
+that bug and turn the bug into an exploit.</li>
+<li>That exploit maybe allow that particular attacker to break out of
+isolation or take some control over the kernel.</li>
+</ul></li>
 <li><strong>Kernel must treat processes as malicious</strong></li>
 </ul>
-<h2>3. Kernel Organization</h2>
-<p>A Key design question is that what part of the operating system should run in supervisor mode.</p>
-<h3>i. Monolithic Kernel</h3>
-<p><strong>One possible answer is that the entire operating system resides in the kernel, which means the entire operating system runs with full hardware priviledge.</strong></p>
-<p><img src="Sources/mnkernel.png" alt="mnkernel"></p>
+<h2 id="kernel-organization">3. Kernel Organization</h2>
+<p>A Key design question is that what part of the operating system
+should run in supervisor mode.</p>
+<h3 id="i.-monolithic-kernel">i. Monolithic Kernel</h3>
+<p><strong>One possible answer is that the entire operating system
+resides in the kernel, which means the entire operating system runs with
+full hardware priviledge.</strong></p>
+<figure>
+<img src="Sources/mnkernel.png" alt="mnkernel" />
+<figcaption aria-hidden="true">mnkernel</figcaption>
+</figure>
 <ul>
 <li><strong>Pros:</strong>
 <ul>
-<li>Tight integration: it is easier for different parts of the operating system to cooperate.</li>
+<li>Tight integration: it is easier for different parts of the operating
+system to cooperate.</li>
 <li><strong>Which will lead a great performance</strong></li>
-</ul>
-</li>
+</ul></li>
 <li><strong>Cons:</strong>
 <ul>
-<li>There are a lot of code in the kernel, which will bring many bugs.</li>
+<li>There are a lot of code in the kernel, which will bring many
+bugs.</li>
+</ul></li>
 </ul>
-</li>
-</ul>
-<h3>ii. Microkernel</h3>
-<p><strong>Another design which basically focuses on reducing the amount of code in the kernel,</strong> which let many OS services run as ordinary user programs, and the kernel only implements minimal mechanism to services in user space.</p>
-<p><img src="Sources/microkernel.png" alt="microkernel"></p>
+<h3 id="ii.-microkernel">ii. Microkernel</h3>
+<p><strong>Another design which basically focuses on reducing the amount
+of code in the kernel,</strong> which let many OS services run as
+ordinary user programs, and the kernel only implements minimal mechanism
+to services in user space.</p>
+<figure>
+<img src="Sources/microkernel.png" alt="microkernel" />
+<figcaption aria-hidden="true">microkernel</figcaption>
+</figure>
 <ul>
-<li>
-<p><strong>Pros:</strong></p>
+<li><strong>Pros:</strong>
 <ul>
-<li>More isolation, can pick which we part want in different using environment.</li>
+<li>More isolation, can pick which we part want in different using
+environment.</li>
 <li>Less code, hopefully less bugs and easier to implement.</li>
-</ul>
-</li>
-<li>
-<p><strong>Cons:</strong></p>
+</ul></li>
+<li><strong>Cons:</strong>
 <ul>
-<li>Maybe hard to get good performance (Too much <strong>ipc</strong>)</li>
+<li>Maybe hard to get good performance (Too much
+<strong>ipc</strong>)</li>
+</ul></li>
 </ul>
-</li>
-</ul>
-<p><img src="Sources/minix.png" alt="minix"></p>
+<figure>
+<img src="Sources/minix.png" alt="minix" />
+<figcaption aria-hidden="true">minix</figcaption>
+</figure>
 	</section>
 	</div>
     </div>
@@ -277,6 +498,10 @@ this.page.identifier = "os/docs/lectures/1Introduction.html"
    </div>
 </footer>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
+
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
 <script src="../../../theme/js/bootstrap.min.js"></script>
 
 <!-- Enable responsive features in IE8 with Respond.js (https://github.com/scottjehl/Respond) -->

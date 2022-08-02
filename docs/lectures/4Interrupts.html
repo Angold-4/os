@@ -10,7 +10,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <link href="../../../images/favicon.png" rel="icon">
-
 <link rel="canonical" href=".">
         <meta name="author" content="Angold Wang" />
 
@@ -26,6 +25,128 @@
 
     <link href="../../../theme/css/pygments/monokai.css" rel="stylesheet">
     <link rel="stylesheet" href="../../../theme/css/style.css" type="text/css"/>
+
+  <style>
+
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+
+    li {
+      font-size: 18px;
+    }
+
+    p {
+      font-size: 18px;
+    }
+
+    a {
+      font-size: 18px;
+    }
+
+    k
+
+    code {
+      font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
+      font-size: 85%;
+      margin: 0;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+    {   }
+
+    @media screen {
+      pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
 
 </head>
 <body>
@@ -64,81 +185,220 @@
     <div class="row">
         <div class="col-lg-12">
 	<section id="content" class="body">
-
-
-
-<h1>4. Interrupts</h1>
-<h5>04/03/2022 By Angold Wang</h5>
-<p>In the previous post, <strong><a href="https://a4org.github.io/os/docs/lectures/3Traps.html">3. Traps</a></strong>, we went through the actual xv6 code to illustrate the actual mechanics in the system call.
-I also mentioned at the begin of prev post, <strong>The &quot;traps&quot; mechanisim is used in 3 different situations</strong>:</p>
-<ol>
-<li><strong>System Call</strong></li>
-<li><strong>Device Interrupt</strong></li>
-<li><strong>Fault and Exceptions</strong></li>
-</ol>
-<p>Since the previous article covered the whole trap procedure (trampoline, recovery...) with actual xv6 code. Which is pretty much the same in these 3 situations. I'll treat the <strong>&quot;Trap&quot;</strong> as an abstract procedure and this lecture will focus on things other than traps.</p>
-<h2>0. Device Driver (UART)</h2>
-<p><strong>A driver is the code in an operating system that manages a particular device. Which:</strong></p>
-<ol>
-<li>Configures the device hardware.</li>
-<li>Handles the resulting interrupts.</li>
-<li>Tells the device to perform operations.</li>
-<li><strong>Interacts with processes that may be waiting for the I/O from the device.</strong></li>
-</ol>
-<p><strong>While booting, xv6's <code>main</code> calls <code>consoleinit</code> to initialize the <a href="https://en.wikipedia.org/wiki/Universal_asynchronous_receiver-transmitter">UART</a> hardware:</strong></p>
+<nav id="TOC" role="doc-toc">
 <ul>
-<li><strong>Generating a recieve interrupt when the UART receives each byte of input. (In RHR)</strong></li>
-<li><strong>Generating a transmit complete interrupt each time the UART finishes sending a byte of output. (In THR)</strong></li>
-</ul>
-<p><img src="Sources/uart.png" alt="uart"></p>
-<h2>1. System Call</h2>
-<p><strong>A system call will pause the current user-process, cause a trap which saves user's current state... and jump to kernel space in order to execute the kernel syscall.</strong></p>
-<p>Let's continue the actual <strong><code>write()</code></strong> system call we mentioned last article. The way that shell indicate that it is ready for user input is to print &quot;$&quot; in the console.</p>
-<p>In the xv6 implementation, the shell calls <code>fprintf</code> function, which will eventually make a system call <code>write(2, &quot;$&quot;, 1)</code>.</p>
-<pre><code class="language-c">  fprintf(2, &quot;$&quot;);
-</code></pre>
-<p>Now we are in the kernel code, the <code>write</code> system call eventually arrives at <strong><code>consolewrite()</code></strong> located in <code>kernel/console.c</code>, which will write the stuff byte-by-byte by calling <strong><code>uartputc(c)</code></strong>.</p>
-<p>Like I show in the figure, the UART device maintains an output buffer (<code>uart_tx_buf</code>) so that <strong>writing processes do not have to wait for the UART to finish sending,</strong> this mechanism, called <strong>asynchrony</strong>, separates device activity from process activity through <strong>buffering</strong> and <strong>interrupts</strong>. Instead, <strong><code>uartputc</code></strong> appends each character to the buffer, kick the UART hardware to start transmitting by calling <strong><code>uartstart()</code></strong>.</p>
-<p>Basically, <strong><code>uartstart()</code></strong> writes the byte pointed to by the current write pointer into the <code>THE</code>, which is the transmit holding register. In our system, <strong>once you write that byte into <code>THR</code>, the UART hardware will send the data to the Console (Monitor) to draw that byte on your monitor.</strong></p>
-<p>Each time UART finishes sending a byte to console, it generates an interrupt. After the trap <strong><code>uartintr()</code></strong> calls <strong><code>uartstart()</code></strong> again, which hands the device the next buffered output character... It will keep that loop (the yellow arrow showing on the figure) until no data in the buffer (writep == readp).</p>
-<p><img src="Sources/writesyscall.png" alt="writesyscall"></p>
-<h2>2. Device Interrupts</h2>
-<p>There are basically two kinds of device interrupts -- The <strong>Timer interrupts</strong> and <strong>others</strong>.</p>
-<h3>i. Device interrupts</h3>
-<p>For the device interrups, typically, when a user types <strong>&quot;ls&quot;</strong>, press enter in their keyboard and wants to pass this command to the shell. The UART hardware asks the RISC=V to raise an interrupt, The current user process will be interrupted and the xv6's trap handler will be activated. The trap handler calls <strong><code>devintr</code></strong> (<code>kernel/trap.c</code>), which looks at the RISC-V <code>scause</code> register to discover that the interrupt is from an external device. Then it asks a hardware unit called the <code>PLIC</code> to tell it which device interrupted. In this case, it was the UART, <strong><code>devintr</code></strong> calls <strong><code>uartintr</code></strong>.</p>
-<p><strong><code>uartintr</code></strong> reads any waiting input characters from the UART hardware and hands them to <strong><code>consoleintr</code></strong>, which <strong>accumulate input characters in <code>cons.buf</code> until a whole line arrives.</strong> The way is that <strong><code>consoleintr</code></strong> treats backspace and a few other characters specially. When a newline arrives, it wakes up a waiting <strong><code>consoleread</code></strong> (if there is one)(<code>p-&gt;status = RUNNABLE</code>), then back to the trap ret, and resume the interrupted process.</p>
-<p>Once woken, <strong><code>consoleread</code></strong> will observe a full line in <code>cons.buf</code>, copy it to user space, and return from the trap to the user space.</p>
-<p><img src="Sources/keyboard.png" alt="keyboard"></p>
-<h3>ii. Timer interrupts</h3>
-<p>Xv6 uses <strong>timer interrupts</strong> to switch among different <strong>compute-bound process</strong>.</p>
-<p>The code <strong><code>timerinit</code></strong> in <code>kernel/start.c</code> initializing the clock hardware. Basically, it sets <code>mtvec</code> to <strong><code>timervec</code></strong> (kernel/kernelvec.S) in order to deal with each clock interrupts.</p>
-<p><strong>A timer interrpt can occur at any point when user or kernel code is executing.</strong> The basic strategy to handle a clock interrupt is to ask the RISC-V to <strong>raise a &quot;software interrupt&quot;</strong> and then immediately return (<strong>then switch to the sheduler's context by calling <code>yield()</code></strong> which we will talk in great amount of details next post). The RISC-V delivers software interrupts to the kernel with the <strong>ordinary trap mechanism</strong>, and allows the kernel to disable them (very important for code executing in critical section).</p>
-<p><img src="Sources/timer.png" alt="timer"></p>
-<p>The xv6 makes sure that there will always be an interrupt while the code executing in the user space.</p>
-<h2>3. Fault and Exceptions</h2>
-<p>Xv6's response to exceptions is quite boring:</p>
+<li><a href="#interrupts" id="toc-interrupts">4. Interrupts</a>
 <ul>
-<li><strong>If an exception happens in user space, the kernel kills the faulting process.</strong></li>
-<li><strong>If an exception happens in the kernel, the kernel panics.</strong></li>
+<li><a href="#device-driver-uart" id="toc-device-driver-uart">0. Device
+Driver (UART)</a></li>
+<li><a href="#system-call" id="toc-system-call">1. System Call</a></li>
+<li><a href="#device-interrupts" id="toc-device-interrupts">2. Device
+Interrupts</a>
+<ul>
+<li><a href="#i.-device-interrupts" id="toc-i.-device-interrupts">i.
+Device interrupts</a></li>
+<li><a href="#ii.-timer-interrupts" id="toc-ii.-timer-interrupts">ii.
+Timer interrupts</a></li>
+</ul></li>
+<li><a href="#fault-and-exceptions" id="toc-fault-and-exceptions">3.
+Fault and Exceptions</a>
+<ul>
+<li><a href="#i.-copy-on-write" id="toc-i.-copy-on-write">i.
+Copy-on-Write</a></li>
+<li><a href="#ii.-lazy-allocation" id="toc-ii.-lazy-allocation">ii. Lazy
+Allocation</a></li>
+</ul></li>
+</ul></li>
 </ul>
-<p>In the real sophisticated operating system, fault and exceptions often be responded in much more interesting ways.</p>
-<h3>i. Copy-on-Write</h3>
-<h4>The problem</h4>
-<p>The <code>fork()</code> system call in xv6 copies all of the parent process's user-space memory into the child. If the parent is large, copying can take a long time. Worse, the work is often largely wasted; for example, a <code>fork()</code> followed by <code>exec()</code> in the child will cause the child to discard the copied memory, probably without ever using most of it. On the other hand, if both parent and child use a page, and one or both writes it, a copy is truly needed.</p>
-<h4>The solution</h4>
-<p>The goal of copy-on-write (COW) <code>fork()</code> is to defer allocating and copying physical memory pages for the child until the copies are actually needed, if ever.
-COW <code>fork()</code> creates just a pagetable for the child, with PTEs for user memory pointing to the parent's physical pages. COW <code>fork()</code> marks all the user PTEs in both parent and child as not writable.</p>
-<p>When either process tries to write one of these COW pages, the CPU will force a page fault. The kernel page-fault handler detects this case, allocates a page of physical memory for the faulting process, copies the original page into the new page, and modifies the relevant PTE in the faulting</p>
-<p>process to refer to the new page, this time with the PTE marked writeable. When the page fault handler returns, the user process will be able to write its copy of the page.</p>
-<p><strong><a href="https://pdos.csail.mit.edu/6.828/2020/labs/cow.html">6.S081 Lab6 Copy-on-write fork</a></strong></p>
-<p><strong><a href="https://a4org.github.io/os/docs/labs/cow.html">Personal Implementation</a></strong></p>
-<h3>ii. Lazy Allocation</h3>
-<p>One of the many neat tricks an O/S can play with page table hardware is <strong>lazy allocation</strong> of user-space heap memory.</p>
-<p>Xv6 applications ask the kernel for heap memory using the <code>sbrk()</code> system call. In the kernel we've given you, <code>sbrk()</code> allocates physical memory and maps it into the process's virtual address space. It can take a long time for a kernel to allocate and map memory for a large request. Consider, for example, that a gigabyte consists of <code>262,144 4096-byte pages</code>; that's a huge number of allocations even if each is individually cheap.</p>
-<p>In addition, some programs allocate more memory than they actually use (e.g., to implement sparse arrays), or allocate memory well in advance of use. To allow <code>sbrk()</code> to complete more quickly in these cases, sophisticated kernels allocate user memory lazily. That is, <code>sbrk()</code> doesn't allocate physical memory, but just remembers which user addresses are allocated and marks those addresses as invalid in the user page table.</p>
-<p>When the process first tries to use any given page of lazily-allocated memory, the CPU generates a page fault, which the kernel handles by allocating physical memory, zeroing it, and mapping it.</p>
-<p><strong><a href="https://pdos.csail.mit.edu/6.828/2020/labs/lazy.html">6.S081 Lab6 Lazy Allocation</a></strong></p>
-<p><strong><a href="https://a4org.github.io/os/docs/labs/lazy.html">Personal Implementation</a></strong></p>
+</nav>
+<h1 id="interrupts">4. Interrupts</h1>
+<h5 id="by-angold-wang">04/03/2022 By Angold Wang</h5>
+<p>In the previous post, <strong><a
+href="https://a4org.github.io/os/docs/lectures/3Traps.html">3.
+Traps</a></strong>, we went through the actual xv6 code to illustrate
+the actual mechanics in the system call. I also mentioned at the begin
+of prev post, <strong>The “traps” mechanisim is used in 3 different
+situations</strong>: 1. <strong>System Call</strong> 2. <strong>Device
+Interrupt</strong> 3. <strong>Fault and Exceptions</strong></p>
+<p>Since the previous article covered the whole trap procedure
+(trampoline, recovery…) with actual xv6 code. Which is pretty much the
+same in these 3 situations. I’ll treat the <strong>“Trap”</strong> as an
+abstract procedure and this lecture will focus on things other than
+traps.</p>
+<h2 id="device-driver-uart">0. Device Driver (UART)</h2>
+<p><strong>A driver is the code in an operating system that manages a
+particular device. Which:</strong> 1. Configures the device hardware. 2.
+Handles the resulting interrupts. 3. Tells the device to perform
+operations. 4. <strong>Interacts with processes that may be waiting for
+the I/O from the device.</strong></p>
+<p><strong>While booting, xv6’s <code>main</code> calls
+<code>consoleinit</code> to initialize the <a
+href="https://en.wikipedia.org/wiki/Universal_asynchronous_receiver-transmitter">UART</a>
+hardware:</strong> * <strong>Generating a recieve interrupt when the
+UART receives each byte of input. (In RHR)</strong> * <strong>Generating
+a transmit complete interrupt each time the UART finishes sending a byte
+of output. (In THR)</strong></p>
+<figure>
+<img src="Sources/uart.png" alt="uart" />
+<figcaption aria-hidden="true">uart</figcaption>
+</figure>
+<h2 id="system-call">1. System Call</h2>
+<p><strong>A system call will pause the current user-process, cause a
+trap which saves user’s current state… and jump to kernel space in order
+to execute the kernel syscall.</strong></p>
+<p>Let’s continue the actual <strong><code>write()</code></strong>
+system call we mentioned last article. The way that shell indicate that
+it is ready for user input is to print “$” in the console.</p>
+<p>In the xv6 implementation, the shell calls <code>fprintf</code>
+function, which will eventually make a system call
+<code>write(2, "$", 1)</code>.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>  fprintf<span class="op">(</span><span class="dv">2</span><span class="op">,</span> <span class="st">&quot;$&quot;</span><span class="op">);</span></span></code></pre></div>
+<p>Now we are in the kernel code, the <code>write</code> system call
+eventually arrives at <strong><code>consolewrite()</code></strong>
+located in <code>kernel/console.c</code>, which will write the stuff
+byte-by-byte by calling <strong><code>uartputc(c)</code></strong>.</p>
+<p>Like I show in the figure, the UART device maintains an output buffer
+(<code>uart_tx_buf</code>) so that <strong>writing processes do not have
+to wait for the UART to finish sending,</strong> this mechanism, called
+<strong>asynchrony</strong>, separates device activity from process
+activity through <strong>buffering</strong> and
+<strong>interrupts</strong>. Instead,
+<strong><code>uartputc</code></strong> appends each character to the
+buffer, kick the UART hardware to start transmitting by calling
+<strong><code>uartstart()</code></strong>.</p>
+<p>Basically, <strong><code>uartstart()</code></strong> writes the byte
+pointed to by the current write pointer into the <code>THE</code>, which
+is the transmit holding register. In our system, <strong>once you write
+that byte into <code>THR</code>, the UART hardware will send the data to
+the Console (Monitor) to draw that byte on your monitor.</strong></p>
+<p>Each time UART finishes sending a byte to console, it generates an
+interrupt. After the trap <strong><code>uartintr()</code></strong> calls
+<strong><code>uartstart()</code></strong> again, which hands the device
+the next buffered output character… It will keep that loop (the yellow
+arrow showing on the figure) until no data in the buffer (writep ==
+readp).</p>
+<figure>
+<img src="Sources/writesyscall.png" alt="writesyscall" />
+<figcaption aria-hidden="true">writesyscall</figcaption>
+</figure>
+<h2 id="device-interrupts">2. Device Interrupts</h2>
+<p>There are basically two kinds of device interrupts – The
+<strong>Timer interrupts</strong> and <strong>others</strong>.</p>
+<h3 id="i.-device-interrupts">i. Device interrupts</h3>
+<p>For the device interrups, typically, when a user types
+<strong>“ls”</strong>, press enter in their keyboard and wants to pass
+this command to the shell. The UART hardware asks the RISC=V to raise an
+interrupt, The current user process will be interrupted and the xv6’s
+trap handler will be activated. The trap handler calls
+<strong><code>devintr</code></strong> (<code>kernel/trap.c</code>),
+which looks at the RISC-V <code>scause</code> register to discover that
+the interrupt is from an external device. Then it asks a hardware unit
+called the <code>PLIC</code> to tell it which device interrupted. In
+this case, it was the UART, <strong><code>devintr</code></strong> calls
+<strong><code>uartintr</code></strong>.</p>
+<p><strong><code>uartintr</code></strong> reads any waiting input
+characters from the UART hardware and hands them to
+<strong><code>consoleintr</code></strong>, which <strong>accumulate
+input characters in <code>cons.buf</code> until a whole line
+arrives.</strong> The way is that
+<strong><code>consoleintr</code></strong> treats backspace and a few
+other characters specially. When a newline arrives, it wakes up a
+waiting <strong><code>consoleread</code></strong> (if there is
+one)(<code>p-&gt;status = RUNNABLE</code>), then back to the trap ret,
+and resume the interrupted process.</p>
+<p>Once woken, <strong><code>consoleread</code></strong> will observe a
+full line in <code>cons.buf</code>, copy it to user space, and return
+from the trap to the user space.</p>
+<figure>
+<img src="Sources/keyboard.png" alt="keyboard" />
+<figcaption aria-hidden="true">keyboard</figcaption>
+</figure>
+<h3 id="ii.-timer-interrupts">ii. Timer interrupts</h3>
+<p>Xv6 uses <strong>timer interrupts</strong> to switch among different
+<strong>compute-bound process</strong>.</p>
+<p>The code <strong><code>timerinit</code></strong> in
+<code>kernel/start.c</code> initializing the clock hardware. Basically,
+it sets <code>mtvec</code> to <strong><code>timervec</code></strong>
+(kernel/kernelvec.S) in order to deal with each clock interrupts.</p>
+<p><strong>A timer interrpt can occur at any point when user or kernel
+code is executing.</strong> The basic strategy to handle a clock
+interrupt is to ask the RISC-V to <strong>raise a “software
+interrupt”</strong> and then immediately return (<strong>then switch to
+the sheduler’s context by calling <code>yield()</code></strong> which we
+will talk in great amount of details next post). The RISC-V delivers
+software interrupts to the kernel with the <strong>ordinary trap
+mechanism</strong>, and allows the kernel to disable them (very
+important for code executing in critical section).</p>
+<figure>
+<img src="Sources/timer.png" alt="timer" />
+<figcaption aria-hidden="true">timer</figcaption>
+</figure>
+<p>The xv6 makes sure that there will always be an interrupt while the
+code executing in the user space.</p>
+<h2 id="fault-and-exceptions">3. Fault and Exceptions</h2>
+<p>Xv6’s response to exceptions is quite boring: * <strong>If an
+exception happens in user space, the kernel kills the faulting
+process.</strong> * <strong>If an exception happens in the kernel, the
+kernel panics.</strong></p>
+<p>In the real sophisticated operating system, fault and exceptions
+often be responded in much more interesting ways.</p>
+<h3 id="i.-copy-on-write">i. Copy-on-Write</h3>
+<h4 id="the-problem">The problem</h4>
+<p>The <code>fork()</code> system call in xv6 copies all of the parent
+process’s user-space memory into the child. If the parent is large,
+copying can take a long time. Worse, the work is often largely wasted;
+for example, a <code>fork()</code> followed by <code>exec()</code> in
+the child will cause the child to discard the copied memory, probably
+without ever using most of it. On the other hand, if both parent and
+child use a page, and one or both writes it, a copy is truly needed.</p>
+<h4 id="the-solution">The solution</h4>
+<p>The goal of copy-on-write (COW) <code>fork()</code> is to defer
+allocating and copying physical memory pages for the child until the
+copies are actually needed, if ever. COW <code>fork()</code> creates
+just a pagetable for the child, with PTEs for user memory pointing to
+the parent’s physical pages. COW <code>fork()</code> marks all the user
+PTEs in both parent and child as not writable.</p>
+<p>When either process tries to write one of these COW pages, the CPU
+will force a page fault. The kernel page-fault handler detects this
+case, allocates a page of physical memory for the faulting process,
+copies the original page into the new page, and modifies the relevant
+PTE in the faulting</p>
+<p>process to refer to the new page, this time with the PTE marked
+writeable. When the page fault handler returns, the user process will be
+able to write its copy of the page.</p>
+<p><strong><a
+href="https://pdos.csail.mit.edu/6.828/2020/labs/cow.html">6.S081 Lab6
+Copy-on-write fork</a></strong></p>
+<p><strong><a
+href="https://a4org.github.io/os/docs/labs/cow.html">Personal
+Implementation</a></strong></p>
+<h3 id="ii.-lazy-allocation">ii. Lazy Allocation</h3>
+<p>One of the many neat tricks an O/S can play with page table hardware
+is <strong>lazy allocation</strong> of user-space heap memory.</p>
+<p>Xv6 applications ask the kernel for heap memory using the
+<code>sbrk()</code> system call. In the kernel we’ve given you,
+<code>sbrk()</code> allocates physical memory and maps it into the
+process’s virtual address space. It can take a long time for a kernel to
+allocate and map memory for a large request. Consider, for example, that
+a gigabyte consists of <code>262,144 4096-byte pages</code>; that’s a
+huge number of allocations even if each is individually cheap.</p>
+<p>In addition, some programs allocate more memory than they actually
+use (e.g., to implement sparse arrays), or allocate memory well in
+advance of use. To allow <code>sbrk()</code> to complete more quickly in
+these cases, sophisticated kernels allocate user memory lazily. That is,
+<code>sbrk()</code> doesn’t allocate physical memory, but just remembers
+which user addresses are allocated and marks those addresses as invalid
+in the user page table.</p>
+<p>When the process first tries to use any given page of
+lazily-allocated memory, the CPU generates a page fault, which the
+kernel handles by allocating physical memory, zeroing it, and mapping
+it.</p>
+<p><strong><a
+href="https://pdos.csail.mit.edu/6.828/2020/labs/lazy.html">6.S081 Lab6
+Lazy Allocation</a></strong></p>
+<p><strong><a
+href="https://a4org.github.io/os/docs/labs/lazy.html">Personal
+Implementation</a></strong></p>
 	</section>
 	</div>
     </div>
@@ -178,6 +438,10 @@ this.page.identifier = "os/docs/lectures/4Interrupts.html"
    </div>
 </footer>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
+
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
 <script src="../../../theme/js/bootstrap.min.js"></script>
 
 <!-- Enable responsive features in IE8 with Respond.js (https://github.com/scottjehl/Respond) -->
